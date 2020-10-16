@@ -49,16 +49,21 @@ INTERNAL void quit_renderer ()
     SDL_DestroyRenderer(gRenderer.renderer);
 }
 
-INTERNAL void clear_renderer (ARGBColor color)
+INTERNAL ARGBColor* get_screen ()
 {
+    return CAST(ARGBColor*, gRenderer.screen->pixels);
+}
+
+INTERNAL void render_clear (ARGBColor color)
+{
+    // We clear outside the viewport to black.
     SDL_SetRenderDrawColor(gRenderer.renderer, 0x00,0x00,0x00,0xFF);
     SDL_RenderClear(gRenderer.renderer);
 
-    U32* pixels = gRenderer.screen->pixels;
-    for (int i=0; i<(SCREEN_W*SCREEN_H); ++i) pixels[i] = color;
+    for (int i=0; i<(SCREEN_W*SCREEN_H); ++i) CAST(ARGBColor*,gRenderer.screen->pixels)[i] = color;
 }
 
-INTERNAL void display_renderer ()
+INTERNAL void render_display ()
 {
     SDL_UpdateTexture(gRenderer.target, NULL, gRenderer.screen->pixels, gRenderer.screen->pitch);
     SDL_RenderCopy(gRenderer.renderer, gRenderer.target, NULL, NULL);

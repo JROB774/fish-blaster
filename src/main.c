@@ -21,8 +21,10 @@ int main (int argc, char** argv)
             }
         }
 
-        clear_renderer(COLOR_BLACK);
-        display_renderer();
+        render_clear(COLOR_BLACK);
+        ARGBColor* pixels = get_screen();
+        for (int i=0; i<(SCREEN_W*SCREEN_H); ++i) pixels[i] = i;
+        render_display();
     }
 
     quit_renderer();

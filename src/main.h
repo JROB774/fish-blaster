@@ -18,6 +18,8 @@
 #define INTERNAL static
 #define GLOBAL   static
 
+#define CAST(t,x) ((t)(x))
+
 typedef int bool;
 #define false 0
 #define true  1
