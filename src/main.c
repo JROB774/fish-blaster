@@ -9,7 +9,6 @@ int main (int argc, char** argv)
 
     Bitmap bitmap;
     load_bitmap_from_file(&bitmap, "assets/test.bmp");
-    free_bitmap(&bitmap);
 
     show_window();
 
@@ -58,8 +57,12 @@ int main (int argc, char** argv)
         render_point( 20,69, COLOR_BLACK);
         render_point(119,69, COLOR_BLACK);
 
+        render_bitmap(&bitmap, 20,20, NULL);
+
         render_display();
     }
+
+    free_bitmap(&bitmap);
 
     quit_renderer();
     quit_window();

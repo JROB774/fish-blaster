@@ -115,8 +115,8 @@ INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
         bitmap->pixels = VirtualAlloc(NULL, (bitmap->w*bitmap->h), MEM_COMMIT, PAGE_READWRITE);
         if (bitmap->pixels)
         {
-            U8*  src = buffer_data+header->bitmap_offset;
-            U32* dst = bitmap->pixels;
+            U8* src = buffer_data+header->bitmap_offset;
+            U8* dst = bitmap->pixels;
 
             // Decode bitmap bits into palette index values from 0-3.
             for (int iy=0; iy<bitmap->h; ++iy)
@@ -124,10 +124,14 @@ INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
                 for (int ix=0; ix<bitmap->w/2; ++ix)
                 {
                     int src_byte = iy * line_size + ix;
-                    // int dst_index = (bitmap->h-1-iy) * bitmap->w + ix * 2;
-                    printf("%d %d ", (src[src_byte]>>4)&0xF, src[src_byte]&0xF);
+                    int dst_index = (bitmap->h-1-iy) * bitmap->w + ix * 2;
+
+                    int hi = (src[src_byte]>>4) & 0xF;
+                    int lo = (src[src_byte]   ) & 0xF;
+
+                    dst[dst_index  ] = hi;
+                    dst[dst_index+1] = lo;
                 }
-                printf("\n");
             }
         }
 
@@ -170,6 +174,48 @@ INTERNAL void render_display ()
     SDL_UpdateTexture(gRenderer.target, NULL, gRenderer.screen->pixels, gRenderer.screen->pitch);
     SDL_RenderCopy(gRenderer.renderer, gRenderer.target, NULL, &viewport);
     SDL_RenderPresent(gRenderer.renderer);
+}
+
+INTERNAL void render_bitmap (Bitmap* bitmap, int x, int y, Clip* clip)
+{
+    assert(bitmap);
+
+    if (x > get_render_target_max_x()) return;
+    if (y > get_render_target_max_y()) return;
+
+    U8*        src = bitmap->pixels;
+    ARGBColor* dst = get_screen();
+
+    int bx = (clip) ? clip->x : 0;
+    int by = (clip) ? clip->y : 0;
+    int bw = (clip) ? clip->w : bitmap->w;
+    int bh = (clip) ? clip->h : bitmap->h;
+
+    // The rectangular region we will be drawing to.
+    int x1 = x;
+    int y1 = y;
+    int x2 = x + bw-1;
+    int y2 = y + bh-1;
+
+    // Clamp the bounds to avoid overflows.
+    x1 = CLAMP(x1, get_render_target_min_x(), get_render_target_max_x());
+    y1 = CLAMP(y1, get_render_target_min_y(), get_render_target_max_y());
+    x2 = CLAMP(x2, get_render_target_min_x(), get_render_target_max_x());
+    y2 = CLAMP(y2, get_render_target_min_y(), get_render_target_max_y());
+
+    for (int iy=y1,sy=by; iy<=y2; ++iy,++sy)
+    {
+        for (int ix=x1,sx=bx; ix<=x2; ++ix,++sx)
+        {
+            switch (src[sy*bitmap->w+sx])
+            {
+                case (0): dst[iy*SCREEN_W+ix] = 0xFF000000; break;
+                case (1): dst[iy*SCREEN_W+ix] = 0xFF3F3F3F; break;
+                case (2): dst[iy*SCREEN_W+ix] = 0xFF7F7F7F; break;
+                case (3): dst[iy*SCREEN_W+ix] = 0xFFFFFFFF; break;
+            }
+        }
+    }
 }
 
 INTERNAL void render_point (int x, int y, ARGBColor color)

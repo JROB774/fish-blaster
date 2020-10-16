@@ -23,6 +23,12 @@ typedef struct Bitmap__
 
 } Bitmap;
 
+typedef struct Clip__
+{
+    int x, y, w, h;
+
+} Clip;
+
 // The size of the "screen" we render to internally.
 // This can be scaled up based on the window size.
 #define SCREEN_W 256
@@ -53,6 +59,8 @@ INTERNAL ARGBColor* get_screen ();
 
 INTERNAL void render_clear   (ARGBColor color);
 INTERNAL void render_display ();
+
+INTERNAL void render_bitmap  (Bitmap* bitmap, int x, int y, Clip* clip);
 
 INTERNAL void render_point   (int x,  int y,                  ARGBColor color);
 INTERNAL void render_line    (int x1, int y1, int x2, int y2, ARGBColor color);
