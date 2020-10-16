@@ -37,4 +37,16 @@ INTERNAL ARGBColor* get_screen ();
 INTERNAL void render_clear     (ARGBColor color);
 INTERNAL void render_display   ();
 
+INTERNAL void render_point     (int x,  int y,                  ARGBColor color);
+INTERNAL void render_line      (int x1, int y1, int x2, int y2, ARGBColor color);
+INTERNAL void render_rect      (int x,  int y,  int w,  int h,  ARGBColor color);
+INTERNAL void render_fill      (int x,  int y,  int w,  int h,  ARGBColor color);
+
+// INTERNAL INTERFACE
+
+INTERNAL int get_render_target_min_x ();
+INTERNAL int get_render_target_max_x ();
+INTERNAL int get_render_target_min_y ();
+INTERNAL int get_render_target_max_y ();
+
 #endif /* RENDERER_H */

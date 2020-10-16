@@ -41,8 +41,19 @@ int main (int argc, char** argv)
         }
 
         render_clear(COLOR_BLACK);
+
         ARGBColor* pixels = get_screen();
         for (int i=0; i<(SCREEN_W*SCREEN_H); ++i) pixels[i] = i;
+
+        render_fill ( 20,20, 100,50, COLOR_RED);
+        render_line ( 20,20, 119,69, COLOR_YELLOW);
+        render_line ( 20,69, 119,20, COLOR_YELLOW);
+        render_rect ( 20,20, 100,50, COLOR_WHITE);
+        render_point( 20,20, COLOR_BLACK);
+        render_point(119,20, COLOR_BLACK);
+        render_point( 20,69, COLOR_BLACK);
+        render_point(119,69, COLOR_BLACK);
+
         render_display();
     }
 
