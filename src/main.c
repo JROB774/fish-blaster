@@ -38,6 +38,7 @@ int main (int argc, char** argv)
 
     init_window();
     init_renderer();
+    init_frame_timer();
 
     Bitmap bitmap;
     Font font;
@@ -83,6 +84,7 @@ int main (int argc, char** argv)
 
         render_clear(COLOR_BLACK);
         render_test(&bitmap, &font);
+        cap_framerate();
         render_display();
     }
 
