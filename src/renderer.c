@@ -49,7 +49,7 @@ INTERNAL void quit_renderer ()
     SDL_DestroyRenderer(gRenderer.renderer);
 }
 
-INTERNAL void clear_renderer (U32 color)
+INTERNAL void clear_renderer (ARGBColor color)
 {
     SDL_SetRenderDrawColor(gRenderer.renderer, 0x00,0x00,0x00,0xFF);
     SDL_RenderClear(gRenderer.renderer);

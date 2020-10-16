@@ -21,7 +21,7 @@ int main (int argc, char** argv)
             }
         }
 
-        clear_renderer(0xFFFF0000);
+        clear_renderer(COLOR_BLACK);
         display_renderer();
     }
 
