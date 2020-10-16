@@ -4,7 +4,6 @@
 GLOBAL struct
 {
     SDL_Window* window;
-    int width, height;
 
 } gWindow;
 
@@ -12,5 +11,8 @@ INTERNAL void init_window ();
 INTERNAL void quit_window ();
 INTERNAL void show_window ();
 INTERNAL void hide_window ();
+
+INTERNAL int get_window_width  ();
+INTERNAL int get_window_height ();
 
 #endif /* WINDOW_H */

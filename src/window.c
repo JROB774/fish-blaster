@@ -11,7 +11,6 @@ INTERNAL void init_window ()
     else
     {
         SDL_SetWindowMinimumSize(gWindow.window, SCREEN_W,SCREEN_H);
-        SDL_GetWindowSize(gWindow.window, &gWindow.width, &gWindow.height);
     }
 }
 
@@ -28,4 +27,18 @@ INTERNAL void show_window ()
 INTERNAL void hide_window ()
 {
     SDL_HideWindow(gWindow.window);
+}
+
+INTERNAL int get_window_width ()
+{
+    int width;
+    SDL_GetWindowSize(gWindow.window, &width, NULL);
+    return width;
+}
+
+INTERNAL int get_window_height ()
+{
+    int height;
+    SDL_GetWindowSize(gWindow.window, NULL, &height);
+    return height;
 }

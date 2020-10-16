@@ -18,6 +18,9 @@
 #define INTERNAL static
 #define GLOBAL   static
 
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 #define CAST(t,x) ((t)(x))
 
 typedef int bool;
