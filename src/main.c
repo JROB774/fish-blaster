@@ -1,6 +1,6 @@
 #include "main.h"
 
-INTERNAL void render_test (Bitmap* bitmap)
+INTERNAL void render_test (Bitmap* bitmap, Font* font)
 {
     static int i=0;
 
@@ -27,6 +27,10 @@ INTERNAL void render_test (Bitmap* bitmap)
     render_bitmap(bitmap, 0,0, palettes[i], NULL);
     i++;
     if (i > 3) i=0;
+
+
+    const ARGBColor fontpal[4] = { 0x00000000, COLOR_WHITE, 0x00000000, 0x00000000 };
+    render_text(font, 0,130, fontpal, "Hello, World!");
 }
 
 int main (int argc, char** argv)
@@ -37,7 +41,10 @@ int main (int argc, char** argv)
     init_renderer();
 
     Bitmap bitmap;
+    Font font;
+
     load_bitmap_from_file(&bitmap, "assets/test.bmp");
+    load_font_from_file(&font, 6,8, "assets/font.bmp");
 
     show_window();
 
@@ -55,9 +62,9 @@ int main (int argc, char** argv)
                     {
                         case (SDLK_RETURN): if (!(SDL_GetModState()&KMOD_ALT)) break;
                         // FALL-THROUGH!
-                        case (SDLK_F11):
-                        // FALL-THROUGH!
                         case (SDLK_f):
+                        // FALL-THROUGH!
+                        case (SDLK_F11):
                         {
                             set_fullscreen(!is_fullscreen());
                         } break;
@@ -76,10 +83,11 @@ int main (int argc, char** argv)
         }
 
         render_clear(COLOR_BLACK);
-        render_test(&bitmap);
+        render_test(&bitmap, &font);
         render_display();
     }
 
+    free_font(&font);
     free_bitmap(&bitmap);
 
     quit_renderer();

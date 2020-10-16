@@ -145,6 +145,38 @@ INTERNAL void free_bitmap (Bitmap* bitmap)
     if (bitmap->pixels) VirtualFree(bitmap->pixels, 0, MEM_RELEASE);
 }
 
+INTERNAL void load_font_from_file (Font* font, int gw, int gh, const char* file_name)
+{
+    assert(font);
+
+    load_bitmap_from_file(&font->bitmap, file_name);
+
+    int x = 0;
+    int y = 0;
+
+    for (int i=0; i<(sizeof(font->glyphs)/sizeof(font->glyphs[0])); ++i)
+    {
+        font->glyphs[i].x = x,  font->glyphs[i].y = y;
+        font->glyphs[i].w = gw, font->glyphs[i].h = gh;
+
+        x += gw;
+        if (x >= font->bitmap.w)
+        {
+            y += gh;
+            x = 0;
+        }
+    }
+
+    font->glyph_w = gw;
+    font->glyph_h = gh;
+}
+
+INTERNAL void free_font (Font* font)
+{
+    assert(font);
+    free_bitmap(&font->bitmap);
+}
+
 INTERNAL ARGBColor* get_screen ()
 {
     return CAST(ARGBColor*, gRenderer.screen->pixels);
@@ -207,9 +239,49 @@ INTERNAL void render_bitmap (Bitmap* bitmap, int x, int y, const ARGBColor palet
     {
         for (int ix=x1,sx=bx; ix<=x2; ++ix,++sx)
         {
-            dst[iy*SCREEN_W+ix] = palette[src[sy*bitmap->w+sx]];
+            ARGBColor color = palette[src[sy*bitmap->w+sx]];
+            if (color) dst[iy*SCREEN_W+ix] = color;
         }
     }
+}
+
+INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4], const char* fmt, ...)
+{
+    assert(font);
+
+    // Format the arguments into final string in a buffer.
+    va_list args;
+    va_start(args, fmt);
+    int size = vsnprintf(NULL, 0, fmt, args) + 1;
+    char* buffer = VirtualAlloc(NULL, size*sizeof(char), MEM_COMMIT, PAGE_READWRITE);
+    if (!buffer)
+    {
+        // @Incomplete: Handle error...
+    }
+    else
+    {
+        vsnprintf(buffer, size, fmt, args);
+
+        int start_x = x;
+        int start_y = y;
+
+        for (const char* c=buffer; *c; ++c)
+        {
+            switch (*c)
+            {
+                case ('\n'): x = start_x, y += font->glyph_h; break;
+                default:
+                {
+                    render_bitmap(&font->bitmap, x,y, palette, &font->glyphs[*c]);
+                    x += font->glyph_w;
+                } break;
+            }
+        }
+
+        VirtualFree(buffer, 0, MEM_RELEASE);
+    }
+
+    va_end(args);
 }
 
 INTERNAL void render_point (int x, int y, ARGBColor color)

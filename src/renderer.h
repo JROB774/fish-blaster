@@ -29,6 +29,14 @@ typedef struct Clip__
 
 } Clip;
 
+typedef struct Font__
+{
+    Bitmap bitmap;
+    Clip glyphs[128];
+    int glyph_w;
+    int glyph_h;
+} Font;
+
 // The size of the "screen" we render to internally.
 // This can be scaled up based on the window size.
 #define SCREEN_W 256
@@ -52,6 +60,11 @@ INTERNAL void quit_renderer ();
 // IMPORTANT: We only support 4-bit bitmaps (right now?) attempting to load any other will fail an assertion!
 INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name);
 INTERNAL void free_bitmap           (Bitmap* bitmap);
+
+// FONT INTERFACE
+
+INTERNAL void load_font_from_file (Font* font, int gw, int gh, const char* file_name);
+INTERNAL void free_font           (Font* font);
 
 // RENDER INTERFACE
 
