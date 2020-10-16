@@ -1,3 +1,20 @@
+#pragma pack(push,1)
+typedef struct BMPHeader__
+{
+    U16 file_type;
+    U32 file_size;
+    U16 reserved1;
+    U16 reserved2;
+    U32 bitmap_offset;
+    U32 size;
+    S32 width;
+    S32 height;
+    U16 planes;
+    U16 bits_per_pixel;
+
+} BMPHeader;
+#pragma pack(pop)
+
 INTERNAL void init_renderer ()
 {
     gRenderer.renderer = SDL_CreateRenderer(gWindow.window, -1, SDL_RENDERER_ACCELERATED);
@@ -47,6 +64,81 @@ INTERNAL void quit_renderer ()
     SDL_DestroyTexture(gRenderer.target);
     SDL_FreeSurface(gRenderer.screen);
     SDL_DestroyRenderer(gRenderer.renderer);
+}
+
+INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
+{
+    assert(bitmap);
+
+    // @Cleanup: Pull this out into a general-purpose read entire file function!!!
+    // Read the entire bitmap file into memory.
+    size_t buffer_size;
+    U8* buffer_data;
+    HANDLE file = CreateFileA(file_name, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (file == INVALID_HANDLE_VALUE)
+    {
+        // @Incomplete: Handle error...
+    }
+    else
+    {
+        buffer_size = GetFileSize(file, NULL);
+        if (buffer_size == INVALID_FILE_SIZE)
+        {
+            // @Incomplete: Handle error...
+        }
+        else
+        {
+            buffer_data = VirtualAlloc(NULL, buffer_size, MEM_COMMIT, PAGE_READWRITE);
+            if (!buffer_data)
+            {
+                // @Incomplete: Handle error...
+            }
+            else
+            {
+                DWORD unused_but_needed;
+                ReadFile(file, buffer_data, buffer_size, &unused_but_needed, NULL);
+            }
+        }
+        CloseHandle(file);
+    }
+
+    if (buffer_data)
+    {
+        BMPHeader* header = CAST(BMPHeader*, buffer_data);
+        assert(header->bits_per_pixel == 4); // NOTE: Currently we are only handling BMP files with 4-bit depth!
+
+        int line_size = (header->width/2+(header->width/2) % 4); // BMP lines are aligned to a 4-byte boundary.
+
+        bitmap->w = header->width;
+        bitmap->h = header->height;
+
+        bitmap->pixels = VirtualAlloc(NULL, (bitmap->w*bitmap->h), MEM_COMMIT, PAGE_READWRITE);
+        if (bitmap->pixels)
+        {
+            U8*  src = buffer_data+header->bitmap_offset;
+            U32* dst = bitmap->pixels;
+
+            // Decode bitmap bits into palette index values from 0-3.
+            for (int iy=0; iy<bitmap->h; ++iy)
+            {
+                for (int ix=0; ix<bitmap->w/2; ++ix)
+                {
+                    int src_byte = iy * line_size + ix;
+                    // int dst_index = (bitmap->h-1-iy) * bitmap->w + ix * 2;
+                    printf("%d %d ", (src[src_byte]>>4)&0xF, src[src_byte]&0xF);
+                }
+                printf("\n");
+            }
+        }
+
+        VirtualFree(buffer_data, 0, MEM_RELEASE);
+    }
+}
+
+INTERNAL void free_bitmap (Bitmap* bitmap)
+{
+    assert(bitmap);
+    if (bitmap->pixels) VirtualFree(bitmap->pixels, 0, MEM_RELEASE);
 }
 
 INTERNAL ARGBColor* get_screen ()

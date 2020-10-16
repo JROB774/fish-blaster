@@ -16,6 +16,13 @@ typedef U32 ARGBColor;
 #define MAKE_RGBA(r,g,b,a) (CAST(ARGBColor,(((b)<<24)|((g)<<16)|((r)<<8)|(a   ))))
 #define MAKE_RGB( r,g,b)   (CAST(ARGBColor,(((b)<<24)|((g)<<16)|((r)<<8)|(0xFF))))
 
+typedef struct Bitmap__
+{
+    int w,h;
+    void* pixels;
+
+} Bitmap;
+
 // The size of the "screen" we render to internally.
 // This can be scaled up based on the window size.
 #define SCREEN_W 256
@@ -29,18 +36,28 @@ GLOBAL struct
 
 } gRenderer;
 
-INTERNAL void init_renderer    ();
-INTERNAL void quit_renderer    ();
+// GENERAL INTERFACE
+
+INTERNAL void init_renderer ();
+INTERNAL void quit_renderer ();
+
+// BITMAP INTEFACE
+
+// IMPORTANT: We only support 4-bit bitmaps (right now?) attempting to load any other will fail an assertion!
+INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name);
+INTERNAL void free_bitmap           (Bitmap* bitmap);
+
+// RENDER INTERFACE
 
 INTERNAL ARGBColor* get_screen ();
 
-INTERNAL void render_clear     (ARGBColor color);
-INTERNAL void render_display   ();
+INTERNAL void render_clear   (ARGBColor color);
+INTERNAL void render_display ();
 
-INTERNAL void render_point     (int x,  int y,                  ARGBColor color);
-INTERNAL void render_line      (int x1, int y1, int x2, int y2, ARGBColor color);
-INTERNAL void render_rect      (int x,  int y,  int w,  int h,  ARGBColor color);
-INTERNAL void render_fill      (int x,  int y,  int w,  int h,  ARGBColor color);
+INTERNAL void render_point   (int x,  int y,                  ARGBColor color);
+INTERNAL void render_line    (int x1, int y1, int x2, int y2, ARGBColor color);
+INTERNAL void render_rect    (int x,  int y,  int w,  int h,  ARGBColor color);
+INTERNAL void render_fill    (int x,  int y,  int w,  int h,  ARGBColor color);
 
 // INTERNAL INTERFACE
 

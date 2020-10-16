@@ -7,6 +7,10 @@ int main (int argc, char** argv)
     init_window();
     init_renderer();
 
+    Bitmap bitmap;
+    load_bitmap_from_file(&bitmap, "assets/test.bmp");
+    free_bitmap(&bitmap);
+
     show_window();
 
     bool running = true;
