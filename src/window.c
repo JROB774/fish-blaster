@@ -29,14 +29,28 @@ INTERNAL void hide_window ()
     SDL_HideWindow(gWindow.window);
 }
 
-INTERNAL int get_window_width ()
+INTERNAL void set_fullscreen (bool enable)
+{
+    gWindow.fullscreen = enable;
+    if (SDL_SetWindowFullscreen(gWindow.window, (gWindow.fullscreen) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) < 0)
+    {
+        // @Incomplete: Handle error...
+    }
+}
+
+INTERNAL bool is_fullscreen ()
+{
+    return gWindow.fullscreen;
+}
+
+INTERNAL int get_window_w ()
 {
     int width;
     SDL_GetWindowSize(gWindow.window, &width, NULL);
     return width;
 }
 
-INTERNAL int get_window_height ()
+INTERNAL int get_window_h ()
 {
     int height;
     SDL_GetWindowSize(gWindow.window, NULL, &height);

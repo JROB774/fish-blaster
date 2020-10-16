@@ -67,13 +67,13 @@ INTERNAL void render_display ()
 {
     // Determine how much we can scale the viewport up by when rendering to the window.
     SDL_Rect viewport;
-    int scale_x = get_window_width () / SCREEN_W;
-    int scale_y = get_window_height() / SCREEN_H;
+    int scale_x = get_window_w() / SCREEN_W;
+    int scale_y = get_window_h() / SCREEN_H;
     int scale   = MIN(scale_x,scale_y);
     viewport.w  = SCREEN_W * scale;
     viewport.h  = SCREEN_H * scale;
-    viewport.x  = (get_window_width ()-viewport.w) / 2;
-    viewport.y  = (get_window_height()-viewport.h) / 2;
+    viewport.x  = (get_window_w()-viewport.w) / 2;
+    viewport.y  = (get_window_h()-viewport.h) / 2;
 
     SDL_UpdateTexture(gRenderer.target, NULL, gRenderer.screen->pixels, gRenderer.screen->pitch);
     SDL_RenderCopy(gRenderer.renderer, gRenderer.target, NULL, &viewport);

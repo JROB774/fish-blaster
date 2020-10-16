@@ -4,15 +4,19 @@
 GLOBAL struct
 {
     SDL_Window* window;
+    bool fullscreen;
 
 } gWindow;
 
-INTERNAL void init_window ();
-INTERNAL void quit_window ();
-INTERNAL void show_window ();
-INTERNAL void hide_window ();
+INTERNAL void init_window    ();
+INTERNAL void quit_window    ();
+INTERNAL void show_window    ();
+INTERNAL void hide_window    ();
 
-INTERNAL int get_window_width  ();
-INTERNAL int get_window_height ();
+INTERNAL void set_fullscreen (bool enable);
+INTERNAL bool is_fullscreen  ();
+
+INTERNAL int  get_window_w   ();
+INTERNAL int  get_window_h   ();
 
 #endif /* WINDOW_H */

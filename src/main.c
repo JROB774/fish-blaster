@@ -15,6 +15,25 @@ int main (int argc, char** argv)
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
+            switch (event.type)
+            {
+                case (SDL_KEYDOWN):
+                {
+                    switch (event.key.keysym.sym)
+                    {
+                        case (SDLK_F11):
+                        case (SDLK_f):
+                        {
+                            set_fullscreen(!is_fullscreen());
+                        } break;
+                    }
+                } break;
+                case (SDL_QUIT):
+                {
+                    running = false;
+                } break;
+            }
+
             if (event.type == SDL_QUIT)
             {
                 running = false;
