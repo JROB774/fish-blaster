@@ -11,6 +11,12 @@ typedef struct BMPHeader__
     S32 height;
     U16 planes;
     U16 bits_per_pixel;
+    U32 compression;
+    U32 image_size;
+    S32 x_pixels_per_meter;
+    S32 y_pixels_per_meter;
+    U32 num_colors;
+    U32 num_important_colors;
 
 } BMPHeader;
 #pragma pack(pop)
@@ -68,6 +74,8 @@ INTERNAL void quit_renderer ()
 
 INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
 {
+    // @INCOMPLETE: NEED TO HANDLE THE COLOR TABLE IN THE BITMAP CORRECTLY IN ORDER TO GET OUR COLORS TO WORK PROPERLY!!!
+
     assert(bitmap);
 
     // @Cleanup: Pull this out into a general-purpose read entire file function!!!
@@ -105,32 +113,72 @@ INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
     if (buffer_data)
     {
         BMPHeader* header = CAST(BMPHeader*, buffer_data);
-        assert(header->bits_per_pixel == 4); // NOTE: Currently we are only handling BMP files with 4-bit depth!
-
-        int line_size = (header->width/2+(header->width/2) % 4); // BMP lines are aligned to a 4-byte boundary.
-
-        bitmap->w = header->width;
-        bitmap->h = header->height;
-
-        bitmap->pixels = VirtualAlloc(NULL, (bitmap->w*bitmap->h)*sizeof(int), MEM_COMMIT, PAGE_READWRITE);
-        if (bitmap->pixels)
+        if (header->file_type != 0x4D42) // This magic number is 'BM' in lil endian byteorder.
         {
-            U8 * src = buffer_data+header->bitmap_offset;
-            int* dst = bitmap->pixels;
-
-            // Decode bitmap bits into palette index values from 0-3.
-            for (int iy=0; iy<bitmap->h; ++iy)
+            // @Incomplete: Handle error...
+        }
+        else
+        {
+            // NOTE: We are only handling BMP files with 4-bit depth!
+            if (header->bits_per_pixel != 4)
             {
-                for (int ix=0; ix<bitmap->w/2; ++ix)
+                assert(header->bits_per_pixel == 4);
+                // @Incomplete: Handle error...
+            }
+            else
+            {
+                // NOTE: We are only handling bitmaps with up to four colors!
+                if (header->num_colors > 4)
                 {
-                    int src_byte = iy * line_size + ix;
-                    int dst_index = (bitmap->h-1-iy) * bitmap->w + ix * 2;
+                    assert(header->num_colors < 4);
+                    // @Incomplete: Handle error...
+                }
+                else
+                {
+                    // Parse the color table for palette information.
+                    ARGBColor* color_table = CAST(ARGBColor*, buffer_data+sizeof(BMPHeader));
+                    int palette_index[4] = {0};
+                    for (int i=0; i<header->num_colors; ++i)
+                    {
+                        switch (color_table[i])
+                        {
+                            case (0xFF000000): palette_index[i] = 0; break;
+                            case (0xFF828282): palette_index[i] = 1; break;
+                            case (0xFFC1C1C1): palette_index[i] = 2; break;
+                            case (0xFFFFFFFF): palette_index[i] = 3; break;
+                            default:
+                                // @Incomplete: Handle error...
+                                assert(false);
+                        }
+                    }
 
-                    int hi = (src[src_byte]>>4) & 0xF;
-                    int lo = (src[src_byte]   ) & 0xF;
+                    int line_size = (header->width/2+(header->width/2) % 4); // BMP lines are aligned to a 4-byte boundary.
 
-                    dst[dst_index  ] = hi;
-                    dst[dst_index+1] = lo;
+                    bitmap->w = header->width;
+                    bitmap->h = header->height;
+
+                    bitmap->pixels = VirtualAlloc(NULL, (bitmap->w*bitmap->h)*sizeof(int), MEM_COMMIT, PAGE_READWRITE);
+                    if (bitmap->pixels)
+                    {
+                        U8 * src = buffer_data+header->bitmap_offset;
+                        int* dst = bitmap->pixels;
+
+                        // Decode bitmap bits into palette index values from 0-3.
+                        for (int iy=0; iy<bitmap->h; ++iy)
+                        {
+                            for (int ix=0; ix<bitmap->w/2; ++ix)
+                            {
+                                int src_byte = iy * line_size + ix;
+                                int dst_index = (bitmap->h-1-iy) * bitmap->w + ix * 2;
+
+                                int hi = (src[src_byte]>>4) & 0xF;
+                                int lo = (src[src_byte]   ) & 0xF;
+
+                                dst[dst_index  ] = palette_index[hi];
+                                dst[dst_index+1] = palette_index[lo];
+                            }
+                        }
+                    }
                 }
             }
         }

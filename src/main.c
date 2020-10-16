@@ -28,9 +28,8 @@ INTERNAL void render_test (Bitmap* bitmap, Font* font)
     i++;
     if (i > 3) i=0;
 
-
-    const ARGBColor fontpal[4] = { 0x00000000, COLOR_WHITE, 0x00000000, 0x00000000 };
-    render_text(font, 0,130, fontpal, "Hello, World!");
+    const ARGBColor fontpal[4] = { 0x00000000, 0x00000000, 0x00000000, COLOR_WHITE };
+    render_text(font, 64,0, fontpal, "Hello, World!");
 }
 
 int main (int argc, char** argv)
