@@ -57,7 +57,8 @@ int main (int argc, char** argv)
         render_point( 20,69, COLOR_BLACK);
         render_point(119,69, COLOR_BLACK);
 
-        render_bitmap(&bitmap, 20,20, NULL);
+        const ARGBColor palette[4] = { COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_WHITE };
+        render_bitmap(&bitmap, 0,0, palette, NULL);
 
         render_display();
     }

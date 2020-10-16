@@ -19,7 +19,7 @@ typedef U32 ARGBColor;
 typedef struct Bitmap__
 {
     int w,h;
-    void* pixels;
+    int* pixels; // Indicies [0-3] into a 4-color palette specified on render.
 
 } Bitmap;
 
@@ -60,7 +60,7 @@ INTERNAL ARGBColor* get_screen ();
 INTERNAL void render_clear   (ARGBColor color);
 INTERNAL void render_display ();
 
-INTERNAL void render_bitmap  (Bitmap* bitmap, int x, int y, Clip* clip);
+INTERNAL void render_bitmap  (Bitmap* bitmap, int x, int y, const ARGBColor palette[4], Clip* clip);
 
 INTERNAL void render_point   (int x,  int y,                  ARGBColor color);
 INTERNAL void render_line    (int x1, int y1, int x2, int y2, ARGBColor color);

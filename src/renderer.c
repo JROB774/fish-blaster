@@ -112,11 +112,11 @@ INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
         bitmap->w = header->width;
         bitmap->h = header->height;
 
-        bitmap->pixels = VirtualAlloc(NULL, (bitmap->w*bitmap->h), MEM_COMMIT, PAGE_READWRITE);
+        bitmap->pixels = VirtualAlloc(NULL, (bitmap->w*bitmap->h)*sizeof(int), MEM_COMMIT, PAGE_READWRITE);
         if (bitmap->pixels)
         {
-            U8* src = buffer_data+header->bitmap_offset;
-            U8* dst = bitmap->pixels;
+            U8 * src = buffer_data+header->bitmap_offset;
+            int* dst = bitmap->pixels;
 
             // Decode bitmap bits into palette index values from 0-3.
             for (int iy=0; iy<bitmap->h; ++iy)
@@ -176,14 +176,14 @@ INTERNAL void render_display ()
     SDL_RenderPresent(gRenderer.renderer);
 }
 
-INTERNAL void render_bitmap (Bitmap* bitmap, int x, int y, Clip* clip)
+INTERNAL void render_bitmap (Bitmap* bitmap, int x, int y, const ARGBColor palette[4], Clip* clip)
 {
     assert(bitmap);
 
     if (x > get_render_target_max_x()) return;
     if (y > get_render_target_max_y()) return;
 
-    U8*        src = bitmap->pixels;
+    int*       src = bitmap->pixels;
     ARGBColor* dst = get_screen();
 
     int bx = (clip) ? clip->x : 0;
@@ -207,13 +207,7 @@ INTERNAL void render_bitmap (Bitmap* bitmap, int x, int y, Clip* clip)
     {
         for (int ix=x1,sx=bx; ix<=x2; ++ix,++sx)
         {
-            switch (src[sy*bitmap->w+sx])
-            {
-                case (0): dst[iy*SCREEN_W+ix] = 0xFF000000; break;
-                case (1): dst[iy*SCREEN_W+ix] = 0xFF3F3F3F; break;
-                case (2): dst[iy*SCREEN_W+ix] = 0xFF7F7F7F; break;
-                case (3): dst[iy*SCREEN_W+ix] = 0xFFFFFFFF; break;
-            }
+            dst[iy*SCREEN_W+ix] = palette[src[sy*bitmap->w+sx]];
         }
     }
 }
