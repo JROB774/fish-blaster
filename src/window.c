@@ -8,9 +8,11 @@ INTERNAL void init_window ()
     {
         // @Incomplete: Handle error...
     }
-
-    SDL_SetWindowMinimumSize(gWindow.window, SCREEN_W,SCREEN_H);
-    SDL_GetWindowSize(gWindow.window, &gWindow.width, &gWindow.height);
+    else
+    {
+        SDL_SetWindowMinimumSize(gWindow.window, SCREEN_W,SCREEN_H);
+        SDL_GetWindowSize(gWindow.window, &gWindow.width, &gWindow.height);
+    }
 }
 
 INTERNAL void quit_window ()

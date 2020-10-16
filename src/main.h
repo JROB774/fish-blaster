@@ -32,7 +32,9 @@ typedef  int32_t S32;
 typedef  int64_t S64;
 
 // Headers
+#include "renderer.h"
 #include "window.h"
 
 // Sources
+#include "renderer.c"
 #include "window.c"
