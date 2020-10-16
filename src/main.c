@@ -30,6 +30,11 @@ INTERNAL void render_test (Bitmap* bitmap, Font* font)
 
     const ARGBColor fontpal[4] = { 0x00000000, 0x00000000, 0x00000000, COLOR_WHITE };
     render_text(font, 64,0, fontpal, "Hello, World!");
+
+    render_text(font, 0, 90, fontpal, (button_pressed (LMB)) ? "PRESSED:  TRUE" : "PRESSED:  FALSE");
+    render_text(font, 0, 98, fontpal, (button_released(LMB)) ? "RELEASED: TRUE" : "RELEASED: FALSE");
+    render_text(font, 0,106, fontpal, (button_down    (LMB)) ? "DOWN:     TRUE" : "DOWN:     FALSE");
+    render_text(font, 0,114, fontpal, (button_up      (LMB)) ? "UP:       TRUE" : "UP:       FALSE");
 }
 
 int main (int argc, char** argv)
@@ -39,6 +44,7 @@ int main (int argc, char** argv)
     init_window();
     init_renderer();
     init_frame_timer();
+
 
     Bitmap bitmap;
     Font font;
@@ -51,6 +57,7 @@ int main (int argc, char** argv)
     bool running = true;
     while (running)
     {
+        update_input_state();
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -74,11 +81,6 @@ int main (int argc, char** argv)
                 {
                     running = false;
                 } break;
-            }
-
-            if (event.type == SDL_QUIT)
-            {
-                running = false;
             }
         }
 

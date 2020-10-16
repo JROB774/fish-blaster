@@ -48,8 +48,10 @@ typedef  int64_t S64;
 #include "ftimer.h"
 #include "renderer.h"
 #include "window.h"
+#include "input.h"
 
 // Sources
 #include "ftimer.c"
 #include "renderer.c"
 #include "window.c"
+#include "input.c"
