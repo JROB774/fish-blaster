@@ -446,7 +446,7 @@ INTERNAL int get_render_target_min_x ()
 }
 INTERNAL int get_render_target_max_x ()
 {
-    return gRenderer.screen->w;
+    return gRenderer.screen->w-1;
 }
 INTERNAL int get_render_target_min_y ()
 {
@@ -454,5 +454,5 @@ INTERNAL int get_render_target_min_y ()
 }
 INTERNAL int get_render_target_max_y ()
 {
-    return gRenderer.screen->h;
+    return gRenderer.screen->h-1;
 }
