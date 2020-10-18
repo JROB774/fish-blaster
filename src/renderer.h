@@ -39,8 +39,9 @@ typedef struct Font__
 
 // The size of the "screen" we render to internally.
 // This can be scaled up based on the window size.
-#define SCREEN_W 256
-#define SCREEN_H 240
+#define SCREEN_W 160 // Width
+#define SCREEN_H 144 // Height
+#define SCREEN_S   3 // Scale
 
 GLOBAL struct
 {
