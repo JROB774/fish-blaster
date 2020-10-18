@@ -1,40 +1,11 @@
 #include "main.h"
 
-INTERNAL void render_test (Bitmap* bitmap, Font* font)
+INTERNAL void render_test (Bitmap* bitmap)
 {
-    static int i=0;
-
-    ARGBColor* pixels = get_screen();
-    for (int i=0; i<(SCREEN_W*SCREEN_H); ++i) pixels[i] = i;
-
-    render_fill ( 20,20, 100,50, COLOR_RED);
-    render_line ( 20,20, 119,69, COLOR_YELLOW);
-    render_line ( 20,69, 119,20, COLOR_YELLOW);
-    render_rect ( 20,20, 100,50, COLOR_WHITE);
-    render_point( 20,20, COLOR_BLACK);
-    render_point(119,20, COLOR_BLACK);
-    render_point( 20,69, COLOR_BLACK);
-    render_point(119,69, COLOR_BLACK);
-
-    const ARGBColor palettes[4][4] =
-    {
-    { COLOR_RED,   COLOR_GREEN, COLOR_BLUE,  COLOR_WHITE },
-    { COLOR_WHITE, COLOR_RED,   COLOR_GREEN, COLOR_BLUE  },
-    { COLOR_BLUE,  COLOR_WHITE, COLOR_RED,   COLOR_GREEN },
-    { COLOR_GREEN, COLOR_BLUE,  COLOR_WHITE, COLOR_RED   }
-    };
-
-    render_bitmap(bitmap, 0,0, palettes[i], NULL);
-    i++;
-    if (i > 3) i=0;
-
-    const ARGBColor fontpal[4] = { 0x00000000, 0x00000000, 0x00000000, COLOR_WHITE };
-    render_text(font, 64,0, fontpal, "Hello, World!");
-
-    render_text(font, 0, 90, fontpal, (button_pressed (LMB)) ? "PRESSED  : TRUE" : "PRESSED  : FALSE");
-    render_text(font, 0, 98, fontpal, (button_released(LMB)) ? "RELEASED : TRUE" : "RELEASED : FALSE");
-    render_text(font, 0,106, fontpal, (button_down    (LMB)) ? "DOWN     : TRUE" : "DOWN     : FALSE");
-    render_text(font, 0,114, fontpal, (button_up      (LMB)) ? "UP       : TRUE" : "UP       : FALSE");
+    render_clear(0xFF2F4B99);
+    const ARGBColor FISH_PALETTE[4] = { 0xFF000000, 0xFFFF3F3F, 0xFFFFFFFF, 0x00000000 };
+    Clip clip = { 32, 0, 16, 8 };
+    render_bitmap(bitmap, 20,40, FISH_PALETTE, &clip);
 }
 
 int main (int argc, char** argv)
@@ -48,8 +19,7 @@ int main (int argc, char** argv)
     Bitmap bitmap;
     Font font;
 
-    load_bitmap_from_file(&bitmap, "assets/test.bmp");
-    load_font_from_file(&font, 6,8, "assets/font.bmp");
+    load_bitmap_from_file(&bitmap, "assets/tile.bmp");
 
     show_window();
 
@@ -84,12 +54,11 @@ int main (int argc, char** argv)
         }
 
         render_clear(COLOR_BLACK);
-        render_test(&bitmap, &font);
+        render_test(&bitmap);
         cap_framerate();
         render_display();
     }
 
-    free_font(&font);
     free_bitmap(&bitmap);
 
     quit_renderer();
