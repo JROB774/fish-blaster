@@ -287,18 +287,25 @@ INTERNAL void render_bitmap (Bitmap* bitmap, int x, int y, const ARGBColor palet
     int x2 = x + bw-1;
     int y2 = y + bh-1;
 
+    // The graphic is entirely off-screen!
+    if (x2 < get_render_target_min_x() || y2 < get_render_target_min_y()) return;
+
     // Clamp the bounds to avoid overflows.
-    x1 = CLAMP(x1, get_render_target_min_x(), get_render_target_max_x());
-    y1 = CLAMP(y1, get_render_target_min_y(), get_render_target_max_y());
     x2 = CLAMP(x2, get_render_target_min_x(), get_render_target_max_x());
     y2 = CLAMP(y2, get_render_target_min_y(), get_render_target_max_y());
 
     for (int iy=y1,sy=by; iy<=y2; ++iy,++sy)
     {
-        for (int ix=x1,sx=bx; ix<=x2; ++ix,++sx)
+        if (iy >= get_render_target_min_y())
         {
-            ARGBColor color = palette[src[sy*bitmap->w+sx]];
-            if (color) dst[iy*SCREEN_W+ix] = color;
+            for (int ix=x1,sx=bx; ix<=x2; ++ix,++sx)
+            {
+                if (ix >= get_render_target_min_x())
+                {
+                    ARGBColor color = palette[src[sy*bitmap->w+sx]];
+                    if (color) dst[iy*SCREEN_W+ix] = color;
+                }
+            }
         }
     }
 }
