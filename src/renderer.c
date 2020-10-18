@@ -1,3 +1,8 @@
+#define PALETTE_BLACK 0xFF000000
+#define PALETTE_COLOR 0xFF7F7F7F
+#define PALETTE_WHITE 0xFFFFFFFF
+#define PALETTE_CLEAR 0xFF7FC9FF
+
 #pragma pack(push,1)
 typedef struct BMPHeader__
 {
@@ -142,10 +147,10 @@ INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
                     {
                         switch (color_table[i])
                         {
-                            case (0xFF000000): palette_index[i] = 0; break;
-                            case (0xFF828282): palette_index[i] = 1; break;
-                            case (0xFFC1C1C1): palette_index[i] = 2; break;
-                            case (0xFFFFFFFF): palette_index[i] = 3; break;
+                            case (PALETTE_BLACK): palette_index[i] = 0; break;
+                            case (PALETTE_COLOR): palette_index[i] = 1; break;
+                            case (PALETTE_WHITE): palette_index[i] = 2; break;
+                            case (PALETTE_CLEAR): palette_index[i] = 3; break;
                             default:
                                 // @Incomplete: Handle error...
                                 assert(false);
