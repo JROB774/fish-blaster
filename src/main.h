@@ -49,9 +49,11 @@ typedef  int64_t S64;
 #include "renderer.h"
 #include "window.h"
 #include "input.h"
+#include "application.h"
 
 // Sources
 #include "ftimer.c"
 #include "renderer.c"
 #include "window.c"
 #include "input.c"
+#include "application.c"

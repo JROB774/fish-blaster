@@ -1,13 +1,5 @@
 #include "main.h"
 
-INTERNAL void render_test (Bitmap* bitmap)
-{
-    render_clear(0xFF2F4B99);
-    const ARGBColor FISH_PALETTE[4] = { 0xFF000000, 0xFFFF3F3F, 0xFFFFFFFF, 0x00000000 };
-    Clip clip = { 32, 0, 16, 8 };
-    render_bitmap(bitmap, 20,40, FISH_PALETTE, &clip);
-}
-
 int main (int argc, char** argv)
 {
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -15,11 +7,7 @@ int main (int argc, char** argv)
     init_window();
     init_renderer();
     init_frame_timer();
-
-    Bitmap bitmap;
-    Font font;
-
-    load_bitmap_from_file(&bitmap, "assets/tile.bmp");
+    init_application();
 
     show_window();
 
@@ -54,13 +42,13 @@ int main (int argc, char** argv)
         }
 
         render_clear(COLOR_BLACK);
-        render_test(&bitmap);
+        update_application(gFrameTimer.delta_time);
+        render_application(gFrameTimer.delta_time);
         cap_framerate();
         render_display();
     }
 
-    free_bitmap(&bitmap);
-
+    quit_application();
     quit_renderer();
     quit_window();
 
