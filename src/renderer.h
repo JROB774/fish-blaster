@@ -1,6 +1,8 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+// @INCOMPLETE: FIX BUG WITH DRAWING BITMAPS SLIGHTLY OUTSIDE OF THE RENDER BUFFER...
+
 #define COLOR_WHITE   0xFFFFFFFF
 #define COLOR_BLACK   0xFF000000
 #define COLOR_RED     0xFFFF0000
@@ -48,6 +50,7 @@ GLOBAL struct
     SDL_Renderer* renderer;
     SDL_Surface*  screen;
     SDL_Texture*  target;
+    SDL_Rect      viewport;
 
 } gRenderer;
 
@@ -69,6 +72,7 @@ INTERNAL void free_font           (Font* font);
 
 // RENDER INTERFACE
 
+INTERNAL SDL_Rect get_viewport ();
 INTERNAL ARGBColor* get_screen ();
 
 INTERNAL void render_clear   (ARGBColor color);

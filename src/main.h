@@ -49,6 +49,7 @@ typedef  int64_t S64;
 #include "renderer.h"
 #include "window.h"
 #include "input.h"
+#include "cursor.h"
 #include "application.h"
 
 // Sources
@@ -56,4 +57,5 @@ typedef  int64_t S64;
 #include "renderer.c"
 #include "window.c"
 #include "input.c"
+#include "cursor.c"
 #include "application.c"

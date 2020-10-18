@@ -230,6 +230,11 @@ INTERNAL void free_font (Font* font)
     free_bitmap(&font->bitmap);
 }
 
+INTERNAL SDL_Rect get_viewport ()
+{
+    return gRenderer.viewport;
+}
+
 INTERNAL ARGBColor* get_screen ()
 {
     return CAST(ARGBColor*, gRenderer.screen->pixels);
@@ -247,17 +252,17 @@ INTERNAL void render_clear (ARGBColor color)
 INTERNAL void render_display ()
 {
     // Determine how much we can scale the viewport up by when rendering to the window.
-    SDL_Rect viewport;
     int scale_x = get_window_w() / SCREEN_W;
     int scale_y = get_window_h() / SCREEN_H;
     int scale   = MIN(scale_x,scale_y);
-    viewport.w  = SCREEN_W * scale;
-    viewport.h  = SCREEN_H * scale;
-    viewport.x  = (get_window_w()-viewport.w) / 2;
-    viewport.y  = (get_window_h()-viewport.h) / 2;
+
+    gRenderer.viewport.w  = SCREEN_W * scale;
+    gRenderer.viewport.h  = SCREEN_H * scale;
+    gRenderer.viewport.x  = (get_window_w()-gRenderer.viewport.w) / 2;
+    gRenderer.viewport.y  = (get_window_h()-gRenderer.viewport.h) / 2;
 
     SDL_UpdateTexture(gRenderer.target, NULL, gRenderer.screen->pixels, gRenderer.screen->pitch);
-    SDL_RenderCopy(gRenderer.renderer, gRenderer.target, NULL, &viewport);
+    SDL_RenderCopy(gRenderer.renderer, gRenderer.target, NULL, &gRenderer.viewport);
     SDL_RenderPresent(gRenderer.renderer);
 }
 

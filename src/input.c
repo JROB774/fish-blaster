@@ -41,12 +41,20 @@ INTERNAL bool button_up (MouseButton button)
 
 INTERNAL float get_mouse_x ()
 {
+    int scale_x = get_window_w() / SCREEN_W;
+    int scale_y = get_window_h() / SCREEN_H;
+    int scale   = MIN(scale_x,scale_y);
+
     int x; SDL_GetMouseState(&x, NULL);
-    return CAST(float, x);
+    return CAST(float, (x-get_viewport().x) / scale);
 }
 
 INTERNAL float get_mouse_y ()
 {
+    int scale_x = get_window_w() / SCREEN_W;
+    int scale_y = get_window_h() / SCREEN_H;
+    int scale   = MIN(scale_x,scale_y);
+
     int y; SDL_GetMouseState(NULL, &y);
-    return CAST(float, y);
+    return CAST(float, (y-get_viewport().y) / scale);
 }
