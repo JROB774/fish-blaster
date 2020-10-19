@@ -20,6 +20,5 @@ INTERNAL void render_application (float dt)
     // const ARGBColor FISH_PALETTE[4] = { COLOR_BLACK,0xFFFF3F3F,COLOR_WHITE,0 };
     // Clip clip = { 16, 0, 16, 8 };
     // render_bitmap(&gAppState.tilebmp, 20,40, FISH_PALETTE, &clip);
-
     render_cursor();
 }

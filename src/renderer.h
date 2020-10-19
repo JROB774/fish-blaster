@@ -28,12 +28,10 @@ typedef struct Clip__ { int x, y, w, h; } Clip;
 
 INTERNAL bool     init_renderer  ();
 INTERNAL void     quit_renderer  ();
-INTERNAL SDL_Rect get_viewport   ();
 INTERNAL void     render_clear   (ARGBColor color);
 INTERNAL void     render_display ();
-
-// INTERNAL void render_bitmap  (Bitmap* bitmap, int x, int y, const ARGBColor palette[4], Clip* clip);
-// INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4], const char* fmt, ...)
+INTERNAL void     render_bitmap  (int x, int y, int palette_index, const Clip* clip);
+INTERNAL SDL_Rect get_viewport   ();
 
 /*
 INTERNAL void render_point   (int x,  int y,                  ARGBColor color);

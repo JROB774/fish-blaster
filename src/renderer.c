@@ -238,7 +238,7 @@ INTERNAL bool init_renderer ()
     U8* palette_data = read_bitmap_file("assets/imgpal.bmp");
     if (!palette_data)
     {
-        LOGERROR("Failed to load the renderer palettes!");
+        LOGERROR("Failed to load the renderer palettess!");
         return false;
     }
     else
@@ -249,7 +249,7 @@ INTERNAL bool init_renderer ()
         BMPHeader* header = CAST(BMPHeader*, palette_data);
         if (header->bits_per_pixel != 32)
         {
-            LOGERROR("Renderer palette is not a 32-bit bitmap!");
+            LOGERROR("Renderer palettes are not a 32-bit bitmap!");
             success = false;
         }
         else
@@ -266,7 +266,18 @@ INTERNAL bool init_renderer ()
             else
             {
                 // We just need to copy the palette data over from the bitmap as its already in our desired format.
-                memcpy(gRenderer.palette.pixels, palette_data+header->bitmap_offset, (gRenderer.palette.w*gRenderer.palette.h)*sizeof(ARGBColor));
+                // The only processing we want to do is converting our clear color to all zeroes for transparency.
+                ARGBColor* pixels = CAST(ARGBColor*, palette_data+header->bitmap_offset);
+                for (int iy=0; iy<gRenderer.palette.h; ++iy)
+                {
+                    for (int ix=0; ix<gRenderer.palette.w; ++ix)
+                    {
+                        int src = (                      iy) * gRenderer.palette.w + ix;
+                        int dst = (gRenderer.palette.h-1-iy) * gRenderer.palette.w + ix;
+
+                        gRenderer.palette.pixels[dst] = ((pixels[src] == PALETTE_CLEAR) ? 0 : pixels[src]);
+                    }
+                }
             }
         }
         free(palette_data);
@@ -286,144 +297,6 @@ INTERNAL void quit_renderer ()
     SDL_DestroyTexture(gRenderer.target);
     SDL_FreeSurface(gRenderer.screen);
     SDL_DestroyRenderer(gRenderer.renderer);
-}
-
-/*
-INTERNAL bool load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
-{
-    assert(bitmap);
-
-
-    bool success = true;
-
-    BMPHeader* header = CAST(BMPHeader*, buffer_data);
-    if (header->file_type != 0x4D42) // This magic number is 'BM' in lil endian byteorder.
-    {
-        LOGERROR("File \"%s\" is an unsupported bitmap type!", file_name);
-        success = false;
-    }
-    else
-    {
-        // NOTE: We are only handling BMP files with 4-bit depth!
-        if (header->bits_per_pixel != 4)
-        {
-            LOGERROR("File \"%s\" is not a 4-bit bitmap!", file_name);
-            success = false;
-        }
-        else
-        {
-            // NOTE: We are only handling bitmaps with up to four colors!
-            if (header->num_colors > 4)
-            {
-                LOGERROR("File \"%\" contains more than 4 colors!", file_name);
-                success = false;
-            }
-            else
-            {
-                // Parse the color table for palette information.
-                ARGBColor* color_table = CAST(ARGBColor*, buffer_data+sizeof(BMPHeader));
-                int palette_index[4] = {0};
-                for (int i=0; i<header->num_colors; ++i)
-                {
-                    switch (color_table[i])
-                    {
-                        case (PALETTE_BLACK): palette_index[i] = 0; break;
-                        case (PALETTE_COLOR): palette_index[i] = 1; break;
-                        case (PALETTE_WHITE): palette_index[i] = 2; break;
-                        case (PALETTE_CLEAR): palette_index[i] = 3; break;
-                        default:
-                            LOGDEBUG("File \"%s\" contains unrecognized color 0x%08X!", file_name, color_table[i]);
-                    }
-                }
-
-                int line_size = (header->width/2+(header->width/2) % 4); // BMP lines are aligned to a 4-byte boundary.
-
-                bitmap->w = header->width;
-                bitmap->h = header->height;
-
-                bitmap->pixels = malloc((bitmap->w*bitmap->h)*sizeof(int));
-                if (!bitmap->pixels)
-                {
-                    LOGERROR("Failed to allocate pixels for bitmap \"%s\"!", file_name);
-                    success = false;
-                }
-                else
-                {
-                    U8 * src = buffer_data+header->bitmap_offset;
-                    int* dst = bitmap->pixels;
-
-                    // Decode bitmap bits into palette index values from 0-3.
-                    for (int iy=0; iy<bitmap->h; ++iy)
-                    {
-                        for (int ix=0; ix<bitmap->w/2; ++ix)
-                        {
-                            int src_byte = iy * line_size + ix;
-                            int dst_index = (bitmap->h-1-iy) * bitmap->w + ix * 2;
-
-                            int hi = (src[src_byte]>>4) & 0xF;
-                            int lo = (src[src_byte]   ) & 0xF;
-
-                            dst[dst_index  ] = palette_index[hi];
-                            dst[dst_index+1] = palette_index[lo];
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    free(buffer_data);
-
-    return success;
-}
-
-INTERNAL void free_bitmap (Bitmap* bitmap)
-{
-    assert(bitmap);
-    if (bitmap->pixels) free(bitmap->pixels);
-}
-
-INTERNAL bool load_font_from_file (Font* font, int gw, int gh, const char* file_name)
-{
-    assert(font);
-
-    if (!load_bitmap_from_file(&font->bitmap, file_name))
-    {
-        return false;
-    }
-
-    int x = 0;
-    int y = 0;
-
-    for (int i=0; i<(sizeof(font->glyphs)/sizeof(font->glyphs[0])); ++i)
-    {
-        font->glyphs[i].x = x,  font->glyphs[i].y = y;
-        font->glyphs[i].w = gw, font->glyphs[i].h = gh;
-
-        x += gw;
-        if (x >= font->bitmap.w)
-        {
-            y += gh;
-            x = 0;
-        }
-    }
-
-    font->glyph_w = gw;
-    font->glyph_h = gh;
-
-    return true;
-}
-
-INTERNAL void free_font (Font* font)
-{
-    assert(font);
-    free_bitmap(&font->bitmap);
-}
-*/
-
-INTERNAL SDL_Rect get_viewport ()
-{
-    return gRenderer.viewport;
 }
 
 INTERNAL void render_clear (ARGBColor color)
@@ -450,6 +323,58 @@ INTERNAL void render_display ()
     SDL_UpdateTexture(gRenderer.target, NULL, gRenderer.screen->pixels, gRenderer.screen->pitch);
     SDL_RenderCopy(gRenderer.renderer, gRenderer.target, NULL, &gRenderer.viewport);
     SDL_RenderPresent(gRenderer.renderer);
+}
+
+INTERNAL void render_bitmap (int x, int y, int palette_index, const Clip* clip)
+{
+    assert(clip);
+
+    if (x > get_render_target_max_x()) return;
+    if (y > get_render_target_max_y()) return;
+
+    int*       src = gRenderer.bitmap.pixels;
+    ARGBColor* dst = get_screen();
+
+    int bx = clip->x;
+    int by = clip->y;
+    int bw = clip->w;
+    int bh = clip->h;
+
+    // The rectangular region we will be drawing to.
+    int x1 = x;
+    int y1 = y;
+    int x2 = x + bw-1;
+    int y2 = y + bh-1;
+
+    // The graphic is entirely off-screen!
+    if (x2 < get_render_target_min_x() || y2 < get_render_target_min_y()) return;
+
+    // Clamp the bounds to avoid overflows.
+    x2 = CLAMP(x2, get_render_target_min_x(), get_render_target_max_x());
+    y2 = CLAMP(y2, get_render_target_min_y(), get_render_target_max_y());
+
+    ARGBColor* palette = gRenderer.palette.pixels + (palette_index*gRenderer.palette.w);
+    for (int iy=y1,sy=by; iy<=y2; ++iy,++sy)
+    {
+        if (iy >= get_render_target_min_y())
+        {
+            for (int ix=x1,sx=bx; ix<=x2; ++ix,++sx)
+            {
+                if (ix >= get_render_target_min_x())
+                {
+                    ARGBColor color = palette[src[sy*gRenderer.bitmap.w+sx]];
+                    if (color) dst[iy*SCREEN_W+ix] = color;
+
+                    // printf("0x%08X\n",color);
+                }
+            }
+        }
+    }
+}
+
+INTERNAL SDL_Rect get_viewport ()
+{
+    return gRenderer.viewport;
 }
 
 /*
