@@ -39,17 +39,24 @@ INTERNAL SDL_Rect get_viewport   ();
 
 // PALETTES
 
-#define PAL_TEXT_WHITE  0
-#define PAL_TEXT_BLACK  1
-#define PAL_TEXT_SHADOW 2
-#define PAL_CURSOR      2
-#define PAL_FISH_0      3
-#define PAL_FISH_1      4
-#define PAL_FISH_2      5
+#define PAL_WHITE      0
+#define PAL_BLACK      1
+#define PAL_TEXT_WHITE 2
+#define PAL_TEXT_BLACK 3
+#define PAL_TEXT_SHADE 4
+#define PAL_CURSOR     4
+#define PAL_BLOOD      5
+#define PAL_FISH_0     6
+#define PAL_FISH_1     7
+#define PAL_FISH_2     8
 
 // SPRITES
 
-GLOBAL const Clip SPR_CURSOR   = { 32, 104,  8, 8 };
+GLOBAL const Clip SPR_CURSOR_0 = {  0, 104,  8, 8 };
+GLOBAL const Clip SPR_CURSOR_1 = {  8, 104,  8, 8 };
+GLOBAL const Clip SPR_CURSOR_2 = { 16, 104,  8, 8 };
+GLOBAL const Clip SPR_CURSOR_3 = { 24, 104,  8, 8 };
+GLOBAL const Clip SPR_CURSOR_4 = { 32, 104,  8, 8 };
 GLOBAL const Clip SPR_FISH_R_0 = {  0,   0, 16, 8 };
 GLOBAL const Clip SPR_FISH_R_1 = { 16,   0, 16, 8 };
 GLOBAL const Clip SPR_FISH_L_0 = { 32,   0, 16, 8 };
