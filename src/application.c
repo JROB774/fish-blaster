@@ -34,7 +34,7 @@ INTERNAL void render_application (float dt)
     render_bitmap(80,60,PAL_FISH_2,lframe);
 
     // Render the in-game mouse cursor/crosshair.
-    float cx = get_mouse_x()-(SPR_CURSOR.w/2);
-    float cy = get_mouse_y()-(SPR_CURSOR.h/2);
-    render_bitmap(cx,cy,PAL_CURSOR,&SPR_CURSOR);
+    float cx = get_mouse_x()-(SPR_CURSOR_0.w/2);
+    float cy = get_mouse_y()-(SPR_CURSOR_0.h/2);
+    render_bitmap(cx,cy,PAL_CURSOR,&SPR_CURSOR_0);
 }
