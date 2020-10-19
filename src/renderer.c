@@ -32,48 +32,47 @@ INTERNAL int get_render_target_max_x () { return gRenderer.screen->w-1; }
 INTERNAL int get_render_target_min_y () { return 0;                     }
 INTERNAL int get_render_target_max_y () { return gRenderer.screen->h-1; }
 
-INTERNAL void init_renderer ()
+INTERNAL bool init_renderer ()
 {
     gRenderer.renderer = SDL_CreateRenderer(gWindow.window, -1, SDL_RENDERER_ACCELERATED);
     if (!gRenderer.renderer)
     {
-        // @Incomplete: Handle error...
+        LOGERROR("Failed to create renderer! (%s)", SDL_GetError());
+        return false;
     }
-    else
+
+    U32 pixel_format = SDL_GetWindowPixelFormat(gWindow.window);
+    if (pixel_format == SDL_PIXELFORMAT_UNKNOWN)
     {
-        U32 pixel_format = SDL_GetWindowPixelFormat(gWindow.window);
-        if (pixel_format == SDL_PIXELFORMAT_UNKNOWN)
-        {
-            // @Incomplete: Handle error...
-        }
-        else
-        {
-            // Convert the window's pixel format into a mask usable with SDL_CreateRGBSurface.
-            U32 r,g,b,a;
-            int bpp; // We don't use this but SDL needs us to pass it.
-            if (!SDL_PixelFormatEnumToMasks(pixel_format, &bpp, &r,&g,&b,&a))
-            {
-                // @Incomplete: Handle error...
-            }
-            else
-            {
-                gRenderer.screen = SDL_CreateRGBSurface(0, SCREEN_W,SCREEN_H, 32, r,g,b,a); // Our screen pixels.
-                if (!gRenderer.screen)
-                {
-                    // @Incomplete: Handle error...
-                }
-                else
-                {
-                    gRenderer.target = SDL_CreateTexture(gRenderer.renderer,
-                        pixel_format, SDL_TEXTUREACCESS_STREAMING, SCREEN_W,SCREEN_H);
-                    if (!gRenderer.target)
-                    {
-                        // @Incomplete: Handle error...
-                    }
-                }
-            }
-        }
+        LOGERROR("Failed to retrieve window pixel format! (%s)", SDL_GetError());
+        return false;
     }
+
+    // Convert the window's pixel format into a mask usable with SDL_CreateRGBSurface.
+    U32 r,g,b,a;
+    int bpp; // We don't use this but SDL needs us to pass it.
+    if (!SDL_PixelFormatEnumToMasks(pixel_format, &bpp, &r,&g,&b,&a))
+    {
+        LOGERROR("Failed to convert format to mask! (%s)", SDL_GetError());
+        return false;
+    }
+
+    gRenderer.screen = SDL_CreateRGBSurface(0, SCREEN_W,SCREEN_H, 32, r,g,b,a); // Our screen pixels.
+    if (!gRenderer.screen)
+    {
+        LOGERROR("Failed to create screen buffer! (%s)", SDL_GetError());
+        return false;
+    }
+
+    gRenderer.target = SDL_CreateTexture(gRenderer.renderer,
+        pixel_format, SDL_TEXTUREACCESS_STREAMING, SCREEN_W,SCREEN_H);
+    if (!gRenderer.target)
+    {
+        LOGERROR("Failed to create screen texture! (%s)", SDL_GetError());
+        return false;
+    }
+
+    return true;
 }
 
 INTERNAL void quit_renderer ()
@@ -83,34 +82,36 @@ INTERNAL void quit_renderer ()
     SDL_DestroyRenderer(gRenderer.renderer);
 }
 
-INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
+INTERNAL bool load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
 {
-    // @INCOMPLETE: NEED TO HANDLE THE COLOR TABLE IN THE BITMAP CORRECTLY IN ORDER TO GET OUR COLORS TO WORK PROPERLY!!!
-
     assert(bitmap);
 
     // @Cleanup: Pull this out into a general-purpose read entire file function!!!
     // Read the entire bitmap file into memory.
+    bool success = true;
     size_t buffer_size;
     U8* buffer_data;
     HANDLE file = CreateFileA(file_name, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (file == INVALID_HANDLE_VALUE)
     {
-        // @Incomplete: Handle error...
+        LOGERROR("Failed to load bitmap file \"%s\"!", file_name);
+        success = false;
     }
     else
     {
         buffer_size = GetFileSize(file, NULL);
         if (buffer_size == INVALID_FILE_SIZE)
         {
-            // @Incomplete: Handle error...
+            LOGERROR("Failed to get size of file \"%s\"!", file_name);
+            success = false;
         }
         else
         {
             buffer_data = VirtualAlloc(NULL, buffer_size, MEM_COMMIT, PAGE_READWRITE);
             if (!buffer_data)
             {
-                // @Incomplete: Handle error...
+                LOGERROR("Failed to allocate memory for \"%s\"!", file_name);
+                success = false;
             }
             else
             {
@@ -121,81 +122,89 @@ INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
         CloseHandle(file);
     }
 
-    if (buffer_data)
+    if (!success)
     {
-        BMPHeader* header = CAST(BMPHeader*, buffer_data);
-        if (header->file_type != 0x4D42) // This magic number is 'BM' in lil endian byteorder.
+        return false;
+    }
+
+    BMPHeader* header = CAST(BMPHeader*, buffer_data);
+    if (header->file_type != 0x4D42) // This magic number is 'BM' in lil endian byteorder.
+    {
+        LOGERROR("File \"%s\" is an unsupported bitmap type!", file_name);
+        success = false;
+    }
+    else
+    {
+        // NOTE: We are only handling BMP files with 4-bit depth!
+        if (header->bits_per_pixel != 4)
         {
-            // @Incomplete: Handle error...
+            LOGERROR("File \"%s\" is not a 4-bit bitmap!", file_name);
+            success = false;
         }
         else
         {
-            // NOTE: We are only handling BMP files with 4-bit depth!
-            if (header->bits_per_pixel != 4)
+            // NOTE: We are only handling bitmaps with up to four colors!
+            if (header->num_colors > 4)
             {
-                assert(header->bits_per_pixel == 4);
-                // @Incomplete: Handle error...
+                LOGERROR("File \"%\" contains more than 4 colors!", file_name);
+                success = false;
             }
             else
             {
-                // NOTE: We are only handling bitmaps with up to four colors!
-                if (header->num_colors > 4)
+                // Parse the color table for palette information.
+                ARGBColor* color_table = CAST(ARGBColor*, buffer_data+sizeof(BMPHeader));
+                int palette_index[4] = {0};
+                for (int i=0; i<header->num_colors; ++i)
                 {
-                    assert(header->num_colors < 4);
-                    // @Incomplete: Handle error...
+                    switch (color_table[i])
+                    {
+                        case (PALETTE_BLACK): palette_index[i] = 0; break;
+                        case (PALETTE_COLOR): palette_index[i] = 1; break;
+                        case (PALETTE_WHITE): palette_index[i] = 2; break;
+                        case (PALETTE_CLEAR): palette_index[i] = 3; break;
+                        default:
+                            LOGDEBUG("File \"%s\" contains unrecognized color 0x%08X!", file_name, color_table[i]);
+                    }
+                }
+
+                int line_size = (header->width/2+(header->width/2) % 4); // BMP lines are aligned to a 4-byte boundary.
+
+                bitmap->w = header->width;
+                bitmap->h = header->height;
+
+                bitmap->pixels = VirtualAlloc(NULL, (bitmap->w*bitmap->h)*sizeof(int), MEM_COMMIT, PAGE_READWRITE);
+                if (!bitmap->pixels)
+                {
+                    LOGERROR("Failed to allocate pixels for bitmap \"%s\"!", file_name);
+                    success = false;
                 }
                 else
                 {
-                    // Parse the color table for palette information.
-                    ARGBColor* color_table = CAST(ARGBColor*, buffer_data+sizeof(BMPHeader));
-                    int palette_index[4] = {0};
-                    for (int i=0; i<header->num_colors; ++i)
+                    U8 * src = buffer_data+header->bitmap_offset;
+                    int* dst = bitmap->pixels;
+
+                    // Decode bitmap bits into palette index values from 0-3.
+                    for (int iy=0; iy<bitmap->h; ++iy)
                     {
-                        switch (color_table[i])
+                        for (int ix=0; ix<bitmap->w/2; ++ix)
                         {
-                            case (PALETTE_BLACK): palette_index[i] = 0; break;
-                            case (PALETTE_COLOR): palette_index[i] = 1; break;
-                            case (PALETTE_WHITE): palette_index[i] = 2; break;
-                            case (PALETTE_CLEAR): palette_index[i] = 3; break;
-                            default:
-                                // @Incomplete: Handle error...
-                                assert(false);
-                        }
-                    }
+                            int src_byte = iy * line_size + ix;
+                            int dst_index = (bitmap->h-1-iy) * bitmap->w + ix * 2;
 
-                    int line_size = (header->width/2+(header->width/2) % 4); // BMP lines are aligned to a 4-byte boundary.
+                            int hi = (src[src_byte]>>4) & 0xF;
+                            int lo = (src[src_byte]   ) & 0xF;
 
-                    bitmap->w = header->width;
-                    bitmap->h = header->height;
-
-                    bitmap->pixels = VirtualAlloc(NULL, (bitmap->w*bitmap->h)*sizeof(int), MEM_COMMIT, PAGE_READWRITE);
-                    if (bitmap->pixels)
-                    {
-                        U8 * src = buffer_data+header->bitmap_offset;
-                        int* dst = bitmap->pixels;
-
-                        // Decode bitmap bits into palette index values from 0-3.
-                        for (int iy=0; iy<bitmap->h; ++iy)
-                        {
-                            for (int ix=0; ix<bitmap->w/2; ++ix)
-                            {
-                                int src_byte = iy * line_size + ix;
-                                int dst_index = (bitmap->h-1-iy) * bitmap->w + ix * 2;
-
-                                int hi = (src[src_byte]>>4) & 0xF;
-                                int lo = (src[src_byte]   ) & 0xF;
-
-                                dst[dst_index  ] = palette_index[hi];
-                                dst[dst_index+1] = palette_index[lo];
-                            }
+                            dst[dst_index  ] = palette_index[hi];
+                            dst[dst_index+1] = palette_index[lo];
                         }
                     }
                 }
             }
         }
-
-        VirtualFree(buffer_data, 0, MEM_RELEASE);
     }
+
+    VirtualFree(buffer_data, 0, MEM_RELEASE);
+    return success;
 }
 
 INTERNAL void free_bitmap (Bitmap* bitmap)
@@ -204,11 +213,14 @@ INTERNAL void free_bitmap (Bitmap* bitmap)
     if (bitmap->pixels) VirtualFree(bitmap->pixels, 0, MEM_RELEASE);
 }
 
-INTERNAL void load_font_from_file (Font* font, int gw, int gh, const char* file_name)
+INTERNAL bool load_font_from_file (Font* font, int gw, int gh, const char* file_name)
 {
     assert(font);
 
-    load_bitmap_from_file(&font->bitmap, file_name);
+    if (!load_bitmap_from_file(&font->bitmap, file_name))
+    {
+        return false;
+    }
 
     int x = 0;
     int y = 0;
@@ -228,6 +240,8 @@ INTERNAL void load_font_from_file (Font* font, int gw, int gh, const char* file_
 
     font->glyph_w = gw;
     font->glyph_h = gh;
+
+    return true;
 }
 
 INTERNAL void free_font (Font* font)
@@ -327,7 +341,7 @@ INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4],
     char* buffer = VirtualAlloc(NULL, size*sizeof(char), MEM_COMMIT, PAGE_READWRITE);
     if (!buffer)
     {
-        // @Incomplete: Handle error...
+        LOGDEBUG("Failed to allocate text buffer for render!");
     }
     else
     {

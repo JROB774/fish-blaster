@@ -1,11 +1,23 @@
 #include "main.h"
 
+#define EXITAPP     \
+do                  \
+{                   \
+quit_application(); \
+quit_renderer   (); \
+quit_window     (); \
+quit_logger     (); \
+return 0;           \
+}                   \
+while (0)
+
 int main (int argc, char** argv)
 {
-    init_window();
-    init_renderer();
     init_frame_timer();
-    init_application();
+
+    if (!init_window     ()) EXITAPP;
+    if (!init_renderer   ()) EXITAPP;
+    if (!init_application()) EXITAPP;
 
     show_window();
 
@@ -46,10 +58,5 @@ int main (int argc, char** argv)
         render_display();
     }
 
-    quit_application();
-    quit_renderer();
-    quit_window();
-    quit_logger();
-
-    return 0;
+    EXITAPP;
 }

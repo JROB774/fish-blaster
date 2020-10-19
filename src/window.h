@@ -9,7 +9,7 @@ GLOBAL struct
 
 } gWindow;
 
-INTERNAL void init_window    ();
+INTERNAL bool init_window    ();
 INTERNAL void quit_window    ();
 INTERNAL void show_window    ();
 INTERNAL void hide_window    ();

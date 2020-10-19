@@ -1,4 +1,4 @@
-INTERNAL void init_window ()
+INTERNAL bool init_window ()
 {
     const int WIDTH  = SCREEN_W * SCREEN_S;
     const int HEIGHT = SCREEN_H * SCREEN_S;
@@ -7,7 +7,8 @@ INTERNAL void init_window ()
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
-        // @Incomplete: Handle error...
+        LOGERROR("Failed to initialize SDL! (%s)", SDL_GetError());
+        return false;
     }
 
     // We make the window hidden by default so that we can perform all of the game's
@@ -16,12 +17,13 @@ INTERNAL void init_window ()
         SDL_WINDOWPOS_CENTERED, WIDTH,HEIGHT, SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE);
     if (!gWindow.window)
     {
-        // @Incomplete: Handle error...
+        LOGERROR("Failed to create window! (%s)", SDL_GetError());
+        return false;
     }
-    else
-    {
-        SDL_SetWindowMinimumSize(gWindow.window, SCREEN_W,SCREEN_H);
-    }
+
+    SDL_SetWindowMinimumSize(gWindow.window, SCREEN_W,SCREEN_H);
+
+    return true;
 }
 
 INTERNAL void quit_window ()
@@ -45,7 +47,7 @@ INTERNAL void set_fullscreen (bool enable)
     gWindow.fullscreen = enable;
     if (SDL_SetWindowFullscreen(gWindow.window, (gWindow.fullscreen) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) < 0)
     {
-        // @Incomplete: Handle error...
+        LOGWARNING("Failed to set window fullscreen state! (%s)", SDL_GetError());
     }
 }
 

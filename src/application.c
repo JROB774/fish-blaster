@@ -1,7 +1,11 @@
-INTERNAL void init_application ()
+INTERNAL bool init_application ()
 {
     init_cursor();
-    load_bitmap_from_file(&gAppState.tilebmp, "assets/tile.bmp");
+    if (!load_bitmap_from_file(&gAppState.tilebmp, "assets/tile.bmp"))
+    {
+        return false;
+    }
+    return true;
 }
 
 INTERNAL void quit_application ()

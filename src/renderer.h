@@ -56,18 +56,18 @@ GLOBAL struct
 
 // GENERAL INTERFACE
 
-INTERNAL void init_renderer ();
+INTERNAL bool init_renderer ();
 INTERNAL void quit_renderer ();
 
 // BITMAP INTEFACE
 
 // IMPORTANT: We only support 4-bit bitmaps (right now?) attempting to load any other will fail an assertion!
-INTERNAL void load_bitmap_from_file (Bitmap* bitmap, const char* file_name);
+INTERNAL bool load_bitmap_from_file (Bitmap* bitmap, const char* file_name);
 INTERNAL void free_bitmap           (Bitmap* bitmap);
 
 // FONT INTERFACE
 
-INTERNAL void load_font_from_file (Font* font, int gw, int gh, const char* file_name);
+INTERNAL bool load_font_from_file (Font* font, int gw, int gh, const char* file_name);
 INTERNAL void free_font           (Font* font);
 
 // RENDER INTERFACE

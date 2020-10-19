@@ -7,7 +7,7 @@ GLOBAL struct
 
 } gAppState;
 
-INTERNAL void   init_application ();
+INTERNAL bool   init_application ();
 INTERNAL void   quit_application ();
 INTERNAL void update_application (float dt);
 INTERNAL void render_application (float dt);
