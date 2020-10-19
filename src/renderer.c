@@ -1,7 +1,7 @@
 #define PALETTE_BLACK 0xFF000000
-#define PALETTE_COLOR 0xFF7F7F7F
+#define PALETTE_COLOR 0xFF828282
 #define PALETTE_WHITE 0xFFFFFFFF
-#define PALETTE_CLEAR 0xFF7FC9FF
+#define PALETTE_CLEAR 0xFFC1C1C1
 
 #pragma pack(push,1)
 typedef struct BMPHeader__
