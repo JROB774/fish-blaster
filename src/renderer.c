@@ -26,6 +26,12 @@ typedef struct BMPHeader__
 } BMPHeader;
 #pragma pack(pop)
 
+// These functions are used internally by the renderer during render operations.
+INTERNAL int get_render_target_min_x () { return 0;                     }
+INTERNAL int get_render_target_max_x () { return gRenderer.screen->w-1; }
+INTERNAL int get_render_target_min_y () { return 0;                     }
+INTERNAL int get_render_target_max_y () { return gRenderer.screen->h-1; }
+
 INTERNAL void init_renderer ()
 {
     gRenderer.renderer = SDL_CreateRenderer(gWindow.window, -1, SDL_RENDERER_ACCELERATED);
@@ -443,23 +449,4 @@ INTERNAL void render_fill (int x, int y, int w, int h, ARGBColor color)
             pixels[iy*SCREEN_W+ix] = color;
         }
     }
-}
-
-// INTERNAL INTERFACE
-
-INTERNAL int get_render_target_min_x ()
-{
-    return 0;
-}
-INTERNAL int get_render_target_max_x ()
-{
-    return gRenderer.screen->w-1;
-}
-INTERNAL int get_render_target_min_y ()
-{
-    return 0;
-}
-INTERNAL int get_render_target_max_y ()
-{
-    return gRenderer.screen->h-1;
 }
