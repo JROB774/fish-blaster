@@ -7,6 +7,9 @@
 #define SCREEN_H 144 // Height
 #define SCREEN_S   3 // Scale
 
+#define TILE_W 8
+#define TILE_H 8
+
 typedef U32 ARGBColor;
 
 // Some useful macros for converting separate components into a U32 ARGB color.
@@ -24,20 +27,27 @@ typedef U32 ARGBColor;
 
 typedef struct Clip__ { int x, y, w, h; } Clip;
 
-// GENERAL INTERFACE
+// INTERFACE
 
 INTERNAL bool     init_renderer  ();
 INTERNAL void     quit_renderer  ();
 INTERNAL void     render_clear   (ARGBColor color);
 INTERNAL void     render_display ();
 INTERNAL void     render_bitmap  (int x, int y, int palette_index, const Clip* clip);
+INTERNAL void     render_text    (int x, int y, int palette_index, const char* text, ...);
 INTERNAL SDL_Rect get_viewport   ();
 
-/*
-INTERNAL void render_point   (int x,  int y,                  ARGBColor color);
-INTERNAL void render_line    (int x1, int y1, int x2, int y2, ARGBColor color);
-INTERNAL void render_rect    (int x,  int y,  int w,  int h,  ARGBColor color);
-INTERNAL void render_fill    (int x,  int y,  int w,  int h,  ARGBColor color);
-*/
+// PALETTES
+
+#define PAL_TEXT_WHITE  0
+#define PAL_TEXT_BLACK  1
+#define PAL_TEXT_SHADOW 2
+#define PAL_CURSOR      2
+#define PAL_FISH_RED    3
+
+// SPRITES
+
+GLOBAL const Clip SPR_CURSOR = { 32, 104,  8, 8 };
+GLOBAL const Clip SPR_FISH   = {  0,   0, 16, 8 };
 
 #endif /* RENDERER_H */

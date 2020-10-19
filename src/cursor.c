@@ -10,8 +10,8 @@ INTERNAL void quit_cursor ()
 
 INTERNAL void render_cursor ()
 {
-    Clip clip = { 8,0,8,8 };
-    float x = get_mouse_x()-(clip.w/2);
-    float y = get_mouse_y()-(clip.h/2);
-    render_bitmap(x,y,0,&clip);
+    float x = get_mouse_x()-(SPR_CURSOR.w/2);
+    float y = get_mouse_y()-(SPR_CURSOR.h/2);
+
+    render_bitmap(x,y,PAL_CURSOR,&SPR_CURSOR);
 }

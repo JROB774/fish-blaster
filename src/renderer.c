@@ -364,72 +364,18 @@ INTERNAL void render_bitmap (int x, int y, int palette_index, const Clip* clip)
                 {
                     ARGBColor color = palette[src[sy*gRenderer.bitmap.w+sx]];
                     if (color) dst[iy*SCREEN_W+ix] = color;
-
-                    // printf("0x%08X\n",color);
                 }
             }
         }
     }
 }
 
-INTERNAL SDL_Rect get_viewport ()
+INTERNAL void render_text (int x, int y, int palette_index, const char* text, ...)
 {
-    return gRenderer.viewport;
-}
-
-/*
-INTERNAL void render_bitmap (Bitmap* bitmap, int x, int y, const ARGBColor palette[4], Clip* clip)
-{
-    assert(bitmap);
-
-    if (x > get_render_target_max_x()) return;
-    if (y > get_render_target_max_y()) return;
-
-    int*       src = bitmap->pixels;
-    ARGBColor* dst = get_screen();
-
-    int bx = (clip) ? clip->x : 0;
-    int by = (clip) ? clip->y : 0;
-    int bw = (clip) ? clip->w : bitmap->w;
-    int bh = (clip) ? clip->h : bitmap->h;
-
-    // The rectangular region we will be drawing to.
-    int x1 = x;
-    int y1 = y;
-    int x2 = x + bw-1;
-    int y2 = y + bh-1;
-
-    // The graphic is entirely off-screen!
-    if (x2 < get_render_target_min_x() || y2 < get_render_target_min_y()) return;
-
-    // Clamp the bounds to avoid overflows.
-    x2 = CLAMP(x2, get_render_target_min_x(), get_render_target_max_x());
-    y2 = CLAMP(y2, get_render_target_min_y(), get_render_target_max_y());
-
-    for (int iy=y1,sy=by; iy<=y2; ++iy,++sy)
-    {
-        if (iy >= get_render_target_min_y())
-        {
-            for (int ix=x1,sx=bx; ix<=x2; ++ix,++sx)
-            {
-                if (ix >= get_render_target_min_x())
-                {
-                    ARGBColor color = palette[src[sy*bitmap->w+sx]];
-                    if (color) dst[iy*SCREEN_W+ix] = color;
-                }
-            }
-        }
-    }
-}
-
-INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4], const char* fmt, ...)
-{
-    assert(font);
-
     // Format the arguments into final string in a buffer.
     va_list args;
-    va_start(args, fmt);
-    int size = vsnprintf(NULL, 0, fmt, args) + 1;
+    va_start(args, text);
+    int size = vsnprintf(NULL, 0, text, args) + 1;
     char* buffer = malloc(size*sizeof(char));
     if (!buffer)
     {
@@ -437,7 +383,7 @@ INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4],
     }
     else
     {
-        vsnprintf(buffer, size, fmt, args);
+        vsnprintf(buffer, size, text, args);
 
         int start_x = x;
         int start_y = y;
@@ -446,11 +392,13 @@ INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4],
         {
             switch (*c)
             {
-                case ('\n'): x = start_x, y += font->glyph_h; break;
+                case ('\n'): x = start_x, y += TILE_H; break;
                 default:
                 {
-                    render_bitmap(&font->bitmap, x,y, palette, &font->glyphs[*c]);
-                    x += font->glyph_w;
+                    // @Incomplete: Calculate the clips for text rendering...
+                    Clip temp = {0};
+                    render_bitmap(x,y, palette_index, &temp);
+                    x += TILE_W;
                 } break;
             }
         }
@@ -460,7 +408,11 @@ INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4],
 
     va_end(args);
 }
-*/
+
+INTERNAL SDL_Rect get_viewport ()
+{
+    return gRenderer.viewport;
+}
 
 /*
 INTERNAL void render_point (int x, int y, ARGBColor color)
