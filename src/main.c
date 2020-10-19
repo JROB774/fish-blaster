@@ -1,62 +1,60 @@
 #include "main.h"
 
-#define EXITAPP     \
-do                  \
-{                   \
-quit_application(); \
-quit_renderer   (); \
-quit_window     (); \
-quit_logger     (); \
-return 0;           \
-}                   \
-while (0)
-
 int main (int argc, char** argv)
 {
     init_frame_timer();
 
-    if (!init_window     ()) EXITAPP;
-    if (!init_renderer   ()) EXITAPP;
-    if (!init_application()) EXITAPP;
-
-    show_window();
-
-    while (gWindow.running)
+    if (init_window())
     {
-        update_input_state();
-
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
+        if (init_renderer())
         {
-            switch (event.type)
+            if (init_application())
             {
-                case (SDL_KEYDOWN):
-                {
-                    switch (event.key.keysym.sym)
-                    {
-                        case (SDLK_RETURN): if (!(SDL_GetModState()&KMOD_ALT)) break;
-                        // FALL-THROUGH!
-                        case (SDLK_f):
-                        // FALL-THROUGH!
-                        case (SDLK_F11):
-                        {
-                            set_fullscreen(!is_fullscreen());
-                        } break;
-                    }
-                } break;
-                case (SDL_QUIT):
-                {
-                    gWindow.running = false;
-                } break;
-            }
-        }
+                show_window();
 
-        render_clear(COLOR_BLACK);
-        update_application(gFrameTimer.delta_time);
-        render_application(gFrameTimer.delta_time);
-        cap_framerate();
-        render_display();
+                while (gWindow.running)
+                {
+                    update_input_state();
+
+                    SDL_Event event;
+                    while (SDL_PollEvent(&event))
+                    {
+                        switch (event.type)
+                        {
+                            case (SDL_KEYDOWN):
+                            {
+                                switch (event.key.keysym.sym)
+                                {
+                                    case (SDLK_RETURN): if (!(SDL_GetModState()&KMOD_ALT)) break;
+                                    // FALL-THROUGH!
+                                    case (SDLK_f):
+                                    // FALL-THROUGH!
+                                    case (SDLK_F11):
+                                    {
+                                        set_fullscreen(!is_fullscreen());
+                                    } break;
+                                }
+                            } break;
+                            case (SDL_QUIT):
+                            {
+                                gWindow.running = false;
+                            } break;
+                        }
+                    }
+
+                    render_clear(COLOR_BLACK);
+                    update_application(gFrameTimer.delta_time);
+                    render_application(gFrameTimer.delta_time);
+                    cap_framerate();
+                    render_display();
+                }
+                quit_application();
+            }
+            quit_renderer();
+        }
+        quit_window();
     }
 
-    EXITAPP;
+    quit_logger();
+    return 0;
 }
