@@ -80,9 +80,11 @@ INTERNAL void render_display ();
 
 INTERNAL void render_bitmap  (Bitmap* bitmap, int x, int y, const ARGBColor palette[4], Clip* clip);
 
+/*
 INTERNAL void render_point   (int x,  int y,                  ARGBColor color);
 INTERNAL void render_line    (int x1, int y1, int x2, int y2, ARGBColor color);
 INTERNAL void render_rect    (int x,  int y,  int w,  int h,  ARGBColor color);
 INTERNAL void render_fill    (int x,  int y,  int w,  int h,  ARGBColor color);
+*/
 
 #endif /* RENDERER_H */

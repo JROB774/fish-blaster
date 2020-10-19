@@ -369,6 +369,7 @@ INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4],
     va_end(args);
 }
 
+/*
 INTERNAL void render_point (int x, int y, ARGBColor color)
 {
     if (x < get_render_target_min_x() || x >= get_render_target_max_x() ||
@@ -464,3 +465,4 @@ INTERNAL void render_fill (int x, int y, int w, int h, ARGBColor color)
         }
     }
 }
+*/
