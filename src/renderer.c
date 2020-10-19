@@ -32,6 +32,26 @@ INTERNAL int get_render_target_max_x () { return gRenderer.screen->w-1; }
 INTERNAL int get_render_target_min_y () { return 0;                     }
 INTERNAL int get_render_target_max_y () { return gRenderer.screen->h-1; }
 
+// The caller needs to free the returned file data!
+INTERNAL U8* read_entire_file (const char* file_name)
+{
+    U8* buffer = NULL;
+    FILE* file = fopen(file_name, "rb");
+    if (file)
+    {
+        fseek(file, 0L, SEEK_END);
+        size_t size = ftell(file);
+        rewind(file);
+        buffer = malloc(size*sizeof(U8));
+        if (buffer)
+        {
+            fread(buffer, size*sizeof(U8), 1, file);
+        }
+        fclose(file);
+    }
+    return buffer;
+}
+
 INTERNAL bool init_renderer ()
 {
     gRenderer.renderer = SDL_CreateRenderer(gWindow.window, -1, SDL_RENDERER_ACCELERATED);
@@ -86,46 +106,11 @@ INTERNAL bool load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
 {
     assert(bitmap);
 
-    // @Cleanup: Pull this out into a general-purpose read entire file function!!!
     // Read the entire bitmap file into memory.
-    bool success = true;
-    size_t buffer_size;
-    U8* buffer_data;
-    HANDLE file = CreateFileA(file_name, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (file == INVALID_HANDLE_VALUE)
-    {
-        LOGERROR("Failed to load bitmap file \"%s\"!", file_name);
-        success = false;
-    }
-    else
-    {
-        buffer_size = GetFileSize(file, NULL);
-        if (buffer_size == INVALID_FILE_SIZE)
-        {
-            LOGERROR("Failed to get size of file \"%s\"!", file_name);
-            success = false;
-        }
-        else
-        {
-            buffer_data = VirtualAlloc(NULL, buffer_size, MEM_COMMIT, PAGE_READWRITE);
-            if (!buffer_data)
-            {
-                LOGERROR("Failed to allocate memory for \"%s\"!", file_name);
-                success = false;
-            }
-            else
-            {
-                DWORD unused_but_needed;
-                ReadFile(file, buffer_data, buffer_size, &unused_but_needed, NULL);
-            }
-        }
-        CloseHandle(file);
-    }
+    U8* buffer_data = read_entire_file(file_name);
+    if (!buffer_data) return false;
 
-    if (!success)
-    {
-        return false;
-    }
+    bool success = true;
 
     BMPHeader* header = CAST(BMPHeader*, buffer_data);
     if (header->file_type != 0x4D42) // This magic number is 'BM' in lil endian byteorder.
@@ -172,7 +157,7 @@ INTERNAL bool load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
                 bitmap->w = header->width;
                 bitmap->h = header->height;
 
-                bitmap->pixels = VirtualAlloc(NULL, (bitmap->w*bitmap->h)*sizeof(int), MEM_COMMIT, PAGE_READWRITE);
+                bitmap->pixels = malloc((bitmap->w*bitmap->h)*sizeof(int));
                 if (!bitmap->pixels)
                 {
                     LOGERROR("Failed to allocate pixels for bitmap \"%s\"!", file_name);
@@ -203,14 +188,14 @@ INTERNAL bool load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
         }
     }
 
-    VirtualFree(buffer_data, 0, MEM_RELEASE);
+    free(buffer_data);
     return success;
 }
 
 INTERNAL void free_bitmap (Bitmap* bitmap)
 {
     assert(bitmap);
-    if (bitmap->pixels) VirtualFree(bitmap->pixels, 0, MEM_RELEASE);
+    if (bitmap->pixels) free(bitmap->pixels);
 }
 
 INTERNAL bool load_font_from_file (Font* font, int gw, int gh, const char* file_name)
@@ -338,7 +323,7 @@ INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4],
     va_list args;
     va_start(args, fmt);
     int size = vsnprintf(NULL, 0, fmt, args) + 1;
-    char* buffer = VirtualAlloc(NULL, size*sizeof(char), MEM_COMMIT, PAGE_READWRITE);
+    char* buffer = malloc(size*sizeof(char));
     if (!buffer)
     {
         LOGDEBUG("Failed to allocate text buffer for render!");
@@ -363,7 +348,7 @@ INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4],
             }
         }
 
-        VirtualFree(buffer, 0, MEM_RELEASE);
+        free(buffer);
     }
 
     va_end(args);

@@ -4,8 +4,6 @@
 #include <time.h>
 #include <assert.h>
 
-#include <windows.h>
-
 // Defining these as blank is necessary in order to get SDL2 working with TCC.
 // We also had to modify some typedefs in SDL_config.h, we will look into
 // making that part more portable across compiler's in the future. However,

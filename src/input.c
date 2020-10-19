@@ -7,7 +7,7 @@ GLOBAL struct
 
 INTERNAL void update_input_state ()
 {
-    MoveMemory(gInputState.prev_mouse_state, gInputState.curr_mouse_state, sizeof(gInputState.curr_mouse_state));
+    memmove(gInputState.prev_mouse_state, gInputState.curr_mouse_state, sizeof(gInputState.curr_mouse_state));
 
     gInputState.curr_mouse_state[LMB] = SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(SDL_BUTTON_LEFT );
     gInputState.curr_mouse_state[RMB] = SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT);
