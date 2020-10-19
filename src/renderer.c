@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////
+
+// The stuff in this section is all used internally by the renderer system!
+
 #define PALETTE_BLACK 0xFF000000
 #define PALETTE_COLOR 0xFF828282
 #define PALETTE_WHITE 0xFFFFFFFF
@@ -26,13 +30,42 @@ typedef struct BMPHeader__
 } BMPHeader;
 #pragma pack(pop)
 
-// These functions are used internally by the renderer during render operations.
+typedef struct Bitmap__
+{
+    int w,h;
+    int* pixels; // Indicies [0-3] into a 4-color palette specified on render.
+
+} Bitmap;
+
+typedef struct Palette__
+{
+    int w,h;
+    ARGBColor* pixels;
+
+} Palette;
+
+GLOBAL struct
+{
+    SDL_Renderer* renderer;
+    SDL_Surface*  screen;
+    SDL_Texture*  target;
+    SDL_Rect      viewport;
+    Bitmap        bitmap;
+    Palette       palette;
+
+} gRenderer;
+
+INTERNAL ARGBColor* get_screen ()
+{
+    return CAST(ARGBColor*, gRenderer.screen->pixels);
+}
+
 INTERNAL int get_render_target_min_x () { return 0;                     }
 INTERNAL int get_render_target_max_x () { return gRenderer.screen->w-1; }
 INTERNAL int get_render_target_min_y () { return 0;                     }
 INTERNAL int get_render_target_max_y () { return gRenderer.screen->h-1; }
 
-// The caller needs to free the returned file data!
+// The caller is required to free the returned file data!
 INTERNAL U8* read_entire_file (const char* file_name)
 {
     U8* buffer = NULL;
@@ -52,22 +85,50 @@ INTERNAL U8* read_entire_file (const char* file_name)
     return buffer;
 }
 
+// The caller is required to free the returned file data!
+INTERNAL U8* read_bitmap_file (const char* file_name)
+{
+    // Read the entire bitmap file into memory.
+    U8* bitmap_data = read_entire_file(file_name);
+    if (!bitmap_data)
+    {
+        return NULL;
+    }
+    else
+    {
+        // Some additional checks are performed to make sure the bitmap file is
+        // in the format that we desire so that we can parse its data correctly.
+        BMPHeader* header = CAST(BMPHeader*, bitmap_data);
+        if (header->file_type != 0x4D42) // This magic number is 'BM' in lil endian byteorder.
+        {
+            LOGERROR("BMP \"%s\" is unsupported type!", file_name);
+            free(bitmap_data);
+            bitmap_data = NULL;
+        }
+    }
+    return bitmap_data;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 INTERNAL bool init_renderer ()
 {
+    //
+    // This section of code sets up the actual software renderer itself.
+    //
+
     gRenderer.renderer = SDL_CreateRenderer(gWindow.window, -1, SDL_RENDERER_ACCELERATED);
     if (!gRenderer.renderer)
     {
         LOGERROR("Failed to create renderer! (%s)", SDL_GetError());
         return false;
     }
-
     U32 pixel_format = SDL_GetWindowPixelFormat(gWindow.window);
     if (pixel_format == SDL_PIXELFORMAT_UNKNOWN)
     {
         LOGERROR("Failed to retrieve window pixel format! (%s)", SDL_GetError());
         return false;
     }
-
     // Convert the window's pixel format into a mask usable with SDL_CreateRGBSurface.
     U32 r,g,b,a;
     int bpp; // We don't use this but SDL needs us to pass it.
@@ -76,14 +137,12 @@ INTERNAL bool init_renderer ()
         LOGERROR("Failed to convert format to mask! (%s)", SDL_GetError());
         return false;
     }
-
     gRenderer.screen = SDL_CreateRGBSurface(0, SCREEN_W,SCREEN_H, 32, r,g,b,a); // Our screen pixels.
     if (!gRenderer.screen)
     {
         LOGERROR("Failed to create screen buffer! (%s)", SDL_GetError());
         return false;
     }
-
     gRenderer.target = SDL_CreateTexture(gRenderer.renderer,
         pixel_format, SDL_TEXTUREACCESS_STREAMING, SCREEN_W,SCREEN_H);
     if (!gRenderer.target)
@@ -92,23 +151,148 @@ INTERNAL bool init_renderer ()
         return false;
     }
 
+    //
+    // This section of code loads the bitmap containing all the game's graphics.
+    //
+
+    U8* bitmap_data = read_bitmap_file("assets/imgbit.bmp");
+    if (!bitmap_data)
+    {
+        LOGERROR("Failed to load the renderer graphics!");
+        return false;
+    }
+    else
+    {
+        bool success = true;
+
+        // Perform an extra check to make sure our bitmap graphics are in the exepcted 4-bit data format.
+        BMPHeader* header = CAST(BMPHeader*, bitmap_data);
+        if (header->bits_per_pixel != 4)
+        {
+            LOGERROR("Renderer graphics are not a 4-bit bitmap!");
+            success = false;
+        }
+        else
+        {
+            // Parse the bitmap color table for palette information.
+            ARGBColor* color_table = CAST(ARGBColor*, bitmap_data+sizeof(BMPHeader));
+            int palette_index[4] = {0};
+            for (int i=0; i<header->num_colors; ++i)
+            {
+                switch (color_table[i])
+                {
+                    case (PALETTE_BLACK): palette_index[i] = 0; break;
+                    case (PALETTE_COLOR): palette_index[i] = 1; break;
+                    case (PALETTE_WHITE): palette_index[i] = 2; break;
+                    case (PALETTE_CLEAR): palette_index[i] = 3; break;
+                    default:
+                        LOGDEBUG("Graphics contains unrecognized color 0x%08X!", color_table[i]);
+                }
+            }
+
+            // Decode the color data from 4-bit BMP indexed color into indices into our internal palette system!
+            int line_size = (header->width/2+(header->width/2) % 4); // BMP lines are aligned to a 4-byte boundary.
+
+            gRenderer.bitmap.w = header->width;
+            gRenderer.bitmap.h = header->height;
+
+            gRenderer.bitmap.pixels = malloc((gRenderer.bitmap.w*gRenderer.bitmap.h)*sizeof(int));
+            if (!gRenderer.bitmap.pixels)
+            {
+                LOGERROR("Failed to allocate renderer graphics!");
+                success = false;
+            }
+            else
+            {
+                U8 * src = bitmap_data+header->bitmap_offset;
+                int* dst = gRenderer.bitmap.pixels;
+
+                // Decode bitmap bits into palette index values from 0-3.
+                for (int iy=0; iy<gRenderer.bitmap.h; ++iy)
+                {
+                    for (int ix=0; ix<gRenderer.bitmap.w/2; ++ix)
+                    {
+                        int src_byte = iy * line_size + ix;
+                        int dst_index = (gRenderer.bitmap.h-1-iy) * gRenderer.bitmap.w + (ix*2);
+
+                        int hi = (src[src_byte]>>4) & 0xF;
+                        int lo = (src[src_byte]   ) & 0xF;
+
+                        dst[dst_index  ] = palette_index[hi];
+                        dst[dst_index+1] = palette_index[lo];
+                    }
+                }
+            }
+        }
+        free(bitmap_data);
+        if (!success)
+        {
+            return false;
+        }
+    }
+
+    //
+    // This section of code loads the bitmap containing all the game's palettes.
+    //
+
+    U8* palette_data = read_bitmap_file("assets/imgpal.bmp");
+    if (!palette_data)
+    {
+        LOGERROR("Failed to load the renderer palettes!");
+        return false;
+    }
+    else
+    {
+        bool success = true;
+
+        // Perform an extra check to make sure our palette graphics are in the exepcted 32-bit data format.
+        BMPHeader* header = CAST(BMPHeader*, palette_data);
+        if (header->bits_per_pixel != 32)
+        {
+            LOGERROR("Renderer palette is not a 32-bit bitmap!");
+            success = false;
+        }
+        else
+        {
+            gRenderer.palette.w = header->width;
+            gRenderer.palette.h = header->height;
+
+            gRenderer.palette.pixels = malloc((gRenderer.palette.w*gRenderer.palette.h)*sizeof(ARGBColor));
+            if (!gRenderer.palette.pixels)
+            {
+                LOGERROR("Failed to allocate renderer palettes!");
+                success = false;
+            }
+            else
+            {
+                // We just need to copy the palette data over from the bitmap as its already in our desired format.
+                memcpy(gRenderer.palette.pixels, palette_data+header->bitmap_offset, (gRenderer.palette.w*gRenderer.palette.h)*sizeof(ARGBColor));
+            }
+        }
+        free(palette_data);
+        if (!success)
+        {
+            return false;
+        }
+    }
+
     return true;
 }
 
 INTERNAL void quit_renderer ()
 {
+    free(gRenderer.palette.pixels);
+    free(gRenderer.bitmap.pixels);
     SDL_DestroyTexture(gRenderer.target);
     SDL_FreeSurface(gRenderer.screen);
     SDL_DestroyRenderer(gRenderer.renderer);
 }
 
+/*
 INTERNAL bool load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
 {
     assert(bitmap);
 
-    // Read the entire bitmap file into memory.
-    U8* buffer_data = read_entire_file(file_name);
-    if (!buffer_data) return false;
 
     bool success = true;
 
@@ -189,6 +373,7 @@ INTERNAL bool load_bitmap_from_file (Bitmap* bitmap, const char* file_name)
     }
 
     free(buffer_data);
+
     return success;
 }
 
@@ -234,15 +419,11 @@ INTERNAL void free_font (Font* font)
     assert(font);
     free_bitmap(&font->bitmap);
 }
+*/
 
 INTERNAL SDL_Rect get_viewport ()
 {
     return gRenderer.viewport;
-}
-
-INTERNAL ARGBColor* get_screen ()
-{
-    return CAST(ARGBColor*, gRenderer.screen->pixels);
 }
 
 INTERNAL void render_clear (ARGBColor color)
@@ -271,6 +452,7 @@ INTERNAL void render_display ()
     SDL_RenderPresent(gRenderer.renderer);
 }
 
+/*
 INTERNAL void render_bitmap (Bitmap* bitmap, int x, int y, const ARGBColor palette[4], Clip* clip)
 {
     assert(bitmap);
@@ -353,6 +535,7 @@ INTERNAL void render_text (Font* font, int x, int y, const ARGBColor palette[4],
 
     va_end(args);
 }
+*/
 
 /*
 INTERNAL void render_point (int x, int y, ARGBColor color)
