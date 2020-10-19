@@ -2,8 +2,6 @@
 
 int main (int argc, char** argv)
 {
-    SDL_Init(SDL_INIT_EVERYTHING);
-
     init_window();
     init_renderer();
     init_frame_timer();
@@ -11,10 +9,10 @@ int main (int argc, char** argv)
 
     show_window();
 
-    bool running = true;
-    while (running)
+    while (gWindow.running)
     {
         update_input_state();
+
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -36,7 +34,7 @@ int main (int argc, char** argv)
                 } break;
                 case (SDL_QUIT):
                 {
-                    running = false;
+                    gWindow.running = false;
                 } break;
             }
         }
@@ -51,8 +49,7 @@ int main (int argc, char** argv)
     quit_application();
     quit_renderer();
     quit_window();
-
-    SDL_Quit();
+    quit_logger();
 
     return 0;
 }

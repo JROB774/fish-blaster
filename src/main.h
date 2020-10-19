@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <time.h>
 #include <assert.h>
 
 #include <windows.h>
@@ -45,6 +46,7 @@ typedef  int32_t S32;
 typedef  int64_t S64;
 
 // Headers
+#include "logger.h"
 #include "ftimer.h"
 #include "renderer.h"
 #include "window.h"
@@ -53,6 +55,7 @@ typedef  int64_t S64;
 #include "application.h"
 
 // Sources
+#include "logger.c"
 #include "ftimer.c"
 #include "renderer.c"
 #include "window.c"

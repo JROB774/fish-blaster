@@ -1,7 +1,14 @@
 INTERNAL void init_window ()
 {
-    const int WIDTH = SCREEN_W * SCREEN_S;
+    const int WIDTH  = SCREEN_W * SCREEN_S;
     const int HEIGHT = SCREEN_H * SCREEN_S;
+
+    gWindow.running = true;
+
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    {
+        // @Incomplete: Handle error...
+    }
 
     // We make the window hidden by default so that we can perform all of the game's
     // initialization before displaying the game window -- this looks a lot nicer.
@@ -20,6 +27,7 @@ INTERNAL void init_window ()
 INTERNAL void quit_window ()
 {
     SDL_DestroyWindow(gWindow.window);
+    SDL_Quit();
 }
 
 INTERNAL void show_window ()

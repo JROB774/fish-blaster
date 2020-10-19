@@ -4,6 +4,7 @@
 GLOBAL struct
 {
     SDL_Window* window;
+    bool running;
     bool fullscreen;
 
 } gWindow;
