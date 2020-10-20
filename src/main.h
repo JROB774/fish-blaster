@@ -16,6 +16,7 @@
 
 #define SDL_MAIN_HANDLED 1
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 #define INTERNAL static
 #define GLOBAL   static
