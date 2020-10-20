@@ -67,5 +67,7 @@ GLOBAL const Clip SPR_FISH_R_0 = {  0,   0, 16, 8 };
 GLOBAL const Clip SPR_FISH_R_1 = { 16,   0, 16, 8 };
 GLOBAL const Clip SPR_FISH_L_0 = { 32,   0, 16, 8 };
 GLOBAL const Clip SPR_FISH_L_1 = { 48,   0, 16, 8 };
+GLOBAL const Clip SPR_SCOREBGL = { 80,   0, 16, 8 };
+GLOBAL const Clip SPR_SCOREBGR = { 80,   8, 16, 8 };
 
 #endif /* RENDERER_H */

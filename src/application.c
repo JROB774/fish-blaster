@@ -32,12 +32,20 @@ INTERNAL void render_application (float dt)
     render_fish(dt);
 
     // Render the in-game mouse cursor/crosshair.
-    float cx = get_mouse_x()-(SPR_CURSOR_0.w/2);
-    float cy = get_mouse_y()-(SPR_CURSOR_0.h/2);
+    int cx = get_mouse_x()-(SPR_CURSOR_0.w/2);
+    int cy = get_mouse_y()-(SPR_CURSOR_0.h/2);
     render_bitmap(cx,cy,PAL_CURSOR,&SPR_CURSOR_0);
 
     // Render the score to the top-center of the screen.
     const char* SCORE_TEXT = "%06d";
-    render_text((SCREEN_W-get_text_w(SCORE_TEXT,gScore))/2,2,
-        PAL_TEXT_SHADE, SCORE_TEXT, gScore);
+
+    int sw = get_text_w(SCORE_TEXT,gScore);
+    int sh = TILE_H;
+    int sx = (SCREEN_W-sw)/2;
+    int sy = 2;
+
+    render_bitmap(sx-SPR_SCOREBGL.w,sy, PAL_BLACK, &SPR_SCOREBGL);
+    render_fill(sx,sy,sw,sh, COLOR_BLACK);
+    render_bitmap(sx+sw,sy, PAL_BLACK, &SPR_SCOREBGR);
+    render_text(sx,sy, PAL_TEXT_SHADE, SCORE_TEXT, gScore);
 }
