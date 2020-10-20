@@ -125,6 +125,7 @@ INTERNAL void collide_fish ()
             if (rect_vs_rect_collision(mx,my,mw,mh, fx,fy,fw,fh))
             {
                 // Kill the fish.
+                play_sound(SND_HIT,0);
                 gScore += FISH_SCORE;
                 fish->alive = false;
             }

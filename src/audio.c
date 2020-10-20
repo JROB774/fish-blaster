@@ -102,7 +102,6 @@ INTERNAL void quit_audio ()
 
 INTERNAL void play_sound (SoundID sound, int loops)
 {
-    assert(sound);
     if (gAudio.initialized)
     {
         if (Mix_PlayChannel(-1, gAudio.sound[sound].data, loops) == -1)
@@ -114,7 +113,6 @@ INTERNAL void play_sound (SoundID sound, int loops)
 
 INTERNAL void play_music (MusicID music, int loops)
 {
-    assert(music);
     if (gAudio.initialized)
     {
         if (Mix_PlayMusic(gAudio.music[music].data, loops) == -1)

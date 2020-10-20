@@ -34,8 +34,10 @@ INTERNAL void update_game (float dt)
     // Handle shooting.
     if (button_pressed(LMB))
     {
-        // Check for collision with shootable enemies.
+        play_sound(SND_SHOOT,0);
         shake_camera(1,1,0.1f);
+
+        // Check for collision with shootable enemies.
         collide_fish();
     }
 }
