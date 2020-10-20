@@ -383,6 +383,8 @@ INTERNAL void render_text (int x, int y, int palette_index, const char* text, ..
     }
     else
     {
+        const int FIRST_GLYPH_TILE = 265;
+
         vsnprintf(buffer, size, text, args);
 
         int start_x = x;
@@ -395,9 +397,13 @@ INTERNAL void render_text (int x, int y, int palette_index, const char* text, ..
                 case ('\n'): x = start_x, y += TILE_H; break;
                 default:
                 {
-                    // @Incomplete: Calculate the clips for text rendering...
-                    Clip temp = {0};
-                    render_bitmap(x,y, palette_index, &temp);
+                    int tile = FIRST_GLYPH_TILE+((*c)-(' '));
+                    Clip glyph;
+                    glyph.x = tile % (gRenderer.bitmap.w / TILE_W) * TILE_W;
+                    glyph.y = tile / (gRenderer.bitmap.w / TILE_W) * TILE_H;
+                    glyph.w = TILE_W;
+                    glyph.h = TILE_H;
+                    render_bitmap(x,y, palette_index, &glyph);
                     x += TILE_W;
                 } break;
             }
