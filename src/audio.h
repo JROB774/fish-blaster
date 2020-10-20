@@ -1,15 +1,16 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+typedef struct Sound__ { Mix_Chunk* data; } Sound;
+typedef struct Music__ { Mix_Music* data; } Music;
+
 GLOBAL struct
 {
     float sound_volume;
     float music_volume;
+    bool  initialized;
 
 } gAudio;
-
-typedef struct Sound__ { Mix_Chunk* data; } Sound;
-typedef struct Music__ { Mix_Music* data; } Music;
 
 INTERNAL void init_audio ();
 INTERNAL void quit_audio ();
