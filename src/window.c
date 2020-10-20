@@ -13,7 +13,7 @@ INTERNAL bool init_window ()
 
     // We make the window hidden by default so that we can perform all of the game's
     // initialization before displaying the game window -- this looks a lot nicer.
-    gWindow.window = SDL_CreateWindow("REVIVALJAM", SDL_WINDOWPOS_CENTERED,
+    gWindow.window = SDL_CreateWindow("Fish Blaster", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, WIDTH,HEIGHT, SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE);
     if (!gWindow.window)
     {
