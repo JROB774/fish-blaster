@@ -1,3 +1,15 @@
+// COLLISION
+
+INTERNAL bool point_vs_rect_collision (float px, float py, float rx, float ry, float rw, float rh)
+{
+    return ((px >= rx) && (py >= ry) && (px < (rx+rw)) && (py < (ry+rh)));
+}
+
+INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh)
+{
+    return ((ax < (bx+bw)) && ((ax+aw) > bx) && (ay < (by+bh)) && ((ay+ah) > by));
+}
+
 // SPAWNER
 
 INTERNAL void create_spawner ()
@@ -90,6 +102,31 @@ INTERNAL void render_fish (float dt)
             }
 
             render_bitmap(fish->x,fish->y, fish->palette, frame);
+        }
+    }
+}
+INTERNAL void collide_fish ()
+{
+    int mx = CAST(int,get_mouse_x())-2;
+    int my = CAST(int,get_mouse_y())-2;
+    int mw = 4;
+    int mh = 4;
+
+    for (int i=0; i<FISH_MAX; ++i)
+    {
+        Fish* fish = gEntityFish+i;
+        if (fish->alive)
+        {
+            int fx = CAST(int,fish->x)+1;
+            int fy = CAST(int,fish->y)+1;
+            int fw = 13;
+            int fh =  6;
+
+            if (rect_vs_rect_collision(mx,my,mw,mh, fx,fy,fw,fh))
+            {
+                // Kill the fish.
+                fish->alive = false;
+            }
         }
     }
 }

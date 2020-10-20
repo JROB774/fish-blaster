@@ -16,6 +16,12 @@ INTERNAL void update_application (float dt)
 {
     update_spawner(dt);
     update_fish(dt);
+
+    // Handle shooting.
+    if (button_pressed(LMB))
+    {
+        collide_fish();
+    }
 }
 
 INTERNAL void render_application (float dt)

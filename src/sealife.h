@@ -1,6 +1,10 @@
 #ifndef SEALIFE_H
 #define SEALIFE_H
 
+// COLLISION
+
+INTERNAL bool point_vs_rect_collision (float px, float py, float rx, float ry, float rw, float rh);
+
 // SPAWNER
 
 typedef struct Spawner__
@@ -34,8 +38,9 @@ typedef struct Fish__
 
 GLOBAL Fish gEntityFish[FISH_MAX];
 
-INTERNAL void create_fish ();
-INTERNAL void update_fish (float dt);
-INTERNAL void render_fish (float dt);
+INTERNAL void  create_fish ();
+INTERNAL void  update_fish (float dt);
+INTERNAL void  render_fish (float dt);
+INTERNAL void collide_fish ();
 
 #endif /* SEALIFE_H */
