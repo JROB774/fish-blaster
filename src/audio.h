@@ -1,27 +1,14 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-typedef struct Sound__ { Mix_Chunk* data; } Sound;
-typedef struct Music__ { Mix_Music* data; } Music;
-
-GLOBAL struct
-{
-    float sound_volume;
-    float music_volume;
-    bool  initialized;
-
-} gAudio;
+typedef enum SoundID__ { SND_SHOOT, SND_HIT, SND_TOTAL } SoundID;
+typedef enum MusicID__ { MUS_TOTAL                     } MusicID;
 
 INTERNAL void init_audio ();
 INTERNAL void quit_audio ();
 
-INTERNAL void load_sound (Sound* sound, const char* file_name);
-INTERNAL void free_sound (Sound* sound);
-INTERNAL void play_sound (Sound* sound, int loops);
-
-INTERNAL void load_music (Music* music, const char* file_name);
-INTERNAL void free_music (Music* music);
-INTERNAL void play_music (Music* music, int loops);
+INTERNAL void play_sound (SoundID sound, int loops);
+INTERNAL void play_music (MusicID music, int loops);
 
 // Audio volume should always be set with these functions rather than setting
 // the gAudio.sound_volume and gAudio.music_volume values directly. As these

@@ -1,30 +1,26 @@
+////////////////////////////////////////////////////////////////////////////////
+
+// The stuff in this section is all used internally by the audio/sound system!
+
 #define AUDIO_FREQUENCY     MIX_DEFAULT_FREQUENCY
 #define AUDIO_SAMPLE_FORMAT MIX_DEFAULT_FORMAT
 #define AUDIO_CHANNELS      2 // Stereo Sound
 #define AUDIO_SAMPLE_SIZE   2048
 
-INTERNAL void init_audio ()
+typedef struct Sound__ { Mix_Chunk* data; } Sound;
+typedef struct Music__ { Mix_Music* data; } Music;
+
+GLOBAL struct
 {
-    if (Mix_OpenAudio(AUDIO_FREQUENCY, AUDIO_SAMPLE_FORMAT, AUDIO_CHANNELS, AUDIO_SAMPLE_SIZE) != 0)
-    {
-        LOGWARNING("Failed to open audio device! (%s)", Mix_GetError());
-    }
-    else
-    {
-        Mix_AllocateChannels(32);
+    Sound sound[SND_TOTAL];
+    Music music[MUS_TOTAL];
 
-        // @Incomplete: Load these values from a settings file...
-        set_sound_volume(0.5f);
-        set_music_volume(0.5f);
+    bool initialized;
 
-        gAudio.initialized = true;
-    }
-}
+    float sound_volume;
+    float music_volume;
 
-INTERNAL void quit_audio ()
-{
-    Mix_CloseAudio();
-}
+} gAudio;
 
 INTERNAL void load_sound (Sound* sound, const char* file_name)
 {
@@ -44,18 +40,6 @@ INTERNAL void free_sound (Sound* sound)
     assert(sound);
     Mix_FreeChunk(sound->data);
     sound->data = NULL;
-}
-
-INTERNAL void play_sound (Sound* sound, int loops)
-{
-    assert(sound);
-    if (gAudio.initialized)
-    {
-        if (Mix_PlayChannel(-1, sound->data, loops) == -1)
-        {
-            LOGDEBUG("Failed to play sound! (%s)", Mix_GetError());
-        }
-    }
 }
 
 INTERNAL void load_music (Music* music, const char* file_name)
@@ -78,12 +62,62 @@ INTERNAL void free_music (Music* music)
     music->data = NULL;
 }
 
-INTERNAL void play_music (Music* music, int loops)
+////////////////////////////////////////////////////////////////////////////////
+
+INTERNAL void init_audio ()
+{
+    if (Mix_OpenAudio(AUDIO_FREQUENCY, AUDIO_SAMPLE_FORMAT, AUDIO_CHANNELS, AUDIO_SAMPLE_SIZE) != 0)
+    {
+        LOGWARNING("Failed to open audio device! (%s)", Mix_GetError());
+    }
+    else
+    {
+        Mix_AllocateChannels(32);
+
+        // @Incomplete: Load these values from a settings file...
+        set_sound_volume(0.5f);
+        set_music_volume(0.5f);
+
+        gAudio.initialized = true;
+
+        // Load all of the sounds.
+        load_sound(&gAudio.sound[SND_SHOOT], "assets/sndsht.wav");
+        load_sound(&gAudio.sound[SND_HIT  ], "assets/sndhit.wav");
+
+        // Load all of the music.
+        // ...
+    }
+}
+
+INTERNAL void quit_audio ()
+{
+    if (gAudio.initialized)
+    {
+        free_sound(&gAudio.sound[SND_SHOOT]);
+        free_sound(&gAudio.sound[SND_HIT  ]);
+
+        Mix_CloseAudio();
+    }
+}
+
+INTERNAL void play_sound (SoundID sound, int loops)
+{
+    assert(sound);
+    if (gAudio.initialized)
+    {
+        if (Mix_PlayChannel(-1, gAudio.sound[sound].data, loops) == -1)
+        {
+            LOGDEBUG("Failed to play sound! (%s)", Mix_GetError());
+        }
+    }
+}
+
+INTERNAL void play_music (MusicID music, int loops)
 {
     assert(music);
     if (gAudio.initialized)
     {
-        if (Mix_PlayMusic(music->data, loops) == -1)
+        if (Mix_PlayMusic(gAudio.music[music].data, loops) == -1)
         {
             LOGDEBUG("Failed to play music! (%s)", Mix_GetError());
         }
