@@ -55,6 +55,13 @@ GLOBAL struct
     SDL_Rect      viewport;
     Bitmap        bitmap;
     Palette       palette;
+    int           txoffset;
+    int           tyoffset;
+    int           xoffset;
+    int           yoffset;
+    float         shake_time;
+    int           shake_x;
+    int           shake_y;
 
 } gRenderer;
 
@@ -332,6 +339,9 @@ INTERNAL void render_bitmap (int x, int y, int palette_index, const Clip* clip)
 {
     assert(clip);
 
+    x += gRenderer.xoffset;
+    y += gRenderer.yoffset;
+
     if (x > get_render_target_max_x()) return;
     if (y > get_render_target_max_y()) return;
 
@@ -375,6 +385,12 @@ INTERNAL void render_bitmap (int x, int y, int palette_index, const Clip* clip)
 
 INTERNAL void render_text (int x, int y, int palette_index, const char* text, ...)
 {
+    x += gRenderer.xoffset;
+    y += gRenderer.yoffset;
+
+    if (x > get_render_target_max_x()) return;
+    if (y > get_render_target_max_y()) return;
+
     char text_buffer[RENDER_TEXT_BUFFER_SIZE] = {0};
 
     // Format the arguments into a formatted string in a buffer.
@@ -402,6 +418,117 @@ INTERNAL void render_text (int x, int y, int palette_index, const char* text, ..
                 render_bitmap(x,y, palette_index, &glyph);
                 x += TILE_W;
             } break;
+        }
+    }
+}
+
+INTERNAL void render_point (int x, int y, ARGBColor color)
+{
+    x += gRenderer.xoffset;
+    y += gRenderer.yoffset;
+
+    if (x < get_render_target_min_x() || x >= get_render_target_max_x() ||
+        y < get_render_target_min_y() || y >= get_render_target_max_y()) return;
+
+    get_screen()[y*SCREEN_W+x] = color;
+}
+
+INTERNAL void render_line (int x1, int y1, int x2, int y2, ARGBColor color)
+{
+    x1 += gRenderer.xoffset;
+    y1 += gRenderer.yoffset;
+    x2 += gRenderer.xoffset;
+    y2 += gRenderer.yoffset;
+
+    if (x1 > get_render_target_max_x() && x2 > get_render_target_max_x()) return;
+    if (y1 > get_render_target_max_y() && y2 > get_render_target_max_y()) return;
+
+    // Clamp the bounds to avoid overflows.
+    x1 = CLAMP(x1, get_render_target_min_x(), get_render_target_max_x());
+    y1 = CLAMP(y1, get_render_target_min_y(), get_render_target_max_y());
+    x2 = CLAMP(x2, get_render_target_min_x(), get_render_target_max_x());
+    y2 = CLAMP(y2, get_render_target_min_y(), get_render_target_max_y());
+
+    bool steep = false;
+    if (ABS(x1-x2)<ABS(y1-y2))
+    {
+        SWAP(x1, y1, int);
+        SWAP(x2, y2, int);
+        steep = true;
+    }
+    if (x1>x2)
+    {
+        SWAP(x1, x2, int);
+        SWAP(y1, y2, int);
+    }
+    int dx = x2-x1;
+    int dy = y2-y1;
+    int derror2 = ABS(dy)*2;
+    int error2 = 0;
+    int iy = y1;
+
+    ARGBColor* pixels = get_screen();
+    for (int ix=x1; ix<=x2; ++ix)
+    {
+        if (steep) pixels[ix*SCREEN_W+iy] = color;
+        else pixels[iy*SCREEN_W+ix] = color;
+        error2 += derror2;
+        if (error2 > dx)
+        {
+            iy += (y2>y1?1:-1);
+            error2 -= dx*2;
+        }
+    }
+}
+
+INTERNAL void render_rect (int x, int y, int w, int h, ARGBColor color)
+{
+    // NOTE: We assume that the width and height are not negative...
+
+    x += gRenderer.xoffset;
+    y += gRenderer.yoffset;
+
+    if (x > get_render_target_max_x()) return;
+    if (y > get_render_target_max_y()) return;
+
+    int x1 = x;
+    int y1 = y;
+    int x2 = x+w-1;
+    int y2 = y+h-1;
+
+    render_line(x2,y1,x2,y2, color); // Right
+    render_line(x1,y1,x1,y2, color); // Left
+    render_line(x1,y1,x2,y1, color); // Top
+    render_line(x1,y2,x2,y2, color); // Bottom
+}
+
+INTERNAL void render_fill (int x, int y, int w, int h, ARGBColor color)
+{
+    // NOTE: We assume that the width and height are not negative...
+
+    x += gRenderer.xoffset;
+    y += gRenderer.yoffset;
+
+    if (x > SCREEN_W-1) return;
+    if (y > SCREEN_H-1) return;
+
+    int x1 = x;
+    int y1 = y;
+    int x2 = x+w-1;
+    int y2 = y+h-1;
+
+    // Clamp the bounds to avoid overflows.
+    x1 = CLAMP(x1, get_render_target_min_x(), get_render_target_max_x());
+    y1 = CLAMP(y1, get_render_target_min_y(), get_render_target_max_y());
+    x2 = CLAMP(x2, get_render_target_min_x(), get_render_target_max_x());
+    y2 = CLAMP(y2, get_render_target_min_y(), get_render_target_max_y());
+
+    ARGBColor* pixels = get_screen();
+    for (int iy=y1; iy<=y2; ++iy)
+    {
+        for (int ix=x1; ix<=x2; ++ix)
+        {
+            pixels[iy*SCREEN_W+ix] = color;
         }
     }
 }
@@ -463,98 +590,36 @@ INTERNAL int get_text_h (const char* text, ...)
     return height;
 }
 
-INTERNAL void render_point (int x, int y, ARGBColor color)
+INTERNAL void shake_camera (int x, int y, float duration)
 {
-    if (x < get_render_target_min_x() || x >= get_render_target_max_x() ||
-        y < get_render_target_min_y() || y >= get_render_target_max_y()) return;
-    get_screen()[y*SCREEN_W+x] = color;
+    gRenderer.shake_x = x, gRenderer.shake_y = y;
+    gRenderer.shake_time = duration;
 }
 
-INTERNAL void render_line (int x1, int y1, int x2, int y2, ARGBColor color)
+INTERNAL void update_camera (float dt)
 {
-    if (x1 > get_render_target_max_x() && x2 > get_render_target_max_x()) return;
-    if (y1 > get_render_target_max_y() && y2 > get_render_target_max_y()) return;
-
-    // Clamp the bounds to avoid overflows.
-    x1 = CLAMP(x1, get_render_target_min_x(), get_render_target_max_x());
-    y1 = CLAMP(y1, get_render_target_min_y(), get_render_target_max_y());
-    x2 = CLAMP(x2, get_render_target_min_x(), get_render_target_max_x());
-    y2 = CLAMP(y2, get_render_target_min_y(), get_render_target_max_y());
-
-    bool steep = false;
-    if (ABS(x1-x2)<ABS(y1-y2))
+    // Perform screen/camera shake and update the timer.
+    if (gRenderer.shake_time > 0.0f)
     {
-        SWAP(x1, y1, int);
-        SWAP(x2, y2, int);
-        steep = true;
+        gRenderer.txoffset = random_int_range(-abs(gRenderer.shake_x), abs(gRenderer.shake_x));
+        gRenderer.tyoffset = random_int_range(-abs(gRenderer.shake_y), abs(gRenderer.shake_y));
+        gRenderer.shake_time -= dt;
     }
-    if (x1>x2)
+    else
     {
-        SWAP(x1, x2, int);
-        SWAP(y1, y2, int);
-    }
-    int dx = x2-x1;
-    int dy = y2-y1;
-    int derror2 = ABS(dy)*2;
-    int error2 = 0;
-    int iy = y1;
-
-    ARGBColor* pixels = get_screen();
-    for (int ix=x1; ix<=x2; ++ix)
-    {
-        if (steep) pixels[ix*SCREEN_W+iy] = color;
-        else pixels[iy*SCREEN_W+ix] = color;
-        error2 += derror2;
-        if (error2 > dx)
-        {
-            iy += (y2>y1?1:-1);
-            error2 -= dx*2;
-        }
+        gRenderer.txoffset = 0;
+        gRenderer.tyoffset = 0;
     }
 }
 
-INTERNAL void render_rect (int x, int y, int w, int h, ARGBColor color)
+INTERNAL void begin_camera ()
 {
-    // NOTE: We assume that the width and height are not negative...
-
-    if (x > get_render_target_max_x()) return;
-    if (y > get_render_target_max_y()) return;
-
-    int x1 = x;
-    int y1 = y;
-    int x2 = x+w-1;
-    int y2 = y+h-1;
-
-    render_line(x2,y1,x2,y2, color); // Right
-    render_line(x1,y1,x1,y2, color); // Left
-    render_line(x1,y1,x2,y1, color); // Top
-    render_line(x1,y2,x2,y2, color); // Bottom
+    gRenderer.xoffset = gRenderer.txoffset;
+    gRenderer.yoffset = gRenderer.tyoffset;
 }
 
-INTERNAL void render_fill (int x, int y, int w, int h, ARGBColor color)
+INTERNAL void end_camera ()
 {
-    // NOTE: We assume that the width and height are not negative...
-
-    if (x > SCREEN_W-1) return;
-    if (y > SCREEN_H-1) return;
-
-    int x1 = x;
-    int y1 = y;
-    int x2 = x+w-1;
-    int y2 = y+h-1;
-
-    // Clamp the bounds to avoid overflows.
-    x1 = CLAMP(x1, get_render_target_min_x(), get_render_target_max_x());
-    y1 = CLAMP(y1, get_render_target_min_y(), get_render_target_max_y());
-    x2 = CLAMP(x2, get_render_target_min_x(), get_render_target_max_x());
-    y2 = CLAMP(y2, get_render_target_min_y(), get_render_target_max_y());
-
-    ARGBColor* pixels = get_screen();
-    for (int iy=y1; iy<=y2; ++iy)
-    {
-        for (int ix=x1; ix<=x2; ++ix)
-        {
-            pixels[iy*SCREEN_W+ix] = color;
-        }
-    }
+    gRenderer.xoffset = 0;
+    gRenderer.yoffset = 0;
 }

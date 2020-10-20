@@ -1,5 +1,27 @@
 #define GAME_BACKGROUND_COLOR 0xFF2F4B99
 
+INTERNAL void render_cursor ()
+{
+    int x = get_mouse_x()-(SPR_CURSOR_0.w/2);
+    int y = get_mouse_y()-(SPR_CURSOR_0.h/2);
+    render_bitmap(x,y,PAL_CURSOR,&SPR_CURSOR_0);
+}
+
+INTERNAL void render_score ()
+{
+    const char* SCORE_TEXT = "%06d";
+
+    int w = get_text_w(SCORE_TEXT,gScore);
+    int h = TILE_H;
+    int x = (SCREEN_W-w)/2;
+    int y = 2;
+
+    render_bitmap(x-SPR_SCOREBGL.w,y, PAL_BLACK, &SPR_SCOREBGL);
+    render_fill(x,y,w,h, COLOR_BLACK);
+    render_bitmap(x+w,y, PAL_BLACK, &SPR_SCOREBGR);
+    render_text(x,y, PAL_TEXT_SHADE, SCORE_TEXT, gScore);
+}
+
 INTERNAL bool init_application ()
 {
     seed_random();
@@ -15,12 +37,14 @@ INTERNAL void quit_application ()
 
 INTERNAL void update_application (float dt)
 {
+    update_camera(dt);
     update_spawner(dt);
     update_fish(dt);
 
     // Handle shooting.
     if (button_pressed(LMB))
     {
+        shake_camera(1,1,0.05f);
         collide_fish();
     }
 }
@@ -29,23 +53,10 @@ INTERNAL void render_application (float dt)
 {
     render_clear(GAME_BACKGROUND_COLOR);
 
+    begin_camera();
     render_fish(dt);
+    end_camera();
 
-    // Render the in-game mouse cursor/crosshair.
-    int cx = get_mouse_x()-(SPR_CURSOR_0.w/2);
-    int cy = get_mouse_y()-(SPR_CURSOR_0.h/2);
-    render_bitmap(cx,cy,PAL_CURSOR,&SPR_CURSOR_0);
-
-    // Render the score to the top-center of the screen.
-    const char* SCORE_TEXT = "%06d";
-
-    int sw = get_text_w(SCORE_TEXT,gScore);
-    int sh = TILE_H;
-    int sx = (SCREEN_W-sw)/2;
-    int sy = 2;
-
-    render_bitmap(sx-SPR_SCOREBGL.w,sy, PAL_BLACK, &SPR_SCOREBGL);
-    render_fill(sx,sy,sw,sh, COLOR_BLACK);
-    render_bitmap(sx+sw,sy, PAL_BLACK, &SPR_SCOREBGR);
-    render_text(sx,sy, PAL_TEXT_SHADE, SCORE_TEXT, gScore);
+    render_cursor();
+    render_score();
 }

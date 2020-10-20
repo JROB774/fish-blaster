@@ -42,6 +42,10 @@ INTERNAL void     render_fill    (int x,  int y,  int w,  int h,  ARGBColor colo
 INTERNAL SDL_Rect get_viewport   ();
 INTERNAL int      get_text_w     (const char* text, ...);
 INTERNAL int      get_text_h     (const char* text, ...);
+INTERNAL void     shake_camera   (int x, int y, float duration);
+INTERNAL void     update_camera  (float dt);
+INTERNAL void     begin_camera   ();
+INTERNAL void     end_camera     ();
 
 // PALETTES
 
