@@ -36,15 +36,15 @@ INTERNAL void create_fish ()
         Fish* fish = gEntityFish+i;
         if (!fish->alive)
         {
-            fish->palette = PAL_FISH_0 + (rand() % 3);
-            fish->dir = rand() % 2;
+            fish->palette = random_int_range(PAL_FISH_0,PAL_FISH_2);
+            fish->dir = random_int_range(HDIR_R,HDIR_L);
             fish->alive = true;
             fish->t = 0.0f;
 
             if (fish->dir == HDIR_R) fish->x = 0 - SPR_FISH_R_0.w;
             if (fish->dir == HDIR_L) fish->x = SCREEN_W;
 
-            fish->y = rand() % (SCREEN_H-SPR_FISH_R_0.h-12) + 12;
+            fish->y = random_int_range(12, SCREEN_H-SPR_FISH_R_0.h);
 
             return;
         }

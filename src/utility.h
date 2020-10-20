@@ -37,4 +37,9 @@ typedef  int16_t S16;
 typedef  int32_t S32;
 typedef  int64_t S64;
 
+// UTILITY FUNCTIONS
+
+INTERNAL int random_int       ();
+INTERNAL int random_int_range (int min, int max);
+
 #endif /* UTILITY_H */

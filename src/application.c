@@ -2,6 +2,7 @@
 
 INTERNAL bool init_application ()
 {
+    seed_random();
     create_spawner();
     SDL_ShowCursor(SDL_DISABLE);
     return true;
