@@ -18,6 +18,7 @@ INTERNAL void update_spawner (float dt);
 
 #define FISH_SPAWN_START 0.0f
 #define FISH_SPAWN_RATE  0.5f
+#define FISH_ANIM_SPEED  0.2f
 #define FISH_MAX   128
 #define FISH_SPEED 50
 

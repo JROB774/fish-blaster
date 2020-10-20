@@ -4,7 +4,6 @@ INTERNAL void create_spawner ()
 {
     gSpawner.t_fish = FISH_SPAWN_START;
 }
-
 INTERNAL void update_spawner (float dt)
 {
     if (gSpawner.t_fish > 0.0f) gSpawner.t_fish -= dt;
@@ -39,7 +38,6 @@ INTERNAL void create_fish ()
         }
     }
 }
-
 INTERNAL void update_fish (float dt)
 {
     for (int i=0; i<FISH_MAX; ++i)
@@ -63,7 +61,6 @@ INTERNAL void update_fish (float dt)
         }
     }
 }
-
 INTERNAL void render_fish (float dt)
 {
     for (int i=0; i<FISH_MAX; ++i)
@@ -75,11 +72,11 @@ INTERNAL void render_fish (float dt)
             const Clip* frame = NULL;
             if (fish->dir == HDIR_R)
             {
-                if (fish->t < 0.2f) frame = &SPR_FISH_R_0;
+                if (fish->t < FISH_ANIM_SPEED) frame = &SPR_FISH_R_0;
                 else
                 {
                     frame = &SPR_FISH_R_1;
-                    if (fish->t > 0.4f) fish->t = 0.0f;
+                    if (fish->t > FISH_ANIM_SPEED*2) fish->t = 0.0f;
                 }
             }
             if (fish->dir == HDIR_L)
@@ -88,7 +85,7 @@ INTERNAL void render_fish (float dt)
                 else
                 {
                     frame = &SPR_FISH_L_1;
-                    if (fish->t > 0.4f) fish->t = 0.0f;
+                    if (fish->t > FISH_ANIM_SPEED*2) fish->t = 0.0f;
                 }
             }
 
