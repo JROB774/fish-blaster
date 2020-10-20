@@ -87,4 +87,11 @@ GLOBAL const Clip SPR_BLOOD_5  = { 40,   8,  8, 8 };
 GLOBAL const Clip SPR_BLOOD_6  = { 48,   8,  8, 8 };
 GLOBAL const Clip SPR_BLOOD_7  = { 56,   8,  8, 8 };
 
+// ANIMATIONS
+
+GLOBAL const Clip* ANM_FISH_R[] = { &SPR_FISH_R_0, &SPR_FISH_R_1                                                                                      };
+GLOBAL const Clip* ANM_FISH_L[] = { &SPR_FISH_L_0, &SPR_FISH_L_1                                                                                      };
+GLOBAL const Clip* ANM_BUBBLE[] = { &SPR_BUBBLE_0, &SPR_BUBBLE_1, &SPR_BUBBLE_2, &SPR_BUBBLE_3                                                        };
+GLOBAL const Clip* ANM_BLOOD [] = { &SPR_BLOOD_0,  &SPR_BLOOD_1,  &SPR_BLOOD_2,  &SPR_BLOOD_3, &SPR_BLOOD_4, &SPR_BLOOD_5, &SPR_BLOOD_6, &SPR_BLOOD_7 };
+
 #endif /* RENDER_H */

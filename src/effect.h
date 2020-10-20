@@ -12,8 +12,8 @@ typedef enum EffectID__
 typedef struct Effect__
 {
     EffectID type;
-    const Clip* clip;
     int palette;
+    int frame;
     float x,y,vx,vy;
     bool alive;
     float t;

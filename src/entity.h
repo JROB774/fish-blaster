@@ -32,6 +32,7 @@ typedef struct Fish__
 {
     float x,y;
     int palette;
+    int frame;
     HDir dir;
     bool alive;
     float t;
