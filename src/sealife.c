@@ -1,3 +1,22 @@
+// SPAWNER
+
+INTERNAL void create_spawner ()
+{
+    gSpawner.t_fish = FISH_SPAWN_START;
+}
+
+INTERNAL void update_spawner (float dt)
+{
+    if (gSpawner.t_fish > 0.0f) gSpawner.t_fish -= dt;
+    else
+    {
+        create_fish();
+        gSpawner.t_fish = FISH_SPAWN_RATE;
+    }
+}
+
+// FISH
+
 INTERNAL void create_fish ()
 {
     // Find an empty slot to create a fish and if there isn't one don't create.

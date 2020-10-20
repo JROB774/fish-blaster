@@ -2,6 +2,7 @@
 
 INTERNAL bool init_application ()
 {
+    create_spawner();
     SDL_ShowCursor(SDL_DISABLE);
     return true;
 }
@@ -13,18 +14,7 @@ INTERNAL void quit_application ()
 
 INTERNAL void update_application (float dt)
 {
-    // @Temporary: Pull this spawner code out...
-    static float t = 0.0f;
-    if (t <= 0.0f)
-    {
-        create_fish();
-        t = 0.5f;
-    }
-    else
-    {
-        t -= dt;
-    }
-
+    update_spawner(dt);
     update_fish(dt);
 }
 

@@ -1,10 +1,25 @@
 #ifndef SEALIFE_H
 #define SEALIFE_H
 
+// SPAWNER
+
+typedef struct Spawner__
+{
+    float t_fish;
+
+} Spawner;
+
+GLOBAL Spawner gSpawner;
+
+INTERNAL void create_spawner ();
+INTERNAL void update_spawner (float dt);
+
 // FISH
 
+#define FISH_SPAWN_START 0.0f
+#define FISH_SPAWN_RATE  0.5f
+#define FISH_MAX   128
 #define FISH_SPEED 50
-#define FISH_MAX 128
 
 typedef struct Fish__
 {
