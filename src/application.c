@@ -34,4 +34,6 @@ INTERNAL void render_application (float dt)
     float cx = get_mouse_x()-(SPR_CURSOR_0.w/2);
     float cy = get_mouse_y()-(SPR_CURSOR_0.h/2);
     render_bitmap(cx,cy,PAL_CURSOR,&SPR_CURSOR_0);
+
+    render_text(2,2, PAL_TEXT_SHADE, "%06d", gScore);
 }

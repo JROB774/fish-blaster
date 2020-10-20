@@ -44,7 +44,7 @@ INTERNAL void create_fish ()
             if (fish->dir == HDIR_R) fish->x = 0 - SPR_FISH_R_0.w;
             if (fish->dir == HDIR_L) fish->x = SCREEN_W;
 
-            fish->y = rand() % (SCREEN_H-SPR_FISH_R_0.h);
+            fish->y = rand() % (SCREEN_H-SPR_FISH_R_0.h-12) + 12;
 
             return;
         }
@@ -125,6 +125,7 @@ INTERNAL void collide_fish ()
             if (rect_vs_rect_collision(mx,my,mw,mh, fx,fy,fw,fh))
             {
                 // Kill the fish.
+                gScore += FISH_SCORE;
                 fish->alive = false;
             }
         }

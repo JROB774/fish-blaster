@@ -26,6 +26,7 @@ INTERNAL void update_spawner (float dt);
 #define FISH_ANIM_SPEED  0.2f
 #define FISH_MAX   128
 #define FISH_SPEED 50
+#define FISH_SCORE 10
 
 typedef struct Fish__
 {
