@@ -35,5 +35,7 @@ INTERNAL void render_application (float dt)
     float cy = get_mouse_y()-(SPR_CURSOR_0.h/2);
     render_bitmap(cx,cy,PAL_CURSOR,&SPR_CURSOR_0);
 
-    render_text(2,2, PAL_TEXT_SHADE, "%06d", gScore);
+    const char* SCORE_TEXT = "%06d";
+
+    render_text((SCREEN_W-get_text_w(SCORE_TEXT,gScore))/2,2, PAL_TEXT_SHADE, SCORE_TEXT, gScore);
 }

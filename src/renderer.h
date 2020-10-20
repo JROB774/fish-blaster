@@ -36,6 +36,8 @@ INTERNAL void     render_display ();
 INTERNAL void     render_bitmap  (int x, int y, int palette_index, const Clip* clip);
 INTERNAL void     render_text    (int x, int y, int palette_index, const char* text, ...);
 INTERNAL SDL_Rect get_viewport   ();
+INTERNAL int      get_text_w     (const char* text, ...);
+INTERNAL int      get_text_h     (const char* text, ...);
 
 // PALETTES
 

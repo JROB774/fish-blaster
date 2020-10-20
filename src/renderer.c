@@ -411,6 +411,58 @@ INTERNAL SDL_Rect get_viewport ()
     return gRenderer.viewport;
 }
 
+INTERNAL int get_text_w (const char* text, ...)
+{
+    char text_buffer[RENDER_TEXT_BUFFER_SIZE] = {0};
+
+    // Format the arguments into a formatted string in a buffer.
+    va_list args;
+    va_start(args, text);
+    vsnprintf(text_buffer, RENDER_TEXT_BUFFER_SIZE, text, args);
+    va_end(args);
+
+    int linewidth = 0;
+    int width = 0;
+
+    for (int i=0; i<strlen(text_buffer); ++i)
+    {
+        if (text_buffer[i] == '\n')
+        {
+            width = MAX(width, linewidth);
+            linewidth = 0;
+        }
+        else
+        {
+            linewidth += TILE_W;
+        }
+    }
+
+    return MAX(width, linewidth);
+}
+
+INTERNAL int get_text_h (const char* text, ...)
+{
+    char text_buffer[RENDER_TEXT_BUFFER_SIZE] = {0};
+
+    // Format the arguments into a formatted string in a buffer.
+    va_list args;
+    va_start(args, text);
+    vsnprintf(text_buffer, RENDER_TEXT_BUFFER_SIZE, text, args);
+    va_end(args);
+
+    int height = TILE_H;
+
+    for (int i=0; i<strlen(text_buffer); ++i)
+    {
+        if (text_buffer[i] == '\n')
+        {
+            height += TILE_H;
+        }
+    }
+
+    return height;
+}
+
 /*
 INTERNAL void render_point (int x, int y, ARGBColor color)
 {
