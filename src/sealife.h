@@ -4,6 +4,7 @@
 // COLLISION
 
 INTERNAL bool point_vs_rect_collision (float px, float py, float rx, float ry, float rw, float rh);
+INTERNAL bool rect_vs_rect_collision  (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh);
 
 // SPAWNER
 
