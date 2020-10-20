@@ -1,5 +1,5 @@
-#ifndef RENDERER_H
-#define RENDERER_H
+#ifndef RENDER_H
+#define RENDER_H
 
 // The size of the "screen" we render to internally.
 // This can be scaled up based on the window size.
@@ -79,4 +79,4 @@ GLOBAL const Clip SPR_BUBBLE_1 = { 72,   0,  8, 8 };
 GLOBAL const Clip SPR_BUBBLE_2 = { 64,   8,  8, 8 };
 GLOBAL const Clip SPR_BUBBLE_3 = { 72,   8,  8, 8 };
 
-#endif /* RENDERER_H */
+#endif /* RENDER_H */
