@@ -7,6 +7,9 @@
 #define PALETTE_WHITE 0xFFFFFFFF
 #define PALETTE_CLEAR 0xFFC1C1C1
 
+#define RENDER_TEXT_BUFFER_SIZE 1024
+#define FIRST_GLYPH_TILE_INDEX   265
+
 #pragma pack(push,1)
 typedef struct BMPHeader__
 {
@@ -372,47 +375,35 @@ INTERNAL void render_bitmap (int x, int y, int palette_index, const Clip* clip)
 
 INTERNAL void render_text (int x, int y, int palette_index, const char* text, ...)
 {
-    // Format the arguments into final string in a buffer.
+    char text_buffer[RENDER_TEXT_BUFFER_SIZE] = {0};
+
+    // Format the arguments into a formatted string in a buffer.
     va_list args;
     va_start(args, text);
-    int size = vsnprintf(NULL, 0, text, args) + 1;
-    char* buffer = malloc(size*sizeof(char));
-    if (!buffer)
-    {
-        LOGDEBUG("Failed to allocate text buffer for render!");
-    }
-    else
-    {
-        const int FIRST_GLYPH_TILE = 265;
-
-        vsnprintf(buffer, size, text, args);
-
-        int start_x = x;
-        int start_y = y;
-
-        for (const char* c=buffer; *c; ++c)
-        {
-            switch (*c)
-            {
-                case ('\n'): x = start_x, y += TILE_H; break;
-                default:
-                {
-                    int tile = FIRST_GLYPH_TILE+((*c)-(' '));
-                    Clip glyph;
-                    glyph.x = tile % (gRenderer.bitmap.w / TILE_W) * TILE_W;
-                    glyph.y = tile / (gRenderer.bitmap.w / TILE_W) * TILE_H;
-                    glyph.w = TILE_W;
-                    glyph.h = TILE_H;
-                    render_bitmap(x,y, palette_index, &glyph);
-                    x += TILE_W;
-                } break;
-            }
-        }
-
-        free(buffer);
-    }
-
+    vsnprintf(text_buffer, RENDER_TEXT_BUFFER_SIZE, text, args);
     va_end(args);
+
+    int start_x = x;
+    int start_y = y;
+
+    for (const char* c=text_buffer; *c; ++c)
+    {
+        switch (*c)
+        {
+            case ('\n'): x = start_x, y += TILE_H; break;
+            default:
+            {
+                int tile = FIRST_GLYPH_TILE_INDEX+((*c)-(' '));
+                Clip glyph;
+                glyph.x = tile % (gRenderer.bitmap.w / TILE_W) * TILE_W;
+                glyph.y = tile / (gRenderer.bitmap.w / TILE_W) * TILE_H;
+                glyph.w = TILE_W;
+                glyph.h = TILE_H;
+                render_bitmap(x,y, palette_index, &glyph);
+                x += TILE_W;
+            } break;
+        }
+    }
 }
 
 INTERNAL SDL_Rect get_viewport ()
