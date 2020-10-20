@@ -60,6 +60,7 @@ typedef  int64_t S64;
 #include "renderer.h"
 #include "window.h"
 #include "input.h"
+#include "audio.h"
 #include "sealife.h"
 #include "application.h"
 
@@ -69,5 +70,6 @@ typedef  int64_t S64;
 #include "renderer.c"
 #include "window.c"
 #include "input.c"
+#include "audio.c"
 #include "sealife.c"
 #include "application.c"

@@ -8,6 +8,9 @@ int main (int argc, char** argv)
     {
         if (init_renderer())
         {
+            // We do not fail if audio doesn't initialize as we can still run the game without it.
+            init_audio();
+
             if (init_application())
             {
                 show_window();
@@ -50,6 +53,7 @@ int main (int argc, char** argv)
                 }
                 quit_application();
             }
+            quit_audio();
             quit_renderer();
         }
         quit_window();
