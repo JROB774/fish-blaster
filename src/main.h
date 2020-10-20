@@ -26,6 +26,7 @@
 #include "window.h"
 #include "input.h"
 #include "audio.h"
+#include "effect.h"
 #include "sealife.h"
 #include "application.h"
 
@@ -37,5 +38,6 @@
 #include "window.c"
 #include "input.c"
 #include "audio.c"
+#include "effect.c"
 #include "sealife.c"
 #include "application.c"

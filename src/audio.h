@@ -7,8 +7,8 @@ typedef enum MusicID__ { MUS_TOTAL                     } MusicID;
 INTERNAL void init_audio ();
 INTERNAL void quit_audio ();
 
-INTERNAL void play_sound (SoundID sound, int loops);
-INTERNAL void play_music (MusicID music, int loops);
+INTERNAL void play_sound (SoundID id, int loops);
+INTERNAL void play_music (MusicID id, int loops);
 
 // Audio volume should always be set with these functions rather than setting
 // the gAudio.sound_volume and gAudio.music_volume values directly. As these

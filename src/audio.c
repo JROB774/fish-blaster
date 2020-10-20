@@ -100,22 +100,24 @@ INTERNAL void quit_audio ()
     }
 }
 
-INTERNAL void play_sound (SoundID sound, int loops)
+INTERNAL void play_sound (SoundID id, int loops)
 {
+    assert((id >= 0) && (id < SND_TOTAL));
     if (gAudio.initialized)
     {
-        if (Mix_PlayChannel(-1, gAudio.sound[sound].data, loops) == -1)
+        if (Mix_PlayChannel(-1, gAudio.sound[id].data, loops) == -1)
         {
             LOGDEBUG("Failed to play sound! (%s)", Mix_GetError());
         }
     }
 }
 
-INTERNAL void play_music (MusicID music, int loops)
+INTERNAL void play_music (MusicID id, int loops)
 {
+    assert((id >= 0) && (id < MUS_TOTAL));
     if (gAudio.initialized)
     {
-        if (Mix_PlayMusic(gAudio.music[music].data, loops) == -1)
+        if (Mix_PlayMusic(gAudio.music[id].data, loops) == -1)
         {
             LOGDEBUG("Failed to play music! (%s)", Mix_GetError());
         }

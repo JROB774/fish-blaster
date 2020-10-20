@@ -46,7 +46,7 @@ INTERNAL void create_fish ()
 
             fish->y = random_int_range(12, SCREEN_H-SPR_FISH_R_0.h);
 
-            return;
+            break;
         }
     }
 }

@@ -24,19 +24,30 @@ INTERNAL void render_score ()
     render_text(x,y, PAL_TEXT_SHADE, SCORE_TEXT, gScore);
 }
 
+INTERNAL void shoot ()
+{
+    int x = get_mouse_x()-6;
+    int y = get_mouse_y()-6;
+    int w = 12;
+    int h = 12;
+
+    create_effect(EFX_BUBBLE, x,y,w,h, 2,3);
+    play_sound(SND_SHOOT,0);
+    shake_camera(1,1,0.1f);
+}
+
 // GAME
 
 INTERNAL void update_game (float dt)
 {
     update_spawner(dt);
     update_fish(dt);
+    update_effect(dt);
 
     // Handle shooting.
     if (button_pressed(LMB))
     {
-        play_sound(SND_SHOOT,0);
-        shake_camera(1,1,0.1f);
-
+        shoot();
         // Check for collision with shootable enemies.
         collide_fish();
     }
@@ -44,6 +55,7 @@ INTERNAL void update_game (float dt)
 INTERNAL void render_game (float dt)
 {
     begin_camera();
+    render_effect(dt);
     render_fish(dt);
     end_camera();
 
