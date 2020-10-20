@@ -78,5 +78,13 @@ GLOBAL const Clip SPR_BUBBLE_0 = { 64,   0,  8, 8 };
 GLOBAL const Clip SPR_BUBBLE_1 = { 72,   0,  8, 8 };
 GLOBAL const Clip SPR_BUBBLE_2 = { 64,   8,  8, 8 };
 GLOBAL const Clip SPR_BUBBLE_3 = { 72,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_0  = {  0,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_1  = {  8,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_2  = { 16,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_3  = { 24,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_4  = { 32,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_5  = { 40,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_6  = { 48,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_7  = { 56,   8,  8, 8 };
 
 #endif /* RENDER_H */

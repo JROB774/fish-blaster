@@ -39,7 +39,12 @@ typedef  int64_t S64;
 
 // UTILITY FUNCTIONS
 
-INTERNAL int random_int       ();
-INTERNAL int random_int_range (int min, int max);
+INTERNAL void rotate_vec2 (float* x, float* y, float rad);
+
+INTERNAL void  seed_random        ();
+INTERNAL int   random_int         ();
+INTERNAL int   random_int_range   (int   min, int   max);
+INTERNAL float random_float       ();
+INTERNAL float random_float_range (float min, float max);
 
 #endif /* UTILITY_H */
