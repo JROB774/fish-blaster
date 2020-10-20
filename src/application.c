@@ -47,9 +47,9 @@ INTERNAL void update_game (float dt)
     // Handle shooting.
     if (button_pressed(LMB))
     {
-        shoot();
         // Check for collision with shootable enemies.
         collide_fish();
+        shoot();
     }
 }
 INTERNAL void render_game (float dt)
