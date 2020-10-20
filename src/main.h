@@ -27,7 +27,7 @@
 #include "input.h"
 #include "audio.h"
 #include "effect.h"
-#include "sealife.h"
+#include "entity.h"
 #include "application.h"
 
 // Sources
@@ -39,5 +39,5 @@
 #include "input.c"
 #include "audio.c"
 #include "effect.c"
-#include "sealife.c"
+#include "entity.c"
 #include "application.c"

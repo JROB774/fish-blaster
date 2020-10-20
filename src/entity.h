@@ -1,5 +1,5 @@
-#ifndef SEALIFE_H
-#define SEALIFE_H
+#ifndef ENTITY_H
+#define ENTITY_H
 
 // COLLISION
 
@@ -45,4 +45,4 @@ INTERNAL void  update_fish (float dt);
 INTERNAL void  render_fish (float dt);
 INTERNAL void collide_fish ();
 
-#endif /* SEALIFE_H */
+#endif /* ENTITY_H */
