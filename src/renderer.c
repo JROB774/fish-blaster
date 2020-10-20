@@ -463,7 +463,6 @@ INTERNAL int get_text_h (const char* text, ...)
     return height;
 }
 
-/*
 INTERNAL void render_point (int x, int y, ARGBColor color)
 {
     if (x < get_render_target_min_x() || x >= get_render_target_max_x() ||
@@ -559,4 +558,3 @@ INTERNAL void render_fill (int x, int y, int w, int h, ARGBColor color)
         }
     }
 }
-*/
