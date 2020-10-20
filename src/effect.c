@@ -1,15 +1,19 @@
 // EFX_BUBBLE
 
-#define BUBBLE_MAX_VELOCITY 150
-#define BUBBLE_VELOCITY_INC 10
+#define BUBBLE_MAX_VELOCITY  150
+#define BUBBLE_VELOCITY_INC  10
+#define BUBBLE_MIN_ANM_SPEED 0.2f
+#define BUBBLE_MAX_ANM_SPEED 0.3f
 
 INTERNAL void create_bubble (Effect* effect)
 {
+    effect->t = random_float_range(BUBBLE_MIN_ANM_SPEED,BUBBLE_MAX_ANM_SPEED);
     effect->palette = PAL_BUBBLE;
-    effect->frame = random_int_range(0, ARRAYSIZE(ANM_BUBBLE)-1);
+    effect->frame = random_int_range(0, ARRAYSIZE(ANM_BUBBLE)-2);
 }
 INTERNAL void update_bubble (Effect* effect, float dt)
 {
+    // Quickly apply an upward force to the bubbles.
     effect->vy += BUBBLE_VELOCITY_INC;
     if (effect->vy > BUBBLE_MAX_VELOCITY)
     {
@@ -23,22 +27,59 @@ INTERNAL void update_bubble (Effect* effect, float dt)
     {
         effect->alive = false;
     }
+
+    // Animate the bubble and if it is done animating then kill it.
+    effect->t -= dt;
+    if (effect->t <= 0.0f)
+    {
+        effect->t = random_float_range(BUBBLE_MIN_ANM_SPEED,BUBBLE_MAX_ANM_SPEED);
+        effect->frame++;
+        if (effect->frame >= ARRAYSIZE(ANM_BUBBLE))
+        {
+            effect->alive = false;
+        }
+    }
 }
 
 // EFX_BLOOD
 
+#define BLOOD_MIN_ANM_SPEED 0.2f
+#define BLOOD_MAX_ANM_SPEED 0.6f
+#define BLOOD_VELOCITY_INC  0.5f
+#define BLOOD_MAX_VELOCITY  10
+
 INTERNAL void create_blood (Effect* effect)
 {
+    effect->t = random_float_range(BLOOD_MIN_ANM_SPEED,BLOOD_MAX_ANM_SPEED);
     effect->palette = PAL_BLOOD;
-    effect->frame = random_int_range(0, ARRAYSIZE(ANM_BLOOD)-1);
+    effect->frame = random_int_range(0, ARRAYSIZE(ANM_BLOOD)-2);
     effect->vx = 10;
     effect->vy = 0;
     rotate_vec2(&effect->vx, &effect->vy, random_float_range(0,M_PI*2));
 }
 INTERNAL void update_blood (Effect* effect, float dt)
 {
+    // Slowly apply an upward force to the blood.
+    effect->vy -= BLOOD_VELOCITY_INC;
+    if (effect->vy < -BLOOD_MAX_VELOCITY)
+    {
+        effect->vy = -BLOOD_MAX_VELOCITY;
+    }
+
     effect->x += effect->vx * dt;
     effect->y += effect->vy * dt;
+
+    // Animate the bubble and if it is done animating then kill it.
+    effect->t -= dt;
+    if (effect->t <= 0.0f)
+    {
+        effect->t = random_float_range(BLOOD_MIN_ANM_SPEED,BLOOD_MAX_ANM_SPEED);
+        effect->frame++;
+        if (effect->frame >= ARRAYSIZE(ANM_BLOOD))
+        {
+            effect->alive = false;
+        }
+    }
 }
 
 // EFFECTS
