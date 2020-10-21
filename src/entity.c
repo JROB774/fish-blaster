@@ -89,7 +89,7 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
 #define URCHIN_ANM_SPEED   0.2f
 #define URCHIN_WIDTH  16
 #define URCHIN_HEIGHT 16
-#define URCHIN_SPEED  30
+#define URCHIN_SPEED  40
 
 INTERNAL void create_urchin (Entity* entity)
 {
@@ -98,16 +98,36 @@ INTERNAL void create_urchin (Entity* entity)
     entity->x = random_int_range(0, SCREEN_W-URCHIN_WIDTH);
     entity->y = SCREEN_H;
     entity->frame = 0;
+    entity->active = false;
+
+    entity->vx = 0;
+    entity->vy = -URCHIN_SPEED;
+    rotate_vec2(&entity->vx, &entity->vy, random_float_range(-(M_PI/4), (M_PI/4)));
 }
 INTERNAL void update_urchin (Entity* entity, float dt)
 {
-    // Slowly moves upwards.
-    entity->y -= URCHIN_SPEED * dt;
+    // Slowly move the urchin.
+    entity->x += entity->vx * dt;
+    entity->y += entity->vy * dt;
 
-    // If off-screen then the urchin is deactivated.
-    if (entity->y + URCHIN_HEIGHT < 0)
+    int x = entity->x+(URCHIN_WIDTH/2);
+    int y = entity->y+(URCHIN_HEIGHT/2);
+
+    // Once we're on screen we can activate vertical bouncing.
+    if (!entity->active && (y < SCREEN_H)) entity->active = true;
+
+    // Horizontal bounce.
+    if ((x < 0) || (x > SCREEN_W))
     {
-        entity->alive = false;
+        entity->vx = -(entity->vx);
+    }
+    // Vetical bounce.
+    if (entity->active)
+    {
+        if ((y < 0) || (y > SCREEN_H))
+        {
+            entity->vy = -(entity->vy);
+        }
     }
 }
 INTERNAL const Clip* render_urchin (Entity* entity, float dt)
@@ -166,9 +186,12 @@ INTERNAL void create_entity (EntityID id)
         Entity* entity = gEntity+i;
         if (!entity->alive)
         {
-            entity->alive = true;
             entity->type = id;
+            entity->frame = 0;
+            entity->vx = 0;
+            entity->vy = 0;
             entity->t = 0.0f;
+            entity->alive = true;
 
             // Specific creation logic for the different entity types.
             switch (entity->type)
@@ -223,12 +246,15 @@ INTERNAL void render_entity (float dt)
 
 INTERNAL void collide_entity (bool shot)
 {
+    // Don't handle collisions if the cursor is out of bounds.
+    if (!is_mouse_in_screen_bounds()) return;
+
     // We use a box around the mouse point for collision as it feels better to give
     // some leeway when shooting entities, rather than needing a point collision.
-    int mx = CAST(int,get_mouse_x())-2;
-    int my = CAST(int,get_mouse_y())-2;
-    int mw = 4;
-    int mh = 4;
+    int x = CAST(int,get_mouse_x())-2;
+    int y = CAST(int,get_mouse_y())-2;
+    int w = 4;
+    int h = 4;
 
     for (int i=0; i<ENTITY_MAX; ++i)
     {
@@ -238,9 +264,9 @@ INTERNAL void collide_entity (bool shot)
             // Specific collision logic for the different entity types.
             switch (entity->type)
             {
-                case (ENT_FISH  ): collide_fish  (entity, mx,my,mw,mh, shot); break;
-                case (ENT_URCHIN): collide_urchin(entity, mx,my,mw,mh, shot); break;
-                case (ENT_SQUID ): collide_squid (entity, mx,my,mw,mh, shot); break;
+                case (ENT_FISH  ): collide_fish  (entity, x,y,w,h, shot); break;
+                case (ENT_URCHIN): collide_urchin(entity, x,y,w,h, shot); break;
+                case (ENT_SQUID ): collide_squid (entity, x,y,w,h, shot); break;
             }
         }
     }

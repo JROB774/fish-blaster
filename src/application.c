@@ -47,8 +47,11 @@ INTERNAL void update_game (float dt)
     bool shot = false;
     if (button_pressed(LMB))
     {
-        shoot();
-        shot = true;
+        if (is_mouse_in_screen_bounds())
+        {
+            shoot();
+            shot = true;
+        }
     }
 
     collide_entity(shot);
@@ -70,8 +73,11 @@ INTERNAL void update_gameover (float dt)
 {
     if (button_pressed(LMB))
     {
-        start_game(dt);
-        shoot(); // Do this second so effects don't get wiped.
+        if (is_mouse_in_screen_bounds())
+        {
+            start_game(dt);
+            shoot(); // Do this second so effects don't get wiped.
+        }
     }
 }
 INTERNAL void render_gameover (float dt)

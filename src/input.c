@@ -20,23 +20,26 @@ INTERNAL bool button_pressed (MouseButton button)
     assert(button == LMB || button == RMB);
     return (!gInputState.prev_mouse_state[button] && gInputState.curr_mouse_state[button]);
 }
-
 INTERNAL bool button_released (MouseButton button)
 {
     assert(button == LMB || button == RMB);
     return (gInputState.prev_mouse_state[button] && !gInputState.curr_mouse_state[button]);
 }
-
 INTERNAL bool button_down (MouseButton button)
 {
     assert(button == LMB || button == RMB);
     return gInputState.curr_mouse_state[button];
 }
-
 INTERNAL bool button_up (MouseButton button)
 {
     assert(button == LMB || button == RMB);
     return !gInputState.curr_mouse_state[button];
+}
+
+INTERNAL bool is_mouse_in_screen_bounds ()
+{
+    int mx = get_mouse_x(), my = get_mouse_y();
+    return (mx >= 0 && mx < SCREEN_W && my >= 0 && my < SCREEN_H);
 }
 
 INTERNAL float get_mouse_x ()
@@ -48,7 +51,6 @@ INTERNAL float get_mouse_x ()
     int x; SDL_GetMouseState(&x, NULL);
     return CAST(float, (x-get_viewport().x) / scale);
 }
-
 INTERNAL float get_mouse_y ()
 {
     int scale_x = get_window_w() / SCREEN_W;

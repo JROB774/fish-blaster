@@ -13,12 +13,13 @@ typedef enum EntityID__
 typedef struct Entity__
 {
     EntityID type;
-    float x,y;
+    float x,y,vx,vy;
     int palette;
     int frame;
     int dir;
-    bool alive;
     float t;
+    bool alive;
+    bool active;
 
 } Entity;
 
