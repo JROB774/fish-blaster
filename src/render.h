@@ -47,6 +47,44 @@ INTERNAL void     update_camera  (float dt);
 INTERNAL void     begin_camera   ();
 INTERNAL void     end_camera     ();
 
+// SPRITES
+
+GLOBAL const Clip SPR_CURSOR_0 = {  0, 104,  8, 8 };
+GLOBAL const Clip SPR_CURSOR_1 = {  8, 104,  8, 8 };
+GLOBAL const Clip SPR_CURSOR_2 = { 16, 104,  8, 8 };
+GLOBAL const Clip SPR_CURSOR_3 = { 24, 104,  8, 8 };
+GLOBAL const Clip SPR_CURSOR_4 = { 32, 104,  8, 8 };
+GLOBAL const Clip SPR_FISH_R_0 = {  0,   0, 16, 8 };
+GLOBAL const Clip SPR_FISH_R_1 = { 16,   0, 16, 8 };
+GLOBAL const Clip SPR_FISH_L_0 = { 32,   0, 16, 8 };
+GLOBAL const Clip SPR_FISH_L_1 = { 48,   0, 16, 8 };
+GLOBAL const Clip SPR_SCOREBGL = { 96,   0, 16, 8 };
+GLOBAL const Clip SPR_SCOREBGR = { 96,   8, 16, 8 };
+GLOBAL const Clip SPR_BUBBLE_0 = { 64,   0,  8, 8 };
+GLOBAL const Clip SPR_BUBBLE_1 = { 72,   0,  8, 8 };
+GLOBAL const Clip SPR_BUBBLE_2 = { 64,   8,  8, 8 };
+GLOBAL const Clip SPR_BUBBLE_3 = { 72,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_0  = {  0,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_1  = {  8,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_2  = { 16,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_3  = { 24,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_4  = { 32,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_5  = { 40,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_6  = { 48,   8,  8, 8 };
+GLOBAL const Clip SPR_BLOOD_7  = { 56,   8,  8, 8 };
+GLOBAL const Clip SPR_BONE_0   = { 80,   0,  8, 8 };
+GLOBAL const Clip SPR_BONE_1   = { 88,   0,  8, 8 };
+GLOBAL const Clip SPR_BONE_2   = { 80,   8,  8, 8 };
+GLOBAL const Clip SPR_BONE_3   = { 88,   8,  8, 8 };
+
+// ANIMATIONS
+
+GLOBAL const Clip* ANM_FISH_R[] = { &SPR_FISH_R_0, &SPR_FISH_R_1                                                                                      };
+GLOBAL const Clip* ANM_FISH_L[] = { &SPR_FISH_L_0, &SPR_FISH_L_1                                                                                      };
+GLOBAL const Clip* ANM_BUBBLE[] = { &SPR_BUBBLE_0, &SPR_BUBBLE_1, &SPR_BUBBLE_2, &SPR_BUBBLE_3                                                        };
+GLOBAL const Clip* ANM_BLOOD [] = { &SPR_BLOOD_0,  &SPR_BLOOD_1,  &SPR_BLOOD_2,  &SPR_BLOOD_3, &SPR_BLOOD_4, &SPR_BLOOD_5, &SPR_BLOOD_6, &SPR_BLOOD_7 };
+GLOBAL const Clip* ANM_BONE  [] = { &SPR_BONE_0,   &SPR_BONE_1,   &SPR_BONE_2,   &SPR_BONE_3                                                          };
+
 // PALETTES
 
 #define PAL_WHITE      0
@@ -60,38 +98,6 @@ INTERNAL void     end_camera     ();
 #define PAL_FISH_1     7
 #define PAL_FISH_2     8
 #define PAL_BUBBLE     8
-
-// SPRITES
-
-GLOBAL const Clip SPR_CURSOR_0 = {  0, 104,  8, 8 };
-GLOBAL const Clip SPR_CURSOR_1 = {  8, 104,  8, 8 };
-GLOBAL const Clip SPR_CURSOR_2 = { 16, 104,  8, 8 };
-GLOBAL const Clip SPR_CURSOR_3 = { 24, 104,  8, 8 };
-GLOBAL const Clip SPR_CURSOR_4 = { 32, 104,  8, 8 };
-GLOBAL const Clip SPR_FISH_R_0 = {  0,   0, 16, 8 };
-GLOBAL const Clip SPR_FISH_R_1 = { 16,   0, 16, 8 };
-GLOBAL const Clip SPR_FISH_L_0 = { 32,   0, 16, 8 };
-GLOBAL const Clip SPR_FISH_L_1 = { 48,   0, 16, 8 };
-GLOBAL const Clip SPR_SCOREBGL = { 80,   0, 16, 8 };
-GLOBAL const Clip SPR_SCOREBGR = { 80,   8, 16, 8 };
-GLOBAL const Clip SPR_BUBBLE_0 = { 64,   0,  8, 8 };
-GLOBAL const Clip SPR_BUBBLE_1 = { 72,   0,  8, 8 };
-GLOBAL const Clip SPR_BUBBLE_2 = { 64,   8,  8, 8 };
-GLOBAL const Clip SPR_BUBBLE_3 = { 72,   8,  8, 8 };
-GLOBAL const Clip SPR_BLOOD_0  = {  0,   8,  8, 8 };
-GLOBAL const Clip SPR_BLOOD_1  = {  8,   8,  8, 8 };
-GLOBAL const Clip SPR_BLOOD_2  = { 16,   8,  8, 8 };
-GLOBAL const Clip SPR_BLOOD_3  = { 24,   8,  8, 8 };
-GLOBAL const Clip SPR_BLOOD_4  = { 32,   8,  8, 8 };
-GLOBAL const Clip SPR_BLOOD_5  = { 40,   8,  8, 8 };
-GLOBAL const Clip SPR_BLOOD_6  = { 48,   8,  8, 8 };
-GLOBAL const Clip SPR_BLOOD_7  = { 56,   8,  8, 8 };
-
-// ANIMATIONS
-
-GLOBAL const Clip* ANM_FISH_R[] = { &SPR_FISH_R_0, &SPR_FISH_R_1                                                                                      };
-GLOBAL const Clip* ANM_FISH_L[] = { &SPR_FISH_L_0, &SPR_FISH_L_1                                                                                      };
-GLOBAL const Clip* ANM_BUBBLE[] = { &SPR_BUBBLE_0, &SPR_BUBBLE_1, &SPR_BUBBLE_2, &SPR_BUBBLE_3                                                        };
-GLOBAL const Clip* ANM_BLOOD [] = { &SPR_BLOOD_0,  &SPR_BLOOD_1,  &SPR_BLOOD_2,  &SPR_BLOOD_3, &SPR_BLOOD_4, &SPR_BLOOD_5, &SPR_BLOOD_6, &SPR_BLOOD_7 };
+#define PAL_BONE       9
 
 #endif /* RENDER_H */

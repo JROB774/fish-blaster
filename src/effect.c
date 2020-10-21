@@ -82,6 +82,43 @@ INTERNAL void update_blood (Effect* effect, float dt)
     }
 }
 
+// EFX_BONE
+
+#define BONE_MIN_LIFETIME 0.8f
+#define BONE_MAX_LIFETIME 1.5f
+#define BONE_ANM_SPEED    0.3f
+#define BONE_VELOCITY_INC 0.5f
+#define BONE_MAX_VELOCITY 10
+
+INTERNAL void create_bone (Effect* effect)
+{
+    effect->t = random_float_range(BONE_MIN_LIFETIME,BONE_MAX_LIFETIME);
+    effect->palette = PAL_BONE;
+    effect->frame = random_int_range(0, ARRAYSIZE(ANM_BONE)-1);
+    effect->vx = 10;
+    effect->vy = 0;
+    rotate_vec2(&effect->vx, &effect->vy, random_float_range(0,M_PI*2));
+}
+INTERNAL void update_bone (Effect* effect, float dt)
+{
+    // Slowly apply an upward force to the blood.
+    effect->vy -= BONE_VELOCITY_INC;
+    if (effect->vy < -BONE_MAX_VELOCITY)
+    {
+        effect->vy = -BONE_MAX_VELOCITY;
+    }
+
+    effect->x += effect->vx * dt;
+    effect->y += effect->vy * dt;
+
+    // Once the bone's lifetime is up then kill it.
+    effect->t -= dt;
+    if (effect->t <= 0.0f)
+    {
+        effect->alive = false;
+    }
+}
+
 // EFFECTS
 
 INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_count, int max_count)
@@ -107,6 +144,7 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
             {
                 case (EFX_BUBBLE): create_bubble(effect); break;
                 case (EFX_BLOOD ): create_blood (effect); break;
+                case (EFX_BONE  ): create_bone  (effect); break;
             }
 
             count--;
@@ -130,6 +168,7 @@ INTERNAL void update_effect (float dt)
             {
                 case (EFX_BUBBLE): update_bubble(effect, dt); break;
                 case (EFX_BLOOD ): update_blood (effect, dt); break;
+                case (EFX_BONE  ): update_bone  (effect, dt); break;
             }
         }
     }
@@ -148,6 +187,7 @@ INTERNAL void render_effect (float dt)
             {
                 case (EFX_BUBBLE): clip = ANM_BUBBLE[effect->frame]; break;
                 case (EFX_BLOOD ): clip = ANM_BLOOD [effect->frame]; break;
+                case (EFX_BONE  ): clip = ANM_BONE  [effect->frame]; break;
             }
 
             render_bitmap(effect->x,effect->y, effect->palette, clip);

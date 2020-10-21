@@ -1,5 +1,3 @@
-#define GAME_BACKGROUND_COLOR 0xFF2F4B99
-
 // HELPER FUNCTIONS
 
 INTERNAL void render_cursor ()
@@ -38,6 +36,12 @@ INTERNAL void shoot ()
 
 // GAME
 
+#define GAME_BACKGROUND_COLOR 0xFF2F4B99
+
+INTERNAL void start_game ()
+{
+    create_spawner();
+}
 INTERNAL void update_game (float dt)
 {
     update_spawner(dt);
@@ -67,9 +71,11 @@ INTERNAL void render_game (float dt)
 
 INTERNAL bool init_application ()
 {
-    seed_random();
-    create_spawner();
     SDL_ShowCursor(SDL_DISABLE);
+
+    seed_random();
+    start_game();
+
     return true;
 }
 
