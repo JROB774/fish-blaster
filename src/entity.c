@@ -14,17 +14,20 @@ INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, fl
 
 #define FISH_SPAWN_START 0.0f
 #define FISH_SPAWN_RATE  0.5f
-#define FISH_ANIM_SPEED  0.2f
+#define FISH_ANM_SPEED   0.2f
 #define FISH_SPEED 50
 #define FISH_SCORE 10
 #define FISH_DIR_L 0
 #define FISH_DIR_R 1
+#define FISH_MIN_BLOOD 10
+#define FISH_MAX_BLOOD 15
 
 INTERNAL void create_fish (Entity* entity)
 {
     entity->palette = random_int_range(PAL_FISH_0,PAL_FISH_2);
     entity->dir = random_int_range(FISH_DIR_L,FISH_DIR_R);
-    entity->t = 0.0f;
+    entity->t = FISH_ANM_SPEED;
+    entity->frame = 0;
 
     if (entity->dir == FISH_DIR_L) entity->x = SCREEN_W;
     if (entity->dir == FISH_DIR_R) entity->x = 0 - SPR_FISH_R_0.w;
@@ -33,8 +36,6 @@ INTERNAL void create_fish (Entity* entity)
 }
 INTERNAL void update_fish (Entity* entity, float dt)
 {
-    entity->t += dt;
-
     // Move the fish and deactivate when off-screen.
     if (entity->dir == FISH_DIR_L)
     {
@@ -49,25 +50,17 @@ INTERNAL void update_fish (Entity* entity, float dt)
 }
 INTERNAL const Clip* render_fish (Entity* entity, float dt)
 {
-    // Determine what animation frame to play for the fish.
-    if (entity->dir == FISH_DIR_L)
+    entity->t -= dt;
+    if (entity->t <= 0.0f)
     {
-        if (entity->t < 0.2f) return &SPR_FISH_L_0;
-        else
+        entity->t = FISH_ANM_SPEED;
+        entity->frame++;
+        if (entity->frame >= ARRAYSIZE(ANM_FISH_R)) // Doesn't matter if we use left or right, they're the same length!
         {
-            if (entity->t > FISH_ANIM_SPEED*2) entity->t = 0.0f;
-            return &SPR_FISH_L_1;
+            entity->frame = 0;
         }
     }
-    else
-    {
-        if (entity->t < FISH_ANIM_SPEED) return &SPR_FISH_R_0;
-        else
-        {
-            if (entity->t > FISH_ANIM_SPEED*2) entity->t = 0.0f;
-            return &SPR_FISH_R_1;
-        }
-    }
+    return ((entity->dir == FISH_DIR_L) ? ANM_FISH_L[entity->frame] : ANM_FISH_R[entity->frame]);
 }
 INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
@@ -81,7 +74,7 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
         if (rect_vs_rect_collision(mx,my,mw,mh, x,y,w,h))
         {
             // Kill the fish.
-            create_effect(EFX_BLOOD, x,y,w,h, 10,15);
+            create_effect(EFX_BLOOD, x,y,w,h, FISH_MIN_BLOOD,FISH_MAX_BLOOD);
             play_sound(SND_HIT,0);
             gApp.score += FISH_SCORE;
             entity->alive = false;
@@ -93,16 +86,15 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
 
 #define URCHIN_SPAWN_START 3.0f
 #define URCHIN_SPAWN_RATE  1.0f
-#define URCHIN_ANIM_SPEED  0.2f
+#define URCHIN_ANM_SPEED   0.2f
 #define URCHIN_WIDTH  16
 #define URCHIN_HEIGHT 16
 #define URCHIN_SPEED  30
 
-
 INTERNAL void create_urchin (Entity* entity)
 {
     entity->palette = PAL_URCHIN;
-    entity->t = URCHIN_ANIM_SPEED;
+    entity->t = URCHIN_ANM_SPEED;
     entity->x = random_int_range(0, SCREEN_W-URCHIN_WIDTH);
     entity->y = SCREEN_H;
     entity->frame = 0;
@@ -123,7 +115,7 @@ INTERNAL const Clip* render_urchin (Entity* entity, float dt)
     entity->t -= dt;
     if (entity->t <= 0.0f)
     {
-        entity->t = URCHIN_ANIM_SPEED;
+        entity->t = URCHIN_ANM_SPEED;
         entity->frame++;
         if (entity->frame >= ARRAYSIZE(ANM_URCHIN))
         {
