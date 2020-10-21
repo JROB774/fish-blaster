@@ -12,40 +12,28 @@
 
 typedef U32 ARGBColor;
 
-// Some useful macros for converting separate components into a U32 ARGB color.
-#define MAKE_RGBA(r,g,b,a) (CAST(ARGBColor,(((b)<<24)|((g)<<16)|((r)<<8)|(a   ))))
-#define MAKE_RGB( r,g,b)   (CAST(ARGBColor,(((b)<<24)|((g)<<16)|((r)<<8)|(0xFF))))
-
-#define COLOR_WHITE   0xFFFFFFFF
-#define COLOR_BLACK   0xFF000000
-#define COLOR_RED     0xFFFF0000
-#define COLOR_GREEN   0xFF00FF00
-#define COLOR_BLUE    0xFF0000FF
-#define COLOR_CYAN    0xFF00FFFF
-#define COLOR_MAGENTA 0xFFFF00FF
-#define COLOR_YELLOW  0xFFFFFF00
-
 typedef struct Clip__ { int x, y, w, h; } Clip;
 
 // INTERFACE
 
-INTERNAL bool     init_renderer  ();
-INTERNAL void     quit_renderer  ();
-INTERNAL void     render_clear   (ARGBColor color);
-INTERNAL void     render_display ();
-INTERNAL void     render_bitmap  (int x,  int y,  int palette_index, const Clip* clip);
-INTERNAL void     render_text    (int x,  int y,  int palette_index, const char* text, ...);
-INTERNAL void     render_point   (int x,  int y,                  ARGBColor color);
-INTERNAL void     render_line    (int x1, int y1, int x2, int y2, ARGBColor color);
-INTERNAL void     render_rect    (int x,  int y,  int w,  int h,  ARGBColor color);
-INTERNAL void     render_fill    (int x,  int y,  int w,  int h,  ARGBColor color);
-INTERNAL SDL_Rect get_viewport   ();
-INTERNAL int      get_text_w     (const char* text, ...);
-INTERNAL int      get_text_h     (const char* text, ...);
-INTERNAL void     shake_camera   (int x, int y, float duration);
-INTERNAL void     update_camera  (float dt);
-INTERNAL void     begin_camera   ();
-INTERNAL void     end_camera     ();
+INTERNAL bool      init_renderer     ();
+INTERNAL void      quit_renderer     ();
+INTERNAL void      render_clear      (ARGBColor color);
+INTERNAL void      render_display    ();
+INTERNAL void      render_bitmap     (int x,  int y,  int palette_index, const Clip* clip);
+INTERNAL void      render_text       (int x,  int y,  int palette_index, const char* text, ...);
+INTERNAL void      render_point      (int x,  int y,                  ARGBColor color);
+INTERNAL void      render_line       (int x1, int y1, int x2, int y2, ARGBColor color);
+INTERNAL void      render_rect       (int x,  int y,  int w,  int h,  ARGBColor color);
+INTERNAL void      render_fill       (int x,  int y,  int w,  int h,  ARGBColor color);
+INTERNAL SDL_Rect  get_viewport      ();
+INTERNAL int       get_text_w        (const char* text, ...);
+INTERNAL int       get_text_h        (const char* text, ...);
+INTERNAL ARGBColor get_palette_color (int palette_index, int color_index);
+INTERNAL void      shake_camera      (int x, int y, float duration);
+INTERNAL void      update_camera     (float dt);
+INTERNAL void      begin_camera      ();
+INTERNAL void      end_camera        ();
 
 // SPRITES
 
@@ -87,17 +75,16 @@ GLOBAL const Clip* ANM_BONE  [] = { &SPR_BONE_0,   &SPR_BONE_1,   &SPR_BONE_2,  
 
 // PALETTES
 
-#define PAL_WHITE      0
-#define PAL_BLACK      1
-#define PAL_TEXT_WHITE 2
-#define PAL_TEXT_BLACK 3
-#define PAL_TEXT_SHADE 4
-#define PAL_CURSOR     4
-#define PAL_BLOOD      5
-#define PAL_FISH_0     6
-#define PAL_FISH_1     7
-#define PAL_FISH_2     8
-#define PAL_BUBBLE     8
-#define PAL_BONE       9
+#define PAL_BACKGROUND 0
+#define PAL_WHITE      1
+#define PAL_BLACK      2
+#define PAL_TEXT_SHADE 3
+#define PAL_CURSOR     3
+#define PAL_BLOOD      4
+#define PAL_FISH_0     5
+#define PAL_FISH_1     6
+#define PAL_FISH_2     7
+#define PAL_BUBBLE     7
+#define PAL_BONE       8
 
 #endif /* RENDER_H */

@@ -17,7 +17,7 @@ INTERNAL void render_score ()
     int y = 2;
 
     render_bitmap(x-SPR_SCOREBGL.w,y, PAL_BLACK, &SPR_SCOREBGL);
-    render_fill(x,y,w,h, COLOR_BLACK);
+    render_fill(x,y,w,h, get_palette_color(PAL_BLACK,0));
     render_bitmap(x+w,y, PAL_BLACK, &SPR_SCOREBGR);
     render_text(x,y, PAL_TEXT_SHADE, SCORE_TEXT, gScore);
 }
@@ -35,8 +35,6 @@ INTERNAL void shoot ()
 }
 
 // GAME
-
-#define GAME_BACKGROUND_COLOR 0xFF2F4B99
 
 INTERNAL void start_game ()
 {
@@ -94,6 +92,6 @@ INTERNAL void update_application (float dt)
 
 INTERNAL void render_application (float dt)
 {
-    render_clear(GAME_BACKGROUND_COLOR);
+    render_clear(get_palette_color(PAL_BACKGROUND,0));
     render_game(dt);
 }

@@ -92,7 +92,26 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
     }
 }
 
-// ENTITY
+// ENT_SQUID
+
+INTERNAL void create_squid (Entity* entity)
+{
+    // @Incomplete: ...
+}
+INTERNAL void update_squid (Entity* entity, float dt)
+{
+    // @Incomplete: ...
+}
+INTERNAL void render_squid (Entity* entity, float dt)
+{
+    // @Incomplete: ...
+}
+INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, bool shot)
+{
+    // @Incomplete: ...
+}
+
+// ENTITIES
 
 INTERNAL void create_entity (EntityID id)
 {
@@ -108,7 +127,8 @@ INTERNAL void create_entity (EntityID id)
             // Specific creation logic for the different entity types.
             switch (entity->type)
             {
-                case (ENT_FISH): create_fish(entity); break;
+                case (ENT_FISH ): create_fish (entity); break;
+                case (ENT_SQUID): create_squid(entity); break;
             }
 
             break;
@@ -126,7 +146,8 @@ INTERNAL void update_entity (float dt)
             // Specific update logic for the different entity types.
             switch (entity->type)
             {
-                case (ENT_FISH): update_fish(entity, dt); break;
+                case (ENT_FISH ): update_fish (entity, dt); break;
+                case (ENT_SQUID): update_squid(entity, dt); break;
             }
         }
     }
@@ -142,7 +163,8 @@ INTERNAL void render_entity (float dt)
             // Specific render logic for the different entity types.
             switch (entity->type)
             {
-                case (ENT_FISH): render_fish(entity, dt); break;
+                case (ENT_FISH ): render_fish (entity, dt); break;
+                case (ENT_SQUID): render_squid(entity, dt); break;
             }
         }
     }
@@ -165,13 +187,12 @@ INTERNAL void collide_entity (bool shot)
             // Specific collision logic for the different entity types.
             switch (entity->type)
             {
-                case (ENT_FISH): collide_fish(entity, mx,my,mw,mh, shot); break;
+                case (ENT_FISH ): collide_fish (entity, mx,my,mw,mh, shot); break;
+                case (ENT_SQUID): collide_squid(entity, mx,my,mw,mh, shot); break;
             }
         }
     }
 }
-
-// SPAWNER
 
 INTERNAL void create_spawner ()
 {

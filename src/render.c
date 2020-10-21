@@ -590,6 +590,13 @@ INTERNAL int get_text_h (const char* text, ...)
     return height;
 }
 
+INTERNAL ARGBColor get_palette_color (int palette_index, int color_index)
+{
+    assert((color_index >= 0) && (color_index < gRenderer.palette.w));
+    ARGBColor* palette = gRenderer.palette.pixels + (palette_index*gRenderer.palette.w);
+    return palette[color_index];
+}
+
 INTERNAL void shake_camera (int x, int y, float duration)
 {
     gRenderer.shake_x = x, gRenderer.shake_y = y;
