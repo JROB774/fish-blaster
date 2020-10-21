@@ -1,16 +1,21 @@
 GLOBAL struct
 {
-    bool prev_mouse_state[MOUSE_BUTTON_TOTAL];
-    bool curr_mouse_state[MOUSE_BUTTON_TOTAL];
+    bool prev_mouse_state   [MOUSE_BUTTON_TOTAL];
+    bool curr_mouse_state   [MOUSE_BUTTON_TOTAL];
+    U8   prev_keyboard_state[SDL_NUM_SCANCODES ];
+    U8   curr_keyboard_state[SDL_NUM_SCANCODES ];
 
 } gInputState;
 
 INTERNAL void update_input_state ()
 {
+    // MOUSE
     memmove(gInputState.prev_mouse_state, gInputState.curr_mouse_state, sizeof(gInputState.curr_mouse_state));
-
     gInputState.curr_mouse_state[LMB] = SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(SDL_BUTTON_LEFT );
     gInputState.curr_mouse_state[RMB] = SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT);
+    // KEYBOARD
+    memcpy(gInputState.prev_keyboard_state, gInputState.curr_keyboard_state, SDL_NUM_SCANCODES*sizeof(U8));
+    memcpy(gInputState.curr_keyboard_state, SDL_GetKeyboardState(NULL), SDL_NUM_SCANCODES*sizeof(U8));
 }
 
 // MOUSE
@@ -59,4 +64,34 @@ INTERNAL float get_mouse_y ()
 
     int y; SDL_GetMouseState(NULL, &y);
     return CAST(float, (y-get_viewport().y) / scale);
+}
+
+// KEYBOARD
+
+INTERNAL bool key_pressed (KeyboardCode code)
+{
+    SDL_Scancode scancode = SDL_GetScancodeFromKey(code);
+    assert(scancode < 0 || scancode > SDL_NUM_SCANCODES);
+    return (gInputState.curr_keyboard_state[scancode] && !gInputState.prev_keyboard_state[scancode]);
+}
+
+INTERNAL bool key_released (KeyboardCode code)
+{
+    SDL_Scancode scancode = SDL_GetScancodeFromKey(code);
+    assert(scancode < 0 || scancode > SDL_NUM_SCANCODES);
+    return (!gInputState.curr_keyboard_state[scancode] && gInputState.prev_keyboard_state[scancode]);
+}
+
+INTERNAL bool key_down (KeyboardCode code)
+{
+    SDL_Scancode scancode = SDL_GetScancodeFromKey(code);
+    assert(scancode < 0 || scancode > SDL_NUM_SCANCODES);
+    return (gInputState.curr_keyboard_state[scancode] != 0);
+}
+
+INTERNAL bool key_up (KeyboardCode code)
+{
+    SDL_Scancode scancode = SDL_GetScancodeFromKey(code);
+    assert(scancode < 0 || scancode > SDL_NUM_SCANCODES);
+    return (gInputState.curr_keyboard_state[scancode] == 0);
 }
