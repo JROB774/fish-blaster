@@ -71,27 +71,27 @@ INTERNAL float get_mouse_y ()
 INTERNAL bool key_pressed (KeyboardCode code)
 {
     SDL_Scancode scancode = SDL_GetScancodeFromKey(code);
-    assert(scancode < 0 || scancode > SDL_NUM_SCANCODES);
+    assert(scancode >= 0 && scancode < SDL_NUM_SCANCODES);
     return (gInputState.curr_keyboard_state[scancode] && !gInputState.prev_keyboard_state[scancode]);
 }
 
 INTERNAL bool key_released (KeyboardCode code)
 {
     SDL_Scancode scancode = SDL_GetScancodeFromKey(code);
-    assert(scancode < 0 || scancode > SDL_NUM_SCANCODES);
+    assert(scancode >= 0 && scancode < SDL_NUM_SCANCODES);
     return (!gInputState.curr_keyboard_state[scancode] && gInputState.prev_keyboard_state[scancode]);
 }
 
 INTERNAL bool key_down (KeyboardCode code)
 {
     SDL_Scancode scancode = SDL_GetScancodeFromKey(code);
-    assert(scancode < 0 || scancode > SDL_NUM_SCANCODES);
+    assert(scancode >= 0 && scancode < SDL_NUM_SCANCODES);
     return (gInputState.curr_keyboard_state[scancode] != 0);
 }
 
 INTERNAL bool key_up (KeyboardCode code)
 {
     SDL_Scancode scancode = SDL_GetScancodeFromKey(code);
-    assert(scancode < 0 || scancode > SDL_NUM_SCANCODES);
+    assert(scancode >= 0 && scancode < SDL_NUM_SCANCODES);
     return (gInputState.curr_keyboard_state[scancode] == 0);
 }
