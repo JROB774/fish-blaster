@@ -1,10 +1,35 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-// COLLISION
+// ENTITY
 
-INTERNAL bool point_vs_rect_collision (float px, float py, float rx, float ry, float rw, float rh);
-INTERNAL bool rect_vs_rect_collision  (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh);
+typedef enum EntityID__
+{
+    ENT_FISH,
+    ENT_TOTAL
+
+} EntityID;
+
+typedef struct Entity__
+{
+    EntityID type;
+    float x,y;
+    int palette;
+    int frame;
+    int dir;
+    bool alive;
+    float t;
+
+} Entity;
+
+#define ENTITY_MAX 512
+
+GLOBAL Entity gEntity[ENTITY_MAX];
+
+INTERNAL void  create_entity (EntityID id);
+INTERNAL void  update_entity (float dt);
+INTERNAL void  render_entity (float dt);
+INTERNAL void collide_entity (bool shot); // Whether a shot was fired ot its just normal collision.
 
 // SPAWNER
 
@@ -18,32 +43,5 @@ GLOBAL Spawner gSpawner;
 
 INTERNAL void create_spawner ();
 INTERNAL void update_spawner (float dt);
-
-// FISH
-
-#define FISH_SPAWN_START 0.0f
-#define FISH_SPAWN_RATE  0.5f
-#define FISH_ANIM_SPEED  0.2f
-#define FISH_MAX   128
-#define FISH_SPEED 50
-#define FISH_SCORE 10
-
-typedef struct Fish__
-{
-    float x,y;
-    int palette;
-    int frame;
-    HDir dir;
-    bool alive;
-    float t;
-
-} Fish;
-
-GLOBAL Fish gEntityFish[FISH_MAX];
-
-INTERNAL void  create_fish ();
-INTERNAL void  update_fish (float dt);
-INTERNAL void  render_fish (float dt);
-INTERNAL void collide_fish ();
 
 #endif /* ENTITY_H */

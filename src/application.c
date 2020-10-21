@@ -45,22 +45,24 @@ INTERNAL void start_game ()
 INTERNAL void update_game (float dt)
 {
     update_spawner(dt);
-    update_fish(dt);
-    update_effect(dt);
+    update_entity (dt);
+    update_effect (dt);
 
     // Handle shooting.
+    bool shot = false;
     if (button_pressed(LMB))
     {
-        // Check for collision with shootable enemies.
-        collide_fish();
         shoot();
+        shot = true;
     }
+
+    collide_entity(shot);
 }
 INTERNAL void render_game (float dt)
 {
     begin_camera();
     render_effect(dt);
-    render_fish(dt);
+    render_entity(dt);
     end_camera();
 
     render_cursor();
