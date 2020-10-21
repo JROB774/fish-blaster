@@ -83,7 +83,7 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
             // Kill the fish.
             create_effect(EFX_BLOOD, x,y,w,h, 10,15);
             play_sound(SND_HIT,0);
-            gScore += FISH_SCORE;
+            gApp.score += FISH_SCORE;
             entity->alive = false;
         }
     }

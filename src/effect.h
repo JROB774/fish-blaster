@@ -6,6 +6,7 @@ typedef enum EffectID__
     EFX_BUBBLE,
     EFX_BLOOD,
     EFX_BONE,
+    EFX_SHOT,
     EFX_TOTAL
 
 } EffectID;

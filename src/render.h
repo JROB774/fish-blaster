@@ -66,6 +66,9 @@ GLOBAL const Clip SPR_BONE_2   = { 80,   8,  8,  8 };
 GLOBAL const Clip SPR_BONE_3   = { 88,   8,  8,  8 };
 GLOBAL const Clip SPR_URCHIN_0 = { 80,  16, 16, 16 };
 GLOBAL const Clip SPR_URCHIN_1 = { 96,  16, 16, 16 };
+GLOBAL const Clip SPR_SHOT_0   = {  0,  80,  8,  8 };
+GLOBAL const Clip SPR_SHOT_1   = {  0,  88,  8,  8 };
+GLOBAL const Clip SPR_SHOT_2   = {  0,  96,  8,  8 };
 
 // ANIMATIONS
 
@@ -75,6 +78,7 @@ GLOBAL const Clip* ANM_BUBBLE[] = { &SPR_BUBBLE_0, &SPR_BUBBLE_1, &SPR_BUBBLE_2,
 GLOBAL const Clip* ANM_BLOOD [] = { &SPR_BLOOD_0,  &SPR_BLOOD_1,  &SPR_BLOOD_2,  &SPR_BLOOD_3, &SPR_BLOOD_4, &SPR_BLOOD_5, &SPR_BLOOD_6, &SPR_BLOOD_7 };
 GLOBAL const Clip* ANM_BONE  [] = { &SPR_BONE_0,   &SPR_BONE_1,   &SPR_BONE_2,   &SPR_BONE_3                                                          };
 GLOBAL const Clip* ANM_URCHIN[] = { &SPR_URCHIN_0, &SPR_URCHIN_1                                                                                      };
+GLOBAL const Clip* ANM_SHOT  [] = { &SPR_SHOT_0,   &SPR_SHOT_1,   &SPR_SHOT_2                                                                         };
 
 // PALETTES
 
@@ -83,6 +87,7 @@ GLOBAL const Clip* ANM_URCHIN[] = { &SPR_URCHIN_0, &SPR_URCHIN_1                
 #define PAL_BLACK      2
 #define PAL_TEXT_SHADE 3
 #define PAL_CURSOR     3
+#define PAL_SHOT       3
 #define PAL_BLOOD      4
 #define PAL_FISH_0     5
 #define PAL_FISH_1     6

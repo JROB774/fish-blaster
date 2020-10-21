@@ -119,6 +119,32 @@ INTERNAL void update_bone (Effect* effect, float dt)
     }
 }
 
+// EFX_SHOT
+
+#define SHOT_MIN_ANM_SPEED 0.05f
+#define SHOT_MAX_ANM_SPEED 0.10f
+
+INTERNAL void create_shot (Effect* effect)
+{
+    effect->t = random_float_range(SHOT_MIN_ANM_SPEED,SHOT_MAX_ANM_SPEED);
+    effect->palette = PAL_SHOT;
+    effect->frame = 0;
+}
+INTERNAL void update_shot (Effect* effect, float dt)
+{
+    // Animate the bubble and if it is done animating then kill it.
+    effect->t -= dt;
+    if (effect->t <= 0.0f)
+    {
+        effect->t = random_float_range(SHOT_MIN_ANM_SPEED,SHOT_MAX_ANM_SPEED);
+        effect->frame++;
+        if (effect->frame >= ARRAYSIZE(ANM_SHOT))
+        {
+            effect->alive = false;
+        }
+    }
+}
+
 // EFFECTS
 
 INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_count, int max_count)
@@ -145,6 +171,7 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
                 case (EFX_BUBBLE): create_bubble(effect); break;
                 case (EFX_BLOOD ): create_blood (effect); break;
                 case (EFX_BONE  ): create_bone  (effect); break;
+                case (EFX_SHOT  ): create_shot  (effect); break;
             }
 
             count--;
@@ -169,6 +196,7 @@ INTERNAL void update_effect (float dt)
                 case (EFX_BUBBLE): update_bubble(effect, dt); break;
                 case (EFX_BLOOD ): update_blood (effect, dt); break;
                 case (EFX_BONE  ): update_bone  (effect, dt); break;
+                case (EFX_SHOT  ): update_shot  (effect, dt); break;
             }
         }
     }
@@ -188,6 +216,7 @@ INTERNAL void render_effect (float dt)
                 case (EFX_BUBBLE): clip = ANM_BUBBLE[effect->frame]; break;
                 case (EFX_BLOOD ): clip = ANM_BLOOD [effect->frame]; break;
                 case (EFX_BONE  ): clip = ANM_BONE  [effect->frame]; break;
+                case (EFX_SHOT  ): clip = ANM_SHOT  [effect->frame]; break;
             }
 
             render_bitmap(effect->x,effect->y, effect->palette, clip);

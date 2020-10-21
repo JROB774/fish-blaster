@@ -1,9 +1,14 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-GLOBAL enum { APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } gAppState;
+typedef enum AppState__ { APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } AppState;
 
-GLOBAL int gScore;
+GLOBAL struct
+{
+    AppState state;
+    int score;
+
+} gApp;
 
 INTERNAL bool   init_application ();
 INTERNAL void   quit_application ();

@@ -10,23 +10,27 @@ INTERNAL void render_score (int y)
 {
     const char* SCORE_TEXT = "%06d";
 
-    int w = get_text_w(SCORE_TEXT,gScore);
+    int w = get_text_w(SCORE_TEXT,gApp.score);
     int h = TILE_H;
     int x = (SCREEN_W-w)/2;
 
     render_bitmap(x-SPR_SCOREBGL.w,y, PAL_BLACK, &SPR_SCOREBGL);
     render_fill(x,y,w,h, get_palette_color(PAL_BLACK,0));
     render_bitmap(x+w,y, PAL_BLACK, &SPR_SCOREBGR);
-    render_text(x,y, PAL_TEXT_SHADE, SCORE_TEXT, gScore);
+    render_text(x,y, PAL_TEXT_SHADE, SCORE_TEXT, gApp.score);
 }
 INTERNAL void shoot ()
 {
-    int x = get_mouse_x()-6;
-    int y = get_mouse_y()-6;
+    int mx = get_mouse_x();
+    int my = get_mouse_y();
+
+    int x = mx-6;
+    int y = my-6;
     int w = 12;
     int h = 12;
 
     create_effect(EFX_BUBBLE, x,y,w,h, 2,3);
+    create_effect(EFX_SHOT, mx,my,1,1, 1,1);
     play_sound(SND_SHOOT,0);
     shake_camera(1,1,0.1f);
 }
@@ -95,7 +99,7 @@ INTERNAL void update_application (float dt)
 {
     update_camera(dt);
 
-    switch (gAppState)
+    switch (gApp.state)
     {
         case (APP_STATE_GAME    ): update_game    (dt); break;
         case (APP_STATE_GAMEOVER): update_gameover(dt); break;
@@ -105,7 +109,7 @@ INTERNAL void render_application (float dt)
 {
     render_clear(get_palette_color(PAL_BACKGROUND,0));
 
-    switch (gAppState)
+    switch (gApp.state)
     {
         case (APP_STATE_GAME    ): render_game    (dt); break;
         case (APP_STATE_GAMEOVER): render_gameover(dt); break;
@@ -121,10 +125,10 @@ INTERNAL void start_game ()
 
     create_spawner();
 
-    gScore = 0;
-    gAppState = APP_STATE_GAME;
+    gApp.score = 0;
+    gApp.state = APP_STATE_GAME;
 }
 INTERNAL void game_over ()
 {
-    gAppState = APP_STATE_GAMEOVER;
+    gApp.state = APP_STATE_GAMEOVER;
 }
