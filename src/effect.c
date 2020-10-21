@@ -202,8 +202,23 @@ INTERNAL void update_effect (float dt)
     }
 }
 
+INTERNAL int effect_z_compare (const void* a, const void* b)
+{
+    const Effect* ea = CAST(Effect*, a);
+    const Effect* eb = CAST(Effect*, b);
+
+    if (ea->type < eb->type) return -1;
+    if (ea->type > eb->type) return  1;
+
+    return 0;
+}
+
 INTERNAL void render_effect (float dt)
 {
+    // Sort the effect list so they render in the correct order. The order
+    // is determiend by the order of the IDs in the EffectID enumeratrion.
+    qsort(gEffect, EFFECT_MAX, sizeof(Effect), effect_z_compare);
+
     for (int i=0; i<EFFECT_MAX; ++i)
     {
         Effect* effect = gEffect+i;
