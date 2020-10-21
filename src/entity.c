@@ -141,8 +141,7 @@ INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bo
 
     if (rect_vs_rect_collision(mx,my,mw,mh, x,y,w,h))
     {
-        // @Incomplete: Add a game over state...
-        printf("GAME OVER!\n");
+        game_over();
     }
 }
 
