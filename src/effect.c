@@ -1,6 +1,6 @@
 // EFX_BUBBLE
 
-#define BUBBLE_MAX_VELOCITY  150
+#define BUBBLE_MAX_VELOCITY  100
 #define BUBBLE_VELOCITY_INC  10
 #define BUBBLE_MIN_ANM_SPEED 0.2f
 #define BUBBLE_MAX_ANM_SPEED 0.3f
@@ -46,7 +46,7 @@ INTERNAL void update_bubble (Effect* effect, float dt)
 #define BLOOD_MIN_ANM_SPEED 0.2f
 #define BLOOD_MAX_ANM_SPEED 0.6f
 #define BLOOD_VELOCITY_INC  0.5f
-#define BLOOD_MAX_VELOCITY  10
+#define BLOOD_MAX_VELOCITY  8
 
 INTERNAL void create_blood (Effect* effect)
 {
