@@ -4,6 +4,7 @@
 typedef enum EntityID__
 {
     ENT_FISH,
+    ENT_URCHIN,
     ENT_SQUID,
     ENT_TOTAL
 
@@ -24,6 +25,8 @@ typedef struct Entity__
 typedef struct Spawner__
 {
     float t_fish;
+    float t_urchin;
+    float t_squid;
 
 } Spawner;
 

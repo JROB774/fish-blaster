@@ -45,7 +45,6 @@ int main (int argc, char** argv)
                         }
                     }
 
-                    render_clear(get_palette_color(PAL_BACKGROUND,0));
                     update_application(gFrameTimer.delta_time);
                     render_application(gFrameTimer.delta_time);
                     cap_framerate();

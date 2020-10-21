@@ -312,9 +312,16 @@ INTERNAL void quit_renderer ()
 INTERNAL void render_clear (ARGBColor color)
 {
     // We clear outside the viewport to black.
-    SDL_SetRenderDrawColor(gRenderer.renderer, 0x00,0x00,0x00,0xFF);
+    ARGBColor border_color = get_palette_color(PAL_BLACK,0);
+
+    int r = (border_color >> 16) & 0xFF;
+    int g = (border_color >>  8) & 0xFF;
+    int b = (border_color >>  0) & 0xFF;
+
+    SDL_SetRenderDrawColor(gRenderer.renderer, r,g,b,0xFF);
     SDL_RenderClear(gRenderer.renderer);
 
+    // We clear the inside to what has been passed in.
     for (int i=0; i<(SCREEN_W*SCREEN_H); ++i) CAST(ARGBColor*,gRenderer.screen->pixels)[i] = color;
 }
 
