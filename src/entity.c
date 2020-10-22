@@ -68,10 +68,10 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
 {
     if (shot)
     {
-        int x = CAST(int,entity->x)+3;
-        int y = CAST(int,entity->y)+2;
-        int w = 9;
-        int h = 4;
+        int x = CAST(int,entity->x)+2;
+        int y = CAST(int,entity->y)+1;
+        int w = 12;
+        int h = 6;
 
         if (rect_vs_rect_collision(mx,my,mw,mh, x,y,w,h))
         {
