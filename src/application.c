@@ -59,8 +59,9 @@ INTERNAL void update_game (float dt)
 INTERNAL void render_game (float dt)
 {
     begin_camera();
-    render_effect(dt);
+    render_effect_lo(dt);
     render_entity(dt);
+    render_effect_hi(dt);
     end_camera();
 
     render_cursor();

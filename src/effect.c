@@ -205,6 +205,42 @@ INTERNAL void update_shot (Effect* effect, float dt)
     }
 }
 
+// EFX_SCORE
+
+#define SCORE_VELOCITY 60
+#define SCORE_MOVETIME 0.20f
+#define SCORE_LIFETIME 0.40f
+
+INTERNAL void create_score (Effect* effect)
+{
+    effect->palette = PAL_TEXT_SHADE;
+    effect->t = SCORE_LIFETIME;
+    effect->vx = 0.0f;
+    effect->vy = -SCORE_VELOCITY;
+}
+INTERNAL void update_score (Effect* effect, float dt)
+{
+    effect->t -= dt;
+    if (effect->t <= (SCORE_LIFETIME-SCORE_MOVETIME))
+    {
+        effect->vy = 0.0f;
+        if (effect->t <= 0.0f)
+        {
+            effect->alive = false;
+        }
+    }
+    if (effect->vy == 0.0f)
+    {
+        if ((effect->frame % 2) == 0)
+        {
+            effect->invis = !effect->invis;
+        }
+    }
+
+    effect->y += effect->vy * dt;
+    effect->frame++;
+}
+
 // EFFECTS
 
 INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_count, int max_count)
@@ -228,9 +264,26 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
         {
             effect->alive = true;
             effect->type = id;
+            effect->invis = false;
 
-            effect->x  = random_int_range(x,x+w) - 4; // @Hardcoded: All effects are currently 8x8 pixels!
-            effect->y  = random_int_range(y,y+h) - 4; // @Hardcoded: All effects are currently 8x8 pixels!
+            int fw = 0;
+            int fh = 0;
+
+            switch (effect->type)
+            {
+                case (EFX_BLOOD    ): fw =  8, fh = 8; break;
+                case (EFX_GIB_BLOOD): fw =  8, fh = 8; break;
+                case (EFX_GIB      ): fw =  8, fh = 8; break;
+                case (EFX_BUBBLE   ): fw =  8, fh = 8; break;
+                case (EFX_SHOT     ): fw =  8, fh = 8; break;
+                case (EFX_SCORE10  ):
+                case (EFX_SCORE20  ):
+                case (EFX_SCORE40  ):
+                case (EFX_SCORE80  ): fw = 16, fh = 8; break;
+            }
+
+            effect->x  = random_int_range(x,x+w) - (fw/2);
+            effect->y  = random_int_range(y,y+h) - (fh/2);
             effect->vx = 0;
             effect->vy = 0;
             effect->t  = 0.0f;
@@ -243,6 +296,10 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
                 case (EFX_GIB      ): create_gib      (effect); break;
                 case (EFX_BUBBLE   ): create_bubble   (effect); break;
                 case (EFX_SHOT     ): create_shot     (effect); break;
+                case (EFX_SCORE10  ):
+                case (EFX_SCORE20  ):
+                case (EFX_SCORE40  ):
+                case (EFX_SCORE80  ): create_score    (effect); break;
             }
 
             count--;
@@ -269,6 +326,10 @@ INTERNAL void update_effect (float dt)
                 case (EFX_GIB      ): update_gib       (effect, dt); break;
                 case (EFX_BUBBLE   ): update_bubble    (effect, dt); break;
                 case (EFX_SHOT     ): update_shot      (effect, dt); break;
+                case (EFX_SCORE10  ):
+                case (EFX_SCORE20  ):
+                case (EFX_SCORE40  ):
+                case (EFX_SCORE80  ): update_score     (effect, dt); break;
             }
         }
     }
@@ -285,7 +346,7 @@ INTERNAL int effect_z_compare (const void* a, const void* b)
     return 0;
 }
 
-INTERNAL void render_effect (float dt)
+INTERNAL void render_effect_lo (float dt)
 {
     // Sort the effect list so they render in the correct order. The order
     // is determiend by the order of the IDs in the EffectID enumeration.
@@ -296,18 +357,60 @@ INTERNAL void render_effect (float dt)
         Effect* effect = gEffect+i;
         if (effect->alive)
         {
-            // Specific render logic for the different effect types.
-            const Clip* clip = NULL;;
-            switch (effect->type)
+            // We only want to render certain effect types on the low pass.
+            if (effect->type != EFX_SCORE10 &&
+                effect->type != EFX_SCORE20 &&
+                effect->type != EFX_SCORE40 &&
+                effect->type != EFX_SCORE80)
             {
-                case (EFX_BLOOD    ): clip = ANM_BLOOD [effect->frame]; break;
-                case (EFX_GIB_BLOOD): clip = ANM_BLOOD [effect->frame]; break;
-                case (EFX_GIB      ): clip = ANM_BLOOD [effect->frame]; break;
-                case (EFX_BUBBLE   ): clip = ANM_BUBBLE[effect->frame]; break;
-                case (EFX_SHOT     ): clip = ANM_SHOT  [effect->frame]; break;
-            }
+                // Specific render logic for the different effect types.
+                const Clip* clip = NULL;;
+                switch (effect->type)
+                {
+                    case (EFX_BLOOD    ): clip = ANM_BLOOD [effect->frame]; break;
+                    case (EFX_GIB_BLOOD): clip = ANM_BLOOD [effect->frame]; break;
+                    case (EFX_GIB      ): clip = ANM_BLOOD [effect->frame]; break;
+                    case (EFX_BUBBLE   ): clip = ANM_BUBBLE[effect->frame]; break;
+                    case (EFX_SHOT     ): clip = ANM_SHOT  [effect->frame]; break;
+                }
 
-            render_bitmap(effect->x,effect->y, effect->palette, clip);
+                if (!effect->invis)
+                {
+                    render_bitmap(effect->x,effect->y, effect->palette, clip);
+                }
+            }
+        }
+    }
+}
+
+INTERNAL void render_effect_hi (float dt)
+{
+    for (int i=0; i<EFFECT_MAX; ++i)
+    {
+        Effect* effect = gEffect+i;
+        if (effect->alive)
+        {
+            // We only want to render certain effect types on the high pass.
+            if (effect->type == EFX_SCORE10 ||
+                effect->type == EFX_SCORE20 ||
+                effect->type == EFX_SCORE40 ||
+                effect->type == EFX_SCORE80)
+            {
+                // Specific render logic for the different effect types.
+                const Clip* clip = NULL;;
+                switch (effect->type)
+                {
+                    case (EFX_SCORE10  ): clip = &SPR_SCORE10; break;
+                    case (EFX_SCORE20  ): clip = &SPR_SCORE20; break;
+                    case (EFX_SCORE40  ): clip = &SPR_SCORE40; break;
+                    case (EFX_SCORE80  ): clip = &SPR_SCORE80; break;
+                }
+
+                if (!effect->invis)
+                {
+                    render_bitmap(effect->x,effect->y, effect->palette, clip);
+                }
+            }
         }
     }
 }

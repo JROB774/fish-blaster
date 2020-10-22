@@ -73,6 +73,10 @@ GLOBAL const Clip SPR_URCHIN_1 = { 96,  32, 16, 16 };
 GLOBAL const Clip SPR_SHOT_0   = {  0,  80,  8,  8 };
 GLOBAL const Clip SPR_SHOT_1   = {  0,  88,  8,  8 };
 GLOBAL const Clip SPR_SHOT_2   = {  0,  96,  8,  8 };
+GLOBAL const Clip SPR_SCORE10  = {  0,  32, 16,  8 };
+GLOBAL const Clip SPR_SCORE20  = { 16,  32, 16,  8 };
+GLOBAL const Clip SPR_SCORE40  = { 32,  32, 16,  8 };
+GLOBAL const Clip SPR_SCORE80  = { 48,  32, 16,  8 };
 
 // ANIMATIONS
 
