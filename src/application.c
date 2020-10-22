@@ -101,6 +101,39 @@ INTERNAL void quit_application ()
 {
     SDL_ShowCursor(SDL_ENABLE);
 }
+INTERNAL void handle_application (SDL_Event* event)
+{
+    // Handle checking secret code input and enabling the codes.
+    if (event->type == SDL_KEYDOWN)
+    {
+        int keycode = event->key.keysym.sym;
+        if (keycode >= 'a' && keycode <= 'z')
+        {
+            if (gApp.code_length >= CODE_LENGTH) gApp.code_length = 0;
+            gApp.code[gApp.code_length++] = CAST(char, keycode);
+
+            // Make sure we're matching at least one of the codes so far and if not
+            // reset the length of our input to zero to avoid messing up the buffer.
+             if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) != 0 &&
+                 strncmp(gApp.code, CODE_BLOOD, gApp.code_length) != 0)
+            {
+                gApp.code_length = 0;
+            }
+
+            // If we've entered a full code then check which one matches and assign it.
+            if (gApp.code_length == CODE_LENGTH)
+            {
+                if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) == 0) gApp.code_retro_enabled = true;
+                if (strncmp(gApp.code, CODE_BLOOD, gApp.code_length) == 0) gApp.code_blood_enabled = true;
+            }
+        }
+    }
+
+    if (gApp.code_retro_enabled)
+    {
+        set_palette_mode(PAL_MODE_GAMEBOY);
+    }
+}
 INTERNAL void update_application (float dt)
 {
     update_camera(dt);

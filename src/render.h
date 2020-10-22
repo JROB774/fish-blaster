@@ -14,6 +14,9 @@ typedef U32 ARGBColor;
 
 typedef struct Clip__ { int x, y, w, h; } Clip;
 
+#define PAL_MODE_DEFAULT 0
+#define PAL_MODE_GAMEBOY 1
+
 // INTERFACE
 
 INTERNAL bool      init_renderer     ();
@@ -26,6 +29,7 @@ INTERNAL void      render_point      (int x,  int y,                  ARGBColor 
 INTERNAL void      render_line       (int x1, int y1, int x2, int y2, ARGBColor color);
 INTERNAL void      render_rect       (int x,  int y,  int w,  int h,  ARGBColor color);
 INTERNAL void      render_fill       (int x,  int y,  int w,  int h,  ARGBColor color);
+INTERNAL void      set_palette_mode  (int palette_mode);
 INTERNAL SDL_Rect  get_viewport      ();
 INTERNAL int       get_text_w        (const char* text, ...);
 INTERNAL int       get_text_h        (const char* text, ...);

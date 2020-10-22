@@ -22,6 +22,7 @@ int main (int argc, char** argv)
                     SDL_Event event;
                     while (SDL_PollEvent(&event))
                     {
+                        handle_application(&event);
                         switch (event.type)
                         {
                             case (SDL_KEYDOWN):

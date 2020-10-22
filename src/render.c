@@ -55,6 +55,7 @@ GLOBAL struct
     SDL_Rect      viewport;
     Bitmap        bitmap;
     Palette       palette;
+    int           palette_mode;
     int           txoffset;
     int           tyoffset;
     int           xoffset;
@@ -373,7 +374,7 @@ INTERNAL void render_bitmap (int x, int y, int palette_index, const Clip* clip)
     x2 = CLAMP(x2, get_render_target_min_x(), get_render_target_max_x());
     y2 = CLAMP(y2, get_render_target_min_y(), get_render_target_max_y());
 
-    ARGBColor* palette = gRenderer.palette.pixels + (palette_index*gRenderer.palette.w);
+    ARGBColor* palette = gRenderer.palette.pixels + (palette_index*gRenderer.palette.w+(gRenderer.palette_mode*4));
     for (int iy=y1,sy=by; iy<=y2; ++iy,++sy)
     {
         if (iy >= get_render_target_min_y())
@@ -540,6 +541,11 @@ INTERNAL void render_fill (int x, int y, int w, int h, ARGBColor color)
     }
 }
 
+INTERNAL void set_palette_mode (int palette_mode)
+{
+    gRenderer.palette_mode = palette_mode;
+}
+
 INTERNAL SDL_Rect get_viewport ()
 {
     return gRenderer.viewport;
@@ -600,7 +606,7 @@ INTERNAL int get_text_h (const char* text, ...)
 INTERNAL ARGBColor get_palette_color (int palette_index, int color_index)
 {
     assert((color_index >= 0) && (color_index < gRenderer.palette.w));
-    ARGBColor* palette = gRenderer.palette.pixels + (palette_index*gRenderer.palette.w);
+    ARGBColor* palette = gRenderer.palette.pixels + (palette_index*gRenderer.palette.w+(gRenderer.palette_mode*4));
     return palette[color_index];
 }
 
