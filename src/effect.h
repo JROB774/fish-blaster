@@ -3,7 +3,9 @@
 
 typedef enum EffectID__
 {
+    EFX_GIB_BLOOD,
     EFX_BLOOD,
+    EFX_GIB,
     EFX_BONE,
     EFX_BUBBLE,
     EFX_SHOT,

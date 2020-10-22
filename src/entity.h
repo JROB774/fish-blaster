@@ -4,8 +4,8 @@
 typedef enum EntityID__
 {
     ENT_FISH,
-    ENT_URCHIN,
     ENT_SQUID,
+    ENT_URCHIN,
     ENT_TOTAL
 
 } EntityID;

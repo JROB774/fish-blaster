@@ -21,6 +21,8 @@ INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, fl
 #define FISH_DIR_R 1
 #define FISH_MIN_BLOOD 10
 #define FISH_MAX_BLOOD 15
+#define FISH_MIN_GIB   1
+#define FISH_MAX_GIB   4
 
 INTERNAL void create_fish (Entity* entity)
 {
@@ -75,11 +77,32 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
         {
             // Kill the fish.
             create_effect(EFX_BLOOD, x,y,w,h, FISH_MIN_BLOOD,FISH_MAX_BLOOD);
+            create_effect(EFX_GIB, x,y,w,h, FISH_MIN_GIB,FISH_MAX_GIB);
             play_sound(SND_HIT,0);
             gApp.score += FISH_SCORE;
             entity->alive = false;
         }
     }
+}
+
+// ENT_SQUID
+
+INTERNAL void create_squid (Entity* entity)
+{
+    // @Incomplete: ...
+}
+INTERNAL void update_squid (Entity* entity, float dt)
+{
+    // @Incomplete: ...
+}
+INTERNAL const Clip* render_squid (Entity* entity, float dt)
+{
+    // @Incomplete: ...
+    return NULL;
+}
+INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, bool shot)
+{
+    // @Incomplete: ...
 }
 
 // ENT_URCHIN
@@ -160,26 +183,6 @@ INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bo
     }
 }
 
-// ENT_SQUID
-
-INTERNAL void create_squid (Entity* entity)
-{
-    // @Incomplete: ...
-}
-INTERNAL void update_squid (Entity* entity, float dt)
-{
-    // @Incomplete: ...
-}
-INTERNAL const Clip* render_squid (Entity* entity, float dt)
-{
-    // @Incomplete: ...
-    return NULL;
-}
-INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, bool shot)
-{
-    // @Incomplete: ...
-}
-
 // ENTITIES
 
 INTERNAL void create_entity (EntityID id)
@@ -200,8 +203,8 @@ INTERNAL void create_entity (EntityID id)
             switch (entity->type)
             {
                 case (ENT_FISH  ): create_fish  (entity); break;
-                case (ENT_URCHIN): create_urchin(entity); break;
                 case (ENT_SQUID ): create_squid (entity); break;
+                case (ENT_URCHIN): create_urchin(entity); break;
             }
 
             break;
@@ -220,15 +223,30 @@ INTERNAL void update_entity (float dt)
             switch (entity->type)
             {
                 case (ENT_FISH  ): update_fish  (entity, dt); break;
-                case (ENT_URCHIN): update_urchin(entity, dt); break;
                 case (ENT_SQUID ): update_squid (entity, dt); break;
+                case (ENT_URCHIN): update_urchin(entity, dt); break;
             }
         }
     }
 }
 
+INTERNAL int entity_z_compare (const void* a, const void* b)
+{
+    const Entity* ea = CAST(Entity*, a);
+    const Entity* eb = CAST(Entity*, b);
+
+    if (ea->type < eb->type) return -1;
+    if (ea->type > eb->type) return  1;
+
+    return 0;
+}
+
 INTERNAL void render_entity (float dt)
 {
+    // Sort the entity list so they render in the correct order. The order
+    // is determiend by the order of the IDs in the EntityID enumeration.
+    qsort(gEntity, ENTITY_MAX, sizeof(Entity), entity_z_compare);
+
     for (int i=0; i<ENTITY_MAX; ++i)
     {
         Entity* entity = gEntity+i;
@@ -239,8 +257,8 @@ INTERNAL void render_entity (float dt)
             switch (entity->type)
             {
                 case (ENT_FISH  ): frame = render_fish  (entity, dt); break;
-                case (ENT_URCHIN): frame = render_urchin(entity, dt); break;
                 case (ENT_SQUID ): frame = render_squid (entity, dt); break;
+                case (ENT_URCHIN): frame = render_urchin(entity, dt); break;
             }
             render_bitmap(entity->x,entity->y,entity->palette,frame);
         }
@@ -268,8 +286,8 @@ INTERNAL void collide_entity (bool shot)
             switch (entity->type)
             {
                 case (ENT_FISH  ): collide_fish  (entity, x,y,w,h, shot); break;
-                case (ENT_URCHIN): collide_urchin(entity, x,y,w,h, shot); break;
                 case (ENT_SQUID ): collide_squid (entity, x,y,w,h, shot); break;
+                case (ENT_URCHIN): collide_urchin(entity, x,y,w,h, shot); break;
             }
         }
     }

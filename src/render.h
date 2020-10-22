@@ -88,12 +88,13 @@ GLOBAL const Clip* ANM_SHOT  [] = { &SPR_SHOT_0,   &SPR_SHOT_1,   &SPR_SHOT_2   
 #define PAL_TEXT_SHADE 3
 #define PAL_CURSOR     3
 #define PAL_SHOT       3
-#define PAL_BLOOD      4
-#define PAL_FISH_0     5
-#define PAL_FISH_1     6
-#define PAL_FISH_2     7
-#define PAL_URCHIN     6
-#define PAL_BUBBLE     7
-#define PAL_BONE       8
+#define PAL_BLOOD_0    4
+#define PAL_BLOOD_1    5
+#define PAL_FISH_0     6
+#define PAL_FISH_1     7
+#define PAL_FISH_2     8
+#define PAL_URCHIN     7
+#define PAL_BUBBLE     8
+#define PAL_BONE       9
 
 #endif /* RENDER_H */
