@@ -108,12 +108,15 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 
 // ENT_URCHIN
 
-#define URCHIN_SPAWN_START 3.0f
-#define URCHIN_SPAWN_RATE  1.0f
-#define URCHIN_ANM_SPEED   0.2f
-#define URCHIN_WIDTH  16
-#define URCHIN_HEIGHT 16
-#define URCHIN_SPEED  40
+#define URCHIN_SPAWN_START      8.0f
+#define URCHIN_SPAWN_RATE       1.0f
+#define URCHIN_INCREMENT_START 10.0f
+#define URCHIN_INCREMENT_RATE  10.0f
+#define URCHIN_ANM_SPEED        0.2f
+#define URCHIN_MAX_START 5
+#define URCHIN_WIDTH    16
+#define URCHIN_HEIGHT   16
+#define URCHIN_SPEED    40
 
 INTERNAL void create_urchin (Entity* entity)
 {
@@ -296,24 +299,39 @@ INTERNAL void collide_entity (bool shot)
 
 INTERNAL void create_spawner ()
 {
-    gSpawner.t_fish = FISH_SPAWN_START;
-    gSpawner.t_urchin = URCHIN_SPAWN_START;
+    gSpawner.fish_spawn_timer = FISH_SPAWN_START;
+
+    gSpawner.urchin_spawn_timer = URCHIN_SPAWN_START;
+    gSpawner.urchin_increment_timer = URCHIN_INCREMENT_START;
+    gSpawner.urchin_max_count = URCHIN_MAX_START;
+    gSpawner.urchin_count = 0;
 }
 
 INTERNAL void update_spawner (float dt)
 {
     // FISH
-    if (gSpawner.t_fish > 0.0f) gSpawner.t_fish -= dt;
-    else
+    gSpawner.fish_spawn_timer -= dt;
+    if (gSpawner.fish_spawn_timer <= 0.0f)
     {
         create_entity(ENT_FISH);
-        gSpawner.t_fish = FISH_SPAWN_RATE;
+        gSpawner.fish_spawn_timer = FISH_SPAWN_RATE;
     }
+
     // URCHIN
-    if (gSpawner.t_urchin > 0.0f) gSpawner.t_urchin -= dt;
-    else
+    gSpawner.urchin_spawn_timer -= dt;
+    if (gSpawner.urchin_spawn_timer <= 0.0f)
     {
-        create_entity(ENT_URCHIN);
-        gSpawner.t_urchin = URCHIN_SPAWN_RATE;
+        if (gSpawner.urchin_count < gSpawner.urchin_max_count)
+        {
+            create_entity(ENT_URCHIN);
+            gSpawner.urchin_count++;
+        }
+        gSpawner.urchin_spawn_timer = URCHIN_SPAWN_RATE;
+    }
+    gSpawner.urchin_increment_timer -= dt;
+    if (gSpawner.urchin_increment_timer <= 0.0f)
+    {
+        gSpawner.urchin_max_count++;
+        gSpawner.urchin_increment_timer = URCHIN_INCREMENT_RATE;
     }
 }

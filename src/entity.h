@@ -25,9 +25,12 @@ typedef struct Entity__
 
 typedef struct Spawner__
 {
-    float t_fish;
-    float t_urchin;
-    float t_squid;
+    float fish_spawn_timer;
+
+    float urchin_spawn_timer;
+    float urchin_increment_timer;
+    int   urchin_max_count;
+    int   urchin_count;
 
 } Spawner;
 
