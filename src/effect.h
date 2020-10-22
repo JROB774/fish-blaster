@@ -6,7 +6,6 @@ typedef enum EffectID__
     EFX_GIB_BLOOD,
     EFX_BLOOD,
     EFX_GIB,
-    EFX_BONE,
     EFX_BUBBLE,
     EFX_SHOT,
     EFX_TOTAL
@@ -24,7 +23,7 @@ typedef struct Effect__
 
 } Effect;
 
-#define EFFECT_MAX 512
+#define EFFECT_MAX 2048
 
 GLOBAL Effect gEffect[EFFECT_MAX];
 

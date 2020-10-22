@@ -9,7 +9,10 @@
 
 INTERNAL void create_gib_blood (Effect* effect)
 {
-    effect->t = random_float_range(GIB_BLOOD_MIN_ANM_SPEED,GIB_BLOOD_MAX_ANM_SPEED);
+    float min = GIB_BLOOD_MIN_ANM_SPEED;
+    float max = GIB_BLOOD_MAX_ANM_SPEED;
+
+    effect->t = random_float_range(min,max);
     effect->palette = PAL_BLOOD_1;
     effect->frame = random_int_range(4, ARRAYSIZE(ANM_BLOOD)-2);
     effect->vx = 0;
@@ -31,7 +34,11 @@ INTERNAL void update_gib_blood (Effect* effect, float dt)
     effect->t -= dt;
     if (effect->t <= 0.0f)
     {
-        effect->t = random_float_range(GIB_BLOOD_MIN_ANM_SPEED,GIB_BLOOD_MAX_ANM_SPEED);
+        float min = GIB_BLOOD_MIN_ANM_SPEED;
+        float max = GIB_BLOOD_MAX_ANM_SPEED;
+        if (gApp.code_blood_enabled) max *= 3;
+
+        effect->t = random_float_range(min,max);
         effect->frame++;
         if (effect->frame >= ARRAYSIZE(ANM_BLOOD))
         {
@@ -47,7 +54,10 @@ INTERNAL void update_gib_blood (Effect* effect, float dt)
 
 INTERNAL void create_blood (Effect* effect)
 {
-    effect->t = random_float_range(BLOOD_MIN_ANM_SPEED,BLOOD_MAX_ANM_SPEED);
+    float min = BLOOD_MIN_ANM_SPEED;
+    float max = BLOOD_MAX_ANM_SPEED;
+
+    effect->t = random_float_range(min,max);
     effect->palette = PAL_BLOOD_0;
     effect->frame = random_int_range(0, ARRAYSIZE(ANM_BLOOD)-2);
     effect->vx = BLOOD_START_VELOCITY;
@@ -70,7 +80,11 @@ INTERNAL void update_blood (Effect* effect, float dt)
     effect->t -= dt;
     if (effect->t <= 0.0f)
     {
-        effect->t = random_float_range(BLOOD_MIN_ANM_SPEED,BLOOD_MAX_ANM_SPEED);
+        float min = BLOOD_MIN_ANM_SPEED;
+        float max = BLOOD_MAX_ANM_SPEED;
+        if (gApp.code_blood_enabled) max *= 3;
+
+        effect->t = random_float_range(min,max);
         effect->frame++;
         if (effect->frame >= ARRAYSIZE(ANM_BLOOD))
         {
@@ -88,7 +102,11 @@ INTERNAL void update_blood (Effect* effect, float dt)
 
 INTERNAL void create_gib (Effect* effect)
 {
-    effect->t = random_float_range(GIB_MIN_LIFETIME,GIB_MAX_LIFETIME);
+    float min = GIB_MIN_LIFETIME;
+    float max = GIB_MAX_LIFETIME;
+    if (gApp.code_blood_enabled) max *= 3;
+
+    effect->t = random_float_range(min,max);
     effect->palette = PAL_BLOOD_1;
     effect->frame = random_int_range(0, ARRAYSIZE(ANM_BLOOD)-5);
     effect->vx = GIB_START_VELOCITY;
@@ -111,43 +129,6 @@ INTERNAL void update_gib (Effect* effect, float dt)
     }
 
     // After the gib's counter has gone down kill it.
-    effect->t -= dt;
-    if (effect->t <= 0.0f)
-    {
-        effect->alive = false;
-    }
-}
-
-// EFX_BONE
-
-#define BONE_MIN_LIFETIME 0.8f
-#define BONE_MAX_LIFETIME 1.5f
-#define BONE_ANM_SPEED    0.3f
-#define BONE_VELOCITY_INC 0.5f
-#define BONE_MAX_VELOCITY 10
-
-INTERNAL void create_bone (Effect* effect)
-{
-    effect->t = random_float_range(BONE_MIN_LIFETIME,BONE_MAX_LIFETIME);
-    effect->palette = PAL_BONE;
-    effect->frame = random_int_range(0, ARRAYSIZE(ANM_BONE)-1);
-    effect->vx = 10;
-    effect->vy = 0;
-    rotate_vec2(&effect->vx, &effect->vy, random_float_range(0,M_PI*2));
-}
-INTERNAL void update_bone (Effect* effect, float dt)
-{
-    // Slowly apply an upward force to the blood.
-    effect->vy -= BONE_VELOCITY_INC;
-    if (effect->vy < -BONE_MAX_VELOCITY)
-    {
-        effect->vy = -BONE_MAX_VELOCITY;
-    }
-
-    effect->x += effect->vx * dt;
-    effect->y += effect->vy * dt;
-
-    // Once the bone's lifetime is up then kill it.
     effect->t -= dt;
     if (effect->t <= 0.0f)
     {
@@ -230,6 +211,16 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
 {
     int count = random_int_range(min_count, max_count);
 
+    // If the effect is any of the gore types and the BLOOD code has been
+    // enabled then we want to multiply the number of  particles spawned.
+    if (gApp.code_blood_enabled)
+    {
+        if (id == EFX_GIB_BLOOD || id == EFX_BLOOD || id == EFX_GIB)
+        {
+            count *= 3;
+        }
+    }
+
     for (int i=0; i<EFFECT_MAX; ++i)
     {
         Effect* effect = gEffect+i;
@@ -250,7 +241,6 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
                 case (EFX_BLOOD    ): create_blood    (effect); break;
                 case (EFX_GIB_BLOOD): create_gib_blood(effect); break;
                 case (EFX_GIB      ): create_gib      (effect); break;
-                case (EFX_BONE     ): create_bone     (effect); break;
                 case (EFX_BUBBLE   ): create_bubble   (effect); break;
                 case (EFX_SHOT     ): create_shot     (effect); break;
             }
@@ -277,7 +267,6 @@ INTERNAL void update_effect (float dt)
                 case (EFX_BLOOD    ): update_blood     (effect, dt); break;
                 case (EFX_GIB_BLOOD): update_gib_blood (effect, dt); break;
                 case (EFX_GIB      ): update_gib       (effect, dt); break;
-                case (EFX_BONE     ): update_bone      (effect, dt); break;
                 case (EFX_BUBBLE   ): update_bubble    (effect, dt); break;
                 case (EFX_SHOT     ): update_shot      (effect, dt); break;
             }
@@ -314,7 +303,6 @@ INTERNAL void render_effect (float dt)
                 case (EFX_BLOOD    ): clip = ANM_BLOOD [effect->frame]; break;
                 case (EFX_GIB_BLOOD): clip = ANM_BLOOD [effect->frame]; break;
                 case (EFX_GIB      ): clip = ANM_BLOOD [effect->frame]; break;
-                case (EFX_BONE     ): clip = ANM_BONE  [effect->frame]; break;
                 case (EFX_BUBBLE   ): clip = ANM_BUBBLE[effect->frame]; break;
                 case (EFX_SHOT     ): clip = ANM_SHOT  [effect->frame]; break;
             }

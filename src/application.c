@@ -120,18 +120,22 @@ INTERNAL void handle_application (SDL_Event* event)
                 gApp.code_length = 0;
             }
 
-            // If we've entered a full code then check which one matches and assign it.
+            // If we've entered a full code then check which one matches and toggle it.
             if (gApp.code_length == CODE_LENGTH)
             {
-                if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) == 0) gApp.code_retro_enabled = true;
-                if (strncmp(gApp.code, CODE_BLOOD, gApp.code_length) == 0) gApp.code_blood_enabled = true;
+                if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) == 0) gApp.code_retro_enabled = !gApp.code_retro_enabled;
+                if (strncmp(gApp.code, CODE_BLOOD, gApp.code_length) == 0) gApp.code_blood_enabled = !gApp.code_blood_enabled;
+
+                if (gApp.code_retro_enabled)
+                {
+                    set_palette_mode(PAL_MODE_GAMEBOY);
+                }
+                else
+                {
+                    set_palette_mode(PAL_MODE_DEFAULT);
+                }
             }
         }
-    }
-
-    if (gApp.code_retro_enabled)
-    {
-        set_palette_mode(PAL_MODE_GAMEBOY);
     }
 }
 INTERNAL void update_application (float dt)
