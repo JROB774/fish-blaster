@@ -20,6 +20,8 @@ INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, fl
 #define FISH_SCORE 10
 #define FISH_DIR_L 0
 #define FISH_DIR_R 1
+#define FISH_MIN_SPAWN_Y 12
+#define FISH_MAX_SPAWN_Y (SCREEN_H-8)
 #define FISH_MIN_BLOOD 10
 #define FISH_MAX_BLOOD 15
 #define FISH_MIN_GIB   1
@@ -35,7 +37,7 @@ INTERNAL void create_fish (Entity* entity)
     if (entity->dir == FISH_DIR_L) entity->x = SCREEN_W;
     if (entity->dir == FISH_DIR_R) entity->x = 0 - SPR_FISH_R_0.w;
 
-    entity->y = random_int_range(12, SCREEN_H-SPR_FISH_R_0.h);
+    entity->y = random_int_range(FISH_MIN_SPAWN_Y,FISH_MAX_SPAWN_Y);
 }
 INTERNAL void update_fish (Entity* entity, float dt)
 {
@@ -262,6 +264,22 @@ INTERNAL void spawn_school_of_fish_formation_smallv ()
         b->x = a->x - SPR_FISH_R_0.w;
         c->x = a->x - SPR_FISH_R_0.w;
     }
+
+    // If the top fish is out of bounds then tweak to go in bounds.
+    if (b->y < FISH_MIN_SPAWN_Y)
+    {
+        a->y += 8;
+        b->y += 8;
+        c->y += 8;
+    }
+    // If the bottom fish is out of bounds then tweak to go in bounds.
+    if (c->y > FISH_MAX_SPAWN_Y)
+    {
+        a->y -= 8;
+        b->y -= 8;
+        c->y -= 8;
+    }
+
 }
 INTERNAL void spawn_school_of_fish_formation_line ()
 {
@@ -331,6 +349,25 @@ INTERNAL void spawn_school_of_fish_formation_largev ()
         c->x = a->x - SPR_FISH_R_0.w;
         d->x = a->x - SPR_FISH_R_0.w*2;
         e->x = a->x - SPR_FISH_R_0.w*2;
+    }
+
+    // If the top fish is out of bounds then tweak to go in bounds.
+    if (d->y < FISH_MIN_SPAWN_Y)
+    {
+        a->y += 16;
+        b->y += 16;
+        c->y += 16;
+        d->y += 16;
+        e->y += 16;
+    }
+    // If the bottom fish is out of bounds then tweak to go in bounds.
+    if (e->y > FISH_MAX_SPAWN_Y)
+    {
+        a->y -= 16;
+        b->y -= 16;
+        c->y -= 16;
+        d->y -= 16;
+        e->y -= 16;
     }
 }
 
@@ -480,7 +517,7 @@ INTERNAL void update_spawner (float dt)
     if (gSpawner.fish_spawn_timer <= 0.0f)
     {
         // Small percentage chance to spawn a school of fish in a formation.
-        gSpawner.fish_spawn_timer = FISH_SPAWN_RATE;
+        gSpawner.fish_spawn_timer = FISH_SPAWN_RATE * 3;
         if (random_float() <= FISH_SPAWN_SCHOOL_CHANCE)
         {
             switch (random_int_range(0,2))
@@ -492,6 +529,7 @@ INTERNAL void update_spawner (float dt)
         }
         else
         {
+            gSpawner.fish_spawn_timer = FISH_SPAWN_RATE;
             create_entity(ENT_FISH);
         }
     }
