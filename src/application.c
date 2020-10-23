@@ -82,7 +82,10 @@ INTERNAL void shoot ()
 
 INTERNAL void update_game (float dt)
 {
-    if (gApp.itime > 0.0f) gApp.itime -= dt;
+    if (gApp.itime > 0.0f)
+    {
+        gApp.itime -= dt;
+    }
 
     update_spawner(dt);
     update_entity (dt);
@@ -94,8 +97,11 @@ INTERNAL void update_game (float dt)
     {
         if (is_mouse_in_screen_bounds())
         {
-            shoot();
-            shot = true;
+            if (gApp.shoot_cooldown <= 0.0f)
+            {
+                shoot();
+                shot = true;
+            }
         }
     }
 
@@ -121,8 +127,11 @@ INTERNAL void update_gameover (float dt)
     {
         if (is_mouse_in_screen_bounds())
         {
-            start_game(dt);
-            shoot(); // Do this second so effects don't get wiped.
+            if (gApp.shoot_cooldown <= 0.0f)
+            {
+                start_game(dt);
+                shoot(); // Do this second so effects don't get wiped.
+            }
         }
     }
 }
@@ -205,6 +214,11 @@ INTERNAL void update_application (float dt)
 {
     gApp.frame++;
 
+    if (gApp.shoot_cooldown > 0.0f)
+    {
+        gApp.shoot_cooldown -= dt;
+    }
+
     update_camera(dt);
 
     switch (gApp.state)
@@ -258,6 +272,7 @@ INTERNAL void start_game ()
 }
 INTERNAL void game_over ()
 {
+    gApp.shoot_cooldown = GAMEOVER_COOLDOWN;
     gApp.state = APP_STATE_GAMEOVER;
     gApp.itime = 0.0f;
 }

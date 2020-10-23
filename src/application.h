@@ -7,6 +7,8 @@ typedef enum AppState__ { APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } 
 #define CODE_RETRO "retro"
 #define CODE_BLOOD "blood"
 
+#define GAMEOVER_COOLDOWN 0.25f
+
 #define START_LIFE 2
 #define ITIME   1.0f
 
@@ -16,6 +18,8 @@ GLOBAL struct
     int cursor_y, cursor_prev_y;
 
     AppState state;
+
+    float shoot_cooldown;
 
     int score;
     int life;
