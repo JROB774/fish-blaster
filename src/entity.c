@@ -231,9 +231,131 @@ INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bo
     }
 }
 
+// SCHOOLS
+
+INTERNAL void spawn_school_of_fish_formation_smallv ()
+{
+    // If we don't have enough space for the formation just spawn one fish like normal.
+    if (!have_space_for_num_entities(3))
+    {
+        create_entity(ENT_FISH);
+        return;
+    }
+
+    Entity* a = create_entity(ENT_FISH);
+    Entity* b = create_entity(ENT_FISH);
+    Entity* c = create_entity(ENT_FISH);
+
+    // Put all the fish in a vertical line and the same direction.
+    b->y = a->y - SPR_FISH_L_0.h, b->dir = a->dir;
+    c->y = a->y + SPR_FISH_L_0.h, c->dir = a->dir;
+
+    // Place the fish in the V shape.
+    if (a->dir == FISH_DIR_L)
+    {
+        b->x = a->x + SPR_FISH_L_0.w;
+        c->x = a->x + SPR_FISH_L_0.w;
+    }
+    else
+    {
+        b->x = a->x - SPR_FISH_R_0.w;
+        c->x = a->x - SPR_FISH_R_0.w;
+    }
+}
+
+INTERNAL void spawn_school_of_fish_formation_line ()
+{
+    // If we don't have enough space for the formation just spawn one fish like normal.
+    if (!have_space_for_num_entities(4))
+    {
+        create_entity(ENT_FISH);
+        return;
+    }
+
+    Entity* a = create_entity(ENT_FISH);
+    Entity* b = create_entity(ENT_FISH);
+    Entity* c = create_entity(ENT_FISH);
+    Entity* d = create_entity(ENT_FISH);
+
+    // Put all the fish on the same vertical axis and direction.
+    b->y = a->y, b->dir = a->dir;
+    c->y = a->y, c->dir = a->dir;
+    d->y = a->y, d->dir = a->dir;
+
+    // Place all the fish behind each other in a line.
+    if (a->dir == FISH_DIR_L)
+    {
+        b->x = a->x + SPR_FISH_L_0.w;
+        c->x = b->x + SPR_FISH_L_0.w;
+        d->x = c->x + SPR_FISH_L_0.w;
+    }
+    else
+    {
+        b->x = a->x - SPR_FISH_R_0.w;
+        c->x = b->x - SPR_FISH_R_0.w;
+        d->x = c->x - SPR_FISH_R_0.w;
+    }
+}
+
+INTERNAL void spawn_school_of_fish_formation_largev ()
+{
+    // If we don't have enough space for the formation just spawn one fish like normal.
+    if (!have_space_for_num_entities(5))
+    {
+        create_entity(ENT_FISH);
+        return;
+    }
+
+    Entity* a = create_entity(ENT_FISH);
+    Entity* b = create_entity(ENT_FISH);
+    Entity* c = create_entity(ENT_FISH);
+    Entity* d = create_entity(ENT_FISH);
+    Entity* e = create_entity(ENT_FISH);
+
+    // Put all the fish in a vertical line and the same direction.
+    b->y = a->y - SPR_FISH_L_0.h,   b->dir = a->dir;
+    c->y = a->y + SPR_FISH_L_0.h,   c->dir = a->dir;
+    d->y = a->y - SPR_FISH_L_0.h*2, d->dir = a->dir;
+    e->y = a->y + SPR_FISH_L_0.h*2, e->dir = a->dir;
+
+    // Place the fish in the V shape.
+    if (a->dir == FISH_DIR_L)
+    {
+        b->x = a->x + SPR_FISH_L_0.w;
+        c->x = a->x + SPR_FISH_L_0.w;
+        d->x = a->x + SPR_FISH_L_0.w*2;
+        e->x = a->x + SPR_FISH_L_0.w*2;
+    }
+    else
+    {
+        b->x = a->x - SPR_FISH_R_0.w;
+        c->x = a->x - SPR_FISH_R_0.w;
+        d->x = a->x - SPR_FISH_R_0.w*2;
+        e->x = a->x - SPR_FISH_R_0.w*2;
+    }
+}
+
 // ENTITIES
 
-INTERNAL void create_entity (EntityID id)
+INTERNAL bool have_space_for_num_entities (int num)
+{
+    int count = 0;
+    for (int i=0; i<ENTITY_MAX; ++i)
+    {
+        Entity* entity = gEntity+i;
+        if (!entity->alive)
+        {
+            count++;
+            if (count >= num)
+            {
+                break;
+            }
+        }
+    }
+    return (count >= num);
+}
+
+INTERNAL Entity* create_entity (EntityID id)
 {
     for (int i=0; i<ENTITY_MAX; ++i)
     {
@@ -255,9 +377,10 @@ INTERNAL void create_entity (EntityID id)
                 case (ENT_URCHIN): create_urchin(entity); break;
             }
 
-            break;
+            return entity;
         }
     }
+    return NULL;
 }
 
 INTERNAL void update_entity (float dt)
@@ -353,25 +476,39 @@ INTERNAL void create_spawner ()
 
 INTERNAL void update_spawner (float dt)
 {
-    // FISH
+    // Spawn fish at fixed intervals.
     gSpawner.fish_spawn_timer -= dt;
     if (gSpawner.fish_spawn_timer <= 0.0f)
     {
-        create_entity(ENT_FISH);
+        // Small percentage chance to spawn a school of fish in a formation.
         gSpawner.fish_spawn_timer = FISH_SPAWN_RATE;
+        if (random_int_range(1,100) <= 5)
+        {
+            switch (random_int_range(0,2))
+            {
+                case (0): spawn_school_of_fish_formation_smallv(); break;
+                case (1): spawn_school_of_fish_formation_line  (); break;
+                case (2): spawn_school_of_fish_formation_largev(); break;
+            }
+        }
+        else
+        {
+            create_entity(ENT_FISH);
+        }
     }
 
-    // URCHIN
+    // Spawn urchin at fixed intervals.
     gSpawner.urchin_spawn_timer -= dt;
     if (gSpawner.urchin_spawn_timer <= 0.0f)
     {
+        gSpawner.urchin_spawn_timer = URCHIN_SPAWN_RATE;
         if (gSpawner.urchin_count < gSpawner.urchin_max_count)
         {
-            create_entity(ENT_URCHIN);
             gSpawner.urchin_count++;
+            create_entity(ENT_URCHIN);
         }
-        gSpawner.urchin_spawn_timer = URCHIN_SPAWN_RATE;
     }
+    // Increate the max number of urchin at fixed intervals.
     gSpawner.urchin_increment_timer -= dt;
     if (gSpawner.urchin_increment_timer <= 0.0f)
     {
