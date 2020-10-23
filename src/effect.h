@@ -6,13 +6,20 @@ typedef enum EffectID__
     EFX_GIB_BLOOD,
     EFX_BLOOD,
     EFX_GIB,
-    EFX_CHIP,
+    EFX_CHIP_0,
+    EFX_CHIP_1,
     EFX_BUBBLE,
     EFX_SHOT,
     EFX_SCORE10,
     EFX_SCORE20,
     EFX_SCORE40,
     EFX_SCORE80,
+    EFX_ICO_LIFE,
+    EFX_ICO_TIME,
+    EFX_ICO_MULT,
+    EFX_ICO_RAPD,
+    EFX_ICO_SPRD,
+    EFX_ICO_BOOM,
     EFX_TOTAL
 
 } EffectID;

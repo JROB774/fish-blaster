@@ -19,8 +19,10 @@ INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, fl
 #define CRATE_SPEED  30
 #define CRATE_MIN_SPAWN_X 8
 #define CRATE_MAX_SPAWN_X (SCREEN_W-CRATE_WIDTH-8)
-#define CRATE_MIN_CHIP  12
-#define CRATE_MAX_CHIP  20
+#define CRATE_MIN_CHIP_0 12
+#define CRATE_MAX_CHIP_0 20
+#define CRATE_MIN_CHIP_1 1
+#define CRATE_MAX_CHIP_1 4
 #define CRATE_MIN_BUBBLE 3
 #define CRATE_MAX_BUBBLE 7
 
@@ -68,8 +70,21 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
 
         if (rect_vs_rect_collision(mx,my,mw,mh, x,y,w,h))
         {
+            // Determine which item graphic to display.
+            EffectID effect_id = 0;
+            switch (entity->type)
+            {
+                case (ENT_CRATE_LIFE): effect_id = EFX_ICO_LIFE; break;
+                case (ENT_CRATE_TIME): effect_id = EFX_ICO_TIME; break;
+                case (ENT_CRATE_MULT): effect_id = EFX_ICO_MULT; break;
+                case (ENT_CRATE_RAPD): effect_id = EFX_ICO_RAPD; break;
+                case (ENT_CRATE_SPRD): effect_id = EFX_ICO_SPRD; break;
+                case (ENT_CRATE_BOOM): effect_id = EFX_ICO_BOOM; break;
+            }
+
             // Kill the crate.
-            create_effect(EFX_CHIP, x+(CRATE_WIDTH/2),y+(CRATE_HEIGHT/2),1,1, CRATE_MIN_CHIP,CRATE_MAX_CHIP);
+            create_effect(EFX_CHIP_0, x+(CRATE_WIDTH/2),y+(CRATE_HEIGHT/2),1,1, CRATE_MIN_CHIP_0,CRATE_MAX_CHIP_0);
+            create_effect(effect_id, x+(CRATE_WIDTH/2),y+(CRATE_HEIGHT/2),1,1, 1,1);
             create_effect(EFX_BUBBLE, x,y,w,h, CRATE_MIN_BUBBLE,CRATE_MAX_BUBBLE);
             entity->alive = false;
         }
@@ -595,7 +610,7 @@ INTERNAL void collide_entity (bool shot)
 
 INTERNAL void create_spawner ()
 {
-    gSpawner.crate_spawn_timer = CRATE_SPAWN_START;
+    gSpawner.crate_spawn_timer = 0.0f;
 
     gSpawner.fish_spawn_timer = FISH_SPAWN_START;
 
@@ -615,6 +630,7 @@ INTERNAL void update_spawner (float dt)
         create_entity(random_int_range(ENT_CRATE_LIFE,ENT_CRATE_BOOM));
     }
 
+    #if 0
     // Spawn fish at fixed intervals.
     gSpawner.fish_spawn_timer -= dt;
     if (gSpawner.fish_spawn_timer <= 0.0f)
@@ -655,4 +671,5 @@ INTERNAL void update_spawner (float dt)
         gSpawner.urchin_max_count++;
         gSpawner.urchin_increment_timer = URCHIN_INCREMENT_RATE;
     }
+    #endif
 }
