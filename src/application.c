@@ -129,7 +129,10 @@ INTERNAL void update_gameover (float dt)
 INTERNAL void render_gameover (float dt)
 {
     render_cursor();
+
+    begin_camera();
     render_hud((SCREEN_H-TILE_H)/2,false);
+    end_camera();
 }
 
 // APPLICATION
@@ -228,7 +231,8 @@ INTERNAL void cursor_hit ()
         gApp.itime = ITIME;
         gApp.life--;
 
-        shake_camera(3,3,0.3f);
+        play_sound(SND_SMACK,0);
+        shake_camera(2,2,0.25f);
 
         if (gApp.life <= 0)
         {
