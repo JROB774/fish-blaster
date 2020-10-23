@@ -77,6 +77,7 @@ GLOBAL const Clip SPR_SCORE10  = {  0,  32, 16,  8 };
 GLOBAL const Clip SPR_SCORE20  = { 16,  32, 16,  8 };
 GLOBAL const Clip SPR_SCORE40  = { 32,  32, 16,  8 };
 GLOBAL const Clip SPR_SCORE80  = { 48,  32, 16,  8 };
+GLOBAL const Clip SPR_HEART    = {  0,  16,  8,  8 };
 
 // ANIMATIONS
 
@@ -98,6 +99,7 @@ GLOBAL const Clip* ANM_SHOT  [] = { &SPR_SHOT_0,   &SPR_SHOT_1,   &SPR_SHOT_2   
 #define PAL_SHOT       3
 #define PAL_BLOOD_0    4
 #define PAL_BLOOD_1    5
+#define PAL_HEART      6
 #define PAL_FISH_0     6
 #define PAL_FISH_1     7
 #define PAL_FISH_2     8

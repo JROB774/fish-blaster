@@ -22,18 +22,34 @@ INTERNAL void render_cursor ()
     int y = gApp.cursor_y-(SPR_CURSOR_0.h/2);
     render_bitmap(x,y,PAL_CURSOR,&SPR_CURSOR_0);
 }
-INTERNAL void render_score (int y)
+INTERNAL void render_hud (int y, bool extra)
 {
+    // Draw the players'current score.
     const char* SCORE_TEXT = "%06d";
+    int sw = get_text_w(SCORE_TEXT,gApp.score);
+    int sh = TILE_H;
+    int sx = (SCREEN_W-sw)/2;
+    int sy = y;
+    render_bitmap(sx-SPR_SCOREBGL.w,sy, PAL_BLACK, &SPR_SCOREBGL);
+    render_fill(sx,sy,sw,sh, get_palette_color(PAL_BLACK,0));
+    render_bitmap(sx+sw,sy, PAL_BLACK, &SPR_SCOREBGR);
+    render_text(sx,sy, PAL_TEXT_SHADE, SCORE_TEXT, gApp.score);
 
-    int w = get_text_w(SCORE_TEXT,gApp.score);
-    int h = TILE_H;
-    int x = (SCREEN_W-w)/2;
+    // Don't draw the other parts of the display!
+    if (!extra) return;
 
-    render_bitmap(x-SPR_SCOREBGL.w,y, PAL_BLACK, &SPR_SCOREBGL);
-    render_fill(x,y,w,h, get_palette_color(PAL_BLACK,0));
-    render_bitmap(x+w,y, PAL_BLACK, &SPR_SCOREBGR);
-    render_text(x,y, PAL_TEXT_SHADE, SCORE_TEXT, gApp.score);
+    // Draw the player's current health.
+    render_bitmap(0,y, PAL_BLACK, &SPR_SCOREBGL);
+    render_fill(16,y,16,8, get_palette_color(PAL_BLACK,0));
+    render_bitmap(32,y, PAL_BLACK, &SPR_SCOREBGR);
+    render_bitmap(16,y, PAL_HEART, &SPR_HEART);
+    render_bitmap(24,y, PAL_HEART, &SPR_HEART);
+
+    // Draw the player's current bonus.
+    render_bitmap(SCREEN_W-48,y, PAL_BLACK, &SPR_SCOREBGL);
+    render_fill(SCREEN_W-32,y,16,8, get_palette_color(PAL_BLACK,0));
+    render_bitmap(SCREEN_W-16,y, PAL_BLACK, &SPR_SCOREBGR);
+    render_text(SCREEN_W-32,y, PAL_TEXT_SHADE, "--");
 }
 INTERNAL void shoot ()
 {
@@ -81,7 +97,7 @@ INTERNAL void render_game (float dt)
     end_camera();
 
     render_cursor();
-    render_score(2);
+    render_hud(2,true);
 }
 
 // GAME OVER
@@ -100,7 +116,7 @@ INTERNAL void update_gameover (float dt)
 INTERNAL void render_gameover (float dt)
 {
     render_cursor();
-    render_score((SCREEN_H-TILE_H)/2);
+    render_hud((SCREEN_H-TILE_H)/2,false);
 }
 
 // APPLICATION

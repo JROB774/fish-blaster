@@ -1,4 +1,4 @@
-// COLLISION HELPERS
+// COLLISION
 
 INTERNAL bool point_vs_rect_collision (float px, float py, float rx, float ry, float rw, float rh)
 {
@@ -12,6 +12,7 @@ INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, fl
 
 // ENT_FISH
 
+#define FISH_SPAWN_SCHOOL_CHANCE 0.05f
 #define FISH_SPAWN_START 0.0f
 #define FISH_SPAWN_RATE  0.5f
 #define FISH_ANM_SPEED   0.2f
@@ -262,7 +263,6 @@ INTERNAL void spawn_school_of_fish_formation_smallv ()
         c->x = a->x - SPR_FISH_R_0.w;
     }
 }
-
 INTERNAL void spawn_school_of_fish_formation_line ()
 {
     // If we don't have enough space for the formation just spawn one fish like normal.
@@ -296,7 +296,6 @@ INTERNAL void spawn_school_of_fish_formation_line ()
         d->x = c->x - SPR_FISH_R_0.w;
     }
 }
-
 INTERNAL void spawn_school_of_fish_formation_largev ()
 {
     // If we don't have enough space for the formation just spawn one fish like normal.
@@ -482,7 +481,7 @@ INTERNAL void update_spawner (float dt)
     {
         // Small percentage chance to spawn a school of fish in a formation.
         gSpawner.fish_spawn_timer = FISH_SPAWN_RATE;
-        if (random_int_range(1,100) <= 5)
+        if (random_float() <= FISH_SPAWN_SCHOOL_CHANCE)
         {
             switch (random_int_range(0,2))
             {
