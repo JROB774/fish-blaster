@@ -82,6 +82,13 @@ INTERNAL void shoot ()
 
 INTERNAL void update_game (float dt)
 {
+    // Restart the game if the player wants.
+    if (key_pressed(RESTART))
+    {
+        start_game();
+        return;
+    }
+
     if (gApp.itime > 0.0f)
     {
         gApp.itime -= dt;
