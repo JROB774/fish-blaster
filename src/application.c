@@ -142,7 +142,7 @@ INTERNAL void update_game (float dt)
     bool shot = false;
     if (button_pressed(LMB))
     {
-        if (is_mouse_in_screen_bounds())
+        if (is_cursor_in_screen_bounds())
         {
             if (gApp.god_time <= 0.0f) // You cannot shoot after being hit!.
             {
@@ -175,7 +175,7 @@ INTERNAL void update_gameover (float dt)
 {
     if (button_pressed(LMB))
     {
-        if (is_mouse_in_screen_bounds())
+        if (is_cursor_in_screen_bounds())
         {
             if (gApp.shoot_cooldown <= 0.0f)
             {
@@ -286,6 +286,14 @@ INTERNAL void render_application (float dt)
         case (APP_STATE_GAME    ): render_game    (dt); break;
         case (APP_STATE_GAMEOVER): render_gameover(dt); break;
     }
+}
+
+// CURSOR
+
+INTERNAL bool is_cursor_in_screen_bounds ()
+{
+    int x = get_mouse_x()-3, y = get_mouse_y()-3, w = 6, h = 6;
+    return rect_vs_rect_collision(x,y,w,h, 0,0,SCREEN_W,SCREEN_H);
 }
 
 INTERNAL void cursor_hit ()

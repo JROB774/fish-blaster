@@ -623,7 +623,7 @@ INTERNAL void render_entity (float dt)
 INTERNAL void collide_entity (bool shot)
 {
     // Don't handle collisions if the cursor is out of bounds.
-    if (!is_mouse_in_screen_bounds()) return;
+    if (!is_cursor_in_screen_bounds()) return;
 
     // We use a box around the mouse point for collision as it feels better to give
     // some leeway when shooting entities, rather than needing a point collision.

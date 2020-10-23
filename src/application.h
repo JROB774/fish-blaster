@@ -56,6 +56,7 @@ INTERNAL void handle_application (SDL_Event* event);
 INTERNAL void update_application (float dt);
 INTERNAL void render_application (float dt);
 
+INTERNAL bool is_cursor_in_screen_bounds ();
 INTERNAL void cursor_hit ();
 
 // Switches the state of the game.
