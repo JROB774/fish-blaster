@@ -90,6 +90,7 @@ INTERNAL void init_audio ()
         load_sound(&gAudio.sound[SND_TING_0  ], "assets/ting0.wav"  );
         load_sound(&gAudio.sound[SND_TING_1  ], "assets/ting1.wav"  );
         load_sound(&gAudio.sound[SND_TING_2  ], "assets/ting2.wav"  );
+        load_sound(&gAudio.sound[SND_CODE    ], "assets/code.wav"   );
 
         // Load all of the music.
         // ...
@@ -109,6 +110,7 @@ INTERNAL void quit_audio ()
         free_sound(&gAudio.sound[SND_TING_0  ]);
         free_sound(&gAudio.sound[SND_TING_1  ]);
         free_sound(&gAudio.sound[SND_TING_2  ]);
+        free_sound(&gAudio.sound[SND_CODE    ]);
 
         Mix_CloseAudio();
     }

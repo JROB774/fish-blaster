@@ -161,9 +161,18 @@ INTERNAL void handle_application (SDL_Event* event)
             // If we've entered a full code then check which one matches and toggle it.
             if (gApp.code_length == CODE_LENGTH)
             {
-                if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) == 0) gApp.code_retro_enabled = !gApp.code_retro_enabled;
-                if (strncmp(gApp.code, CODE_BLOOD, gApp.code_length) == 0) gApp.code_blood_enabled = !gApp.code_blood_enabled;
+                if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) == 0)
+                {
+                    gApp.code_retro_enabled = !gApp.code_retro_enabled;
+                    play_sound(SND_CODE,0);
+                }
+                if (strncmp(gApp.code, CODE_BLOOD, gApp.code_length) == 0)
+                {
+                    gApp.code_blood_enabled = !gApp.code_blood_enabled;
+                    play_sound(SND_CODE,0);
+                }
 
+                // Special case for the RETRO code when setting the palette.
                 if (gApp.code_retro_enabled)
                 {
                     set_palette_mode(PAL_MODE_GAMEBOY);

@@ -12,6 +12,7 @@ typedef enum SoundID__
     SND_TING_0,
     SND_TING_1,
     SND_TING_2,
+    SND_CODE,
     SND_TOTAL
 
 } SoundID;
