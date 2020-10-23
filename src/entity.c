@@ -180,6 +180,28 @@ INTERNAL void render_fish (Entity* entity, float dt)
     render_bitmap(entity->x,entity->y,entity->palette,clip);
 
 }
+INTERNAL void kill_fish (Entity* entity)
+{
+    int x = CAST(int,entity->x)+2;
+    int y = CAST(int,entity->y)+1;
+    int w = 12;
+    int h = 6;
+
+    create_effect(EFX_BLOOD, x,y,w,h, FISH_MIN_BLOOD,FISH_MAX_BLOOD);
+    create_effect(EFX_GIB, x,y,w,h, FISH_MIN_GIB,FISH_MAX_GIB);
+    play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
+    entity->alive = false;
+    if (gApp.current_item == ITEM_MULT)
+    {
+        create_effect(EFX_SCORE20, x+w/2,y+h/2,1,1, 1,1);
+        gApp.score += (FISH_SCORE*2);
+    }
+    else
+    {
+        create_effect(EFX_SCORE10, x+w/2,y+h/2,1,1, 1,1);
+        gApp.score += FISH_SCORE;
+    }
+}
 INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
     if (shot)
@@ -191,13 +213,7 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
 
         if (rect_vs_rect_collision(mx,my,mw,mh, x,y,w,h))
         {
-            // Kill the fish.
-            create_effect(EFX_BLOOD, x,y,w,h, FISH_MIN_BLOOD,FISH_MAX_BLOOD);
-            create_effect(EFX_GIB, x,y,w,h, FISH_MIN_GIB,FISH_MAX_GIB);
-            create_effect(EFX_SCORE10, x+w/2,y+h/2,1,1, 1,1);
-            play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
-            gApp.score += FISH_SCORE;
-            entity->alive = false;
+            kill_fish(entity);
         }
     }
 }
