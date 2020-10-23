@@ -10,7 +10,19 @@ typedef enum AppState__ { APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } 
 #define GAMEOVER_COOLDOWN 0.25f
 
 #define MAX_LIFE 2
-#define ITIME    1.0f
+
+#define GOD_DURATION  1.00f
+#define ITEM_DURATION 9.99f
+
+typedef enum ItemID__
+{
+    ITEM_NONE,
+    ITEM_TIME,
+    ITEM_MULT,
+    ITEM_SPRD,
+    ITEM_RAPD
+
+} ItemID;
 
 GLOBAL struct
 {
@@ -19,13 +31,16 @@ GLOBAL struct
 
     AppState state;
 
+    ItemID current_item;
+    float item_time;
+
     float shoot_cooldown;
 
     int score;
     int life;
     int frame;
 
-    float itime;
+    float god_time;
 
     char code[CODE_LENGTH];
     int code_length;

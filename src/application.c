@@ -19,7 +19,7 @@ INTERNAL void render_cursor ()
 
     // Draw the actual cursor graphic.
     bool visible = true;
-    if (gApp.itime > 0.0f)
+    if (gApp.god_time > 0.0f)
     {
         if (gApp.frame % 2 == 0) // Flicker when invincible!
         {
@@ -60,7 +60,21 @@ INTERNAL void render_hud (int y, bool extra)
     render_bitmap(SCREEN_W-48,y, PAL_BLACK, &SPR_SCOREBGL);
     render_fill(SCREEN_W-32,y,16,8, get_palette_color(PAL_BLACK,0));
     render_bitmap(SCREEN_W-16,y, PAL_BLACK, &SPR_SCOREBGR);
-    render_text(SCREEN_W-32,y, PAL_TEXT_SHADE, "--");
+    if (gApp.current_item == ITEM_NONE)
+    {
+        render_text(SCREEN_W-32,y, PAL_TEXT_SHADE, "--");
+    }
+    else
+    {
+        switch (gApp.current_item)
+        {
+            case (ITEM_TIME): render_bitmap(SCREEN_W-32,y,PAL_ICO_TIME, &SPR_ICO_TIME_0); break;
+            case (ITEM_MULT): render_bitmap(SCREEN_W-32,y,PAL_ICO_MULT, &SPR_ICO_MULT_0); break;
+            case (ITEM_RAPD): render_bitmap(SCREEN_W-33,y,PAL_ICO_RAPD, &SPR_ICO_RAPD_0); break; // Kind of hacky but we draw this 1px left so it doesn't hug/touch the number to the right!
+            case (ITEM_SPRD): render_bitmap(SCREEN_W-32,y,PAL_ICO_SPRD, &SPR_ICO_SPRD_0); break;
+        }
+        render_text(SCREEN_W-24,y, PAL_TEXT_SHADE, "%d", CAST(int, floor(gApp.item_time)));
+    }
 }
 INTERNAL void shoot ()
 {
@@ -89,9 +103,17 @@ INTERNAL void update_game (float dt)
         return;
     }
 
-    if (gApp.itime > 0.0f)
+    if (gApp.god_time > 0.0f)
     {
-        gApp.itime -= dt;
+        gApp.god_time -= dt;
+    }
+    if (gApp.item_time > 0.0f)
+    {
+        gApp.item_time -= dt;
+        if (gApp.item_time < 0.0f)
+        {
+            gApp.current_item = ITEM_NONE;
+        }
     }
 
     update_spawner(dt);
@@ -104,7 +126,7 @@ INTERNAL void update_game (float dt)
     {
         if (is_mouse_in_screen_bounds())
         {
-            if (gApp.itime <= 0.0f) // You cannot shoot after being hit!.
+            if (gApp.god_time <= 0.0f) // You cannot shoot after being hit!.
             {
                 if (gApp.shoot_cooldown <= 0.0f)
                 {
@@ -250,9 +272,9 @@ INTERNAL void render_application (float dt)
 
 INTERNAL void cursor_hit ()
 {
-    if (gApp.itime <= 0.0f) // If we don't have invincibility frames.
+    if (gApp.god_time <= 0.0f) // If we don't have invincibility frames.
     {
-        gApp.itime = ITIME;
+        gApp.god_time = GOD_DURATION;
         gApp.life--;
 
         play_sound(SND_SMACK,0);
@@ -276,13 +298,15 @@ INTERNAL void start_game ()
 
     create_spawner();
 
+    gApp.current_item = ITEM_NONE;
+    gApp.item_time = 0.0f;
     gApp.score = 0;
     gApp.life = MAX_LIFE;
-    gApp.itime = 0;
+    gApp.god_time = 0;
 }
 INTERNAL void game_over ()
 {
     gApp.shoot_cooldown = GAMEOVER_COOLDOWN;
     gApp.state = APP_STATE_GAMEOVER;
-    gApp.itime = 0.0f;
+    gApp.god_time = 0.0f;
 }
