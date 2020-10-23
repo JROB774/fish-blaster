@@ -81,8 +81,15 @@ INTERNAL void init_audio ()
         gAudio.initialized = true;
 
         // Load all of the sounds.
-        load_sound(&gAudio.sound[SND_SHOOT], "assets/sndsht.wav");
-        load_sound(&gAudio.sound[SND_HIT  ], "assets/sndhit.wav");
+        load_sound(&gAudio.sound[SND_NSHOT_0 ], "assets/nshot0.wav" );
+        load_sound(&gAudio.sound[SND_NSHOT_1 ], "assets/nshot1.wav" );
+        load_sound(&gAudio.sound[SND_NSHOT_2 ], "assets/nshot2.wav" );
+        load_sound(&gAudio.sound[SND_SQUEAK_0], "assets/squeak0.wav");
+        load_sound(&gAudio.sound[SND_SQUEAK_1], "assets/squeak1.wav");
+        load_sound(&gAudio.sound[SND_SQUEAK_2], "assets/squeak2.wav");
+        load_sound(&gAudio.sound[SND_TING_0  ], "assets/ting0.wav"  );
+        load_sound(&gAudio.sound[SND_TING_1  ], "assets/ting1.wav"  );
+        load_sound(&gAudio.sound[SND_TING_2  ], "assets/ting2.wav"  );
 
         // Load all of the music.
         // ...
@@ -93,8 +100,15 @@ INTERNAL void quit_audio ()
 {
     if (gAudio.initialized)
     {
-        free_sound(&gAudio.sound[SND_SHOOT]);
-        free_sound(&gAudio.sound[SND_HIT  ]);
+        free_sound(&gAudio.sound[SND_NSHOT_0 ]);
+        free_sound(&gAudio.sound[SND_NSHOT_1 ]);
+        free_sound(&gAudio.sound[SND_NSHOT_2 ]);
+        free_sound(&gAudio.sound[SND_SQUEAK_0]);
+        free_sound(&gAudio.sound[SND_SQUEAK_1]);
+        free_sound(&gAudio.sound[SND_SQUEAK_2]);
+        free_sound(&gAudio.sound[SND_TING_0  ]);
+        free_sound(&gAudio.sound[SND_TING_1  ]);
+        free_sound(&gAudio.sound[SND_TING_2  ]);
 
         Mix_CloseAudio();
     }

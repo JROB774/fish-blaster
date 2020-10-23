@@ -79,7 +79,7 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
             create_effect(EFX_BLOOD, x,y,w,h, FISH_MIN_BLOOD,FISH_MAX_BLOOD);
             create_effect(EFX_GIB, x,y,w,h, FISH_MIN_GIB,FISH_MAX_GIB);
             create_effect(EFX_SCORE10, x+w/2,y+h/2,1,1, 1,1);
-            play_sound(SND_HIT,0);
+            play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
             gApp.score += FISH_SCORE;
             entity->alive = false;
         }
@@ -143,13 +143,11 @@ INTERNAL void update_urchin (Entity* entity, float dt)
     // Once we're on screen we can activate vertical bouncing.
     if (!entity->active && (y < SCREEN_H)) entity->active = true;
 
-    // Horizontal bounce.
-    if ((x < 0) || (x > SCREEN_W))
+    if ((x < 0) || (x > SCREEN_W)) // Horizontal bounce.
     {
         entity->vx = -(entity->vx);
     }
-    // Vetical bounce.
-    if (entity->active)
+    if (entity->active) // Vetical bounce.
     {
         if ((y < 0) || (y > SCREEN_H))
         {

@@ -1,8 +1,26 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-typedef enum SoundID__ { SND_SHOOT, SND_HIT, SND_TOTAL } SoundID;
-typedef enum MusicID__ { MUS_TOTAL                     } MusicID;
+typedef enum SoundID__
+{
+    SND_NSHOT_0,
+    SND_NSHOT_1,
+    SND_NSHOT_2,
+    SND_SQUEAK_0,
+    SND_SQUEAK_1,
+    SND_SQUEAK_2,
+    SND_TING_0,
+    SND_TING_1,
+    SND_TING_2,
+    SND_TOTAL
+
+} SoundID;
+
+typedef enum MusicID__
+{
+    MUS_TOTAL
+
+} MusicID;
 
 INTERNAL void init_audio ();
 INTERNAL void quit_audio ();
@@ -15,5 +33,11 @@ INTERNAL void play_music (MusicID id, int loops);
 // functions performs some extra operations in order for the volume to change.
 INTERNAL void set_sound_volume (float volume); // [0-1]
 INTERNAL void set_music_volume (float volume); // [0-1]
+
+// SOUND GROUPS
+
+GLOBAL const SoundID SND_NSHOT [] = { SND_NSHOT_0,  SND_NSHOT_1,  SND_NSHOT_2  };
+GLOBAL const SoundID SND_SQUEAK[] = { SND_SQUEAK_0, SND_SQUEAK_1, SND_SQUEAK_2 };
+GLOBAL const SoundID SND_TING  [] = { SND_TING_0,   SND_TING_1,   SND_TING_2   };
 
 #endif /* AUDIO_H */

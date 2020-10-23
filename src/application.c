@@ -4,12 +4,8 @@ INTERNAL void render_cursor ()
 {
     gApp.cursor_prev_x = gApp.cursor_x;
     gApp.cursor_prev_y = gApp.cursor_y;
-
-    gApp.cursor_x = get_mouse_x();
-    gApp.cursor_y = get_mouse_y();
-
-    int x = gApp.cursor_x-(SPR_CURSOR_0.w/2);
-    int y = gApp.cursor_y-(SPR_CURSOR_0.h/2);
+    gApp.cursor_x      = get_mouse_x();
+    gApp.cursor_y      = get_mouse_y();
 
     // If the cursor moved then draw a trail behind it.
     if (gApp.cursor_x != gApp.cursor_prev_x && gApp.cursor_y != gApp.cursor_prev_y)
@@ -21,6 +17,9 @@ INTERNAL void render_cursor ()
         render_line(gApp.cursor_x,  gApp.cursor_y-1, gApp.cursor_prev_x, gApp.cursor_prev_y, get_palette_color(PAL_CURSOR,2));
     }
 
+    // Draw the actual cursor graphic.
+    int x = gApp.cursor_x-(SPR_CURSOR_0.w/2);
+    int y = gApp.cursor_y-(SPR_CURSOR_0.h/2);
     render_bitmap(x,y,PAL_CURSOR,&SPR_CURSOR_0);
 }
 INTERNAL void render_score (int y)
@@ -48,7 +47,7 @@ INTERNAL void shoot ()
 
     create_effect(EFX_BUBBLE, x,y,w,h, 2,3);
     create_effect(EFX_SHOT, mx,my,1,1, 1,1);
-    play_sound(SND_SHOOT,0);
+    play_sound(SND_NSHOT[random_int_range(0,ARRAYSIZE(SND_NSHOT)-1)],0);
     shake_camera(1,1,0.1f);
 }
 
