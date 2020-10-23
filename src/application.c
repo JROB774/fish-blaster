@@ -2,8 +2,25 @@
 
 INTERNAL void render_cursor ()
 {
-    int x = get_mouse_x()-(SPR_CURSOR_0.w/2);
-    int y = get_mouse_y()-(SPR_CURSOR_0.h/2);
+    gApp.cursor_prev_x = gApp.cursor_x;
+    gApp.cursor_prev_y = gApp.cursor_y;
+
+    gApp.cursor_x = get_mouse_x();
+    gApp.cursor_y = get_mouse_y();
+
+    int x = gApp.cursor_x-(SPR_CURSOR_0.w/2);
+    int y = gApp.cursor_y-(SPR_CURSOR_0.h/2);
+
+    // If the cursor moved then draw a trail behind it.
+    if (gApp.cursor_x != gApp.cursor_prev_x && gApp.cursor_y != gApp.cursor_prev_y)
+    {
+        render_line(gApp.cursor_x,  gApp.cursor_y,   gApp.cursor_prev_x, gApp.cursor_prev_y, get_palette_color(PAL_CURSOR,2));
+        render_line(gApp.cursor_x+1,gApp.cursor_y,   gApp.cursor_prev_x, gApp.cursor_prev_y, get_palette_color(PAL_CURSOR,2));
+        render_line(gApp.cursor_x-1,gApp.cursor_y,   gApp.cursor_prev_x, gApp.cursor_prev_y, get_palette_color(PAL_CURSOR,2));
+        render_line(gApp.cursor_x,  gApp.cursor_y+1, gApp.cursor_prev_x, gApp.cursor_prev_y, get_palette_color(PAL_CURSOR,2));
+        render_line(gApp.cursor_x,  gApp.cursor_y-1, gApp.cursor_prev_x, gApp.cursor_prev_y, get_palette_color(PAL_CURSOR,2));
+    }
+
     render_bitmap(x,y,PAL_CURSOR,&SPR_CURSOR_0);
 }
 INTERNAL void render_score (int y)
@@ -92,6 +109,11 @@ INTERNAL void render_gameover (float dt)
 INTERNAL bool init_application ()
 {
     SDL_ShowCursor(SDL_DISABLE);
+
+    gApp.cursor_x      = get_mouse_x();
+    gApp.cursor_y      = get_mouse_y();
+    gApp.cursor_prev_x = gApp.cursor_x;
+    gApp.cursor_prev_y = gApp.cursor_y;
 
     seed_random();
     start_game();

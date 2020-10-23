@@ -9,6 +9,9 @@ typedef enum AppState__ { APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } 
 
 GLOBAL struct
 {
+    int cursor_x, cursor_prev_x;
+    int cursor_y, cursor_prev_y;
+
     AppState state;
     int score;
 
