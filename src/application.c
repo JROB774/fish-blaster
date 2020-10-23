@@ -104,10 +104,13 @@ INTERNAL void update_game (float dt)
     {
         if (is_mouse_in_screen_bounds())
         {
-            if (gApp.shoot_cooldown <= 0.0f)
+            if (gApp.itime <= 0.0f) // You cannot shoot after being hit!.
             {
-                shoot();
-                shot = true;
+                if (gApp.shoot_cooldown <= 0.0f)
+                {
+                    shoot();
+                    shot = true;
+                }
             }
         }
     }
