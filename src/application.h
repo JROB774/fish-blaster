@@ -33,7 +33,6 @@ GLOBAL struct
 
     ItemID current_item;
     float item_time;
-    bool item_flash;
 
     float shoot_cooldown;
 

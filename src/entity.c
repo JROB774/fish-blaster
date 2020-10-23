@@ -83,28 +83,24 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
                 {
                     gApp.current_item = ITEM_TIME;
                     gApp.item_time = ITEM_DURATION;
-                    gApp.item_flash = false;
                     effect_id = EFX_ICO_TIME;
                 } break;
                 case (ENT_CRATE_MULT):
                 {
                     gApp.current_item = ITEM_MULT;
                     gApp.item_time = ITEM_DURATION;
-                    gApp.item_flash = false;
                     effect_id = EFX_ICO_MULT;
                 } break;
                 case (ENT_CRATE_RAPD):
                 {
                     gApp.current_item = ITEM_RAPD;
                     gApp.item_time = ITEM_DURATION;
-                    gApp.item_flash = false;
                     effect_id = EFX_ICO_RAPD;
                 } break;
                 case (ENT_CRATE_SPRD):
                 {
                     gApp.current_item = ITEM_SPRD;
                     gApp.item_time = ITEM_DURATION;
-                    gApp.item_flash = false;
                     effect_id = EFX_ICO_SPRD;
                 } break;
                 case (ENT_CRATE_BOOM):

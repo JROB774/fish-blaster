@@ -66,11 +66,15 @@ INTERNAL void render_hud (int y, bool extra)
     }
     else
     {
+        bool visible = true;
         if (floor(gApp.item_time) <= 0.0f) // Flash the icon and text just before the item goes away.
         {
-            gApp.item_flash = !gApp.item_flash;
+            if (gApp.frame % 2 == 0)
+            {
+                visible = false;
+            }
         }
-        if (!gApp.item_flash)
+        if (visible)
         {
             render_text(SCREEN_W-24,y, PAL_TEXT_SHADE, "%d", CAST(int, floor(gApp.item_time)));
             switch (gApp.current_item)
@@ -123,9 +127,16 @@ INTERNAL void update_game (float dt)
         }
     }
 
-    update_spawner(dt);
-    update_entity (dt);
-    update_effect (dt);
+    // Half the speed of everything if the slowdown item was recieved.
+    float gamedt = dt;
+    if (gApp.current_item == ITEM_TIME)
+    {
+        gamedt /= 2.0f;
+    }
+
+    update_spawner(gamedt);
+    update_entity (gamedt);
+    update_effect (gamedt);
 
     // Handle shooting.
     bool shot = false;
@@ -307,7 +318,6 @@ INTERNAL void start_game ()
 
     gApp.current_item = ITEM_NONE;
     gApp.item_time = 0.0f;
-    gApp.item_flash = false;
     gApp.score = 0;
     gApp.life = MAX_LIFE;
     gApp.god_time = 0;
