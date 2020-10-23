@@ -10,6 +10,47 @@ INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, fl
     return ((ax < (bx+bw)) && ((ax+aw) > bx) && (ay < (by+bh)) && ((ay+ah) > by));
 }
 
+// ENT_CRATE
+
+#define CRATE_SPAWN_START 20.0f
+#define CRATE_SPAWN_RATE  15.0f
+#define CRATE_WIDTH  16
+#define CRATE_HEIGHT 16
+#define CRATE_SPEED  30
+#define CRATE_MIN_SPAWN_X 8
+#define CRATE_MAX_SPAWN_X (SCREEN_W-CRATE_WIDTH-8)
+
+INTERNAL void create_crate (Entity* entity)
+{
+    entity->palette = PAL_CRATE;
+    entity->frame = 0;
+    entity->x = random_int_range(CRATE_MIN_SPAWN_X,CRATE_MAX_SPAWN_X);
+    entity->y = -CRATE_HEIGHT;
+}
+INTERNAL void update_crate (Entity* entity, float dt)
+{
+    entity->y += CRATE_SPEED * dt;
+    if (entity->y > SCREEN_H) // Deactivate the crate if it goes off-screen.
+    {
+        entity->alive = false;
+    }
+}
+INTERNAL const Clip* render_crate (Entity* entity, float dt)
+{
+    return &SPR_CRATE;
+}
+INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, bool shot)
+{
+    if (shot)
+    {
+        if (rect_vs_rect_collision(mx,my,mw,mh, entity->x,entity->y,CRATE_WIDTH,CRATE_HEIGHT))
+        {
+            // Kill the crate.
+            entity->alive = false;
+        }
+    }
+}
+
 // ENT_FISH
 
 #define FISH_SPAWN_SCHOOL_CHANCE 0.05f
@@ -120,19 +161,22 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 #define URCHIN_WIDTH    16
 #define URCHIN_HEIGHT   16
 #define URCHIN_SPEED    40
+#define URCHIN_MIN_SPAWN_X 0
+#define URCHIN_MAX_SPAWN_X (SCREEN_W-URCHIN_WIDTH)
+#define URCHIN_SPAWN_ANGLE (M_PI/4)
 
 INTERNAL void create_urchin (Entity* entity)
 {
     entity->palette = PAL_URCHIN;
     entity->t = URCHIN_ANM_SPEED;
-    entity->x = random_int_range(0, SCREEN_W-URCHIN_WIDTH);
+    entity->x = random_int_range(URCHIN_MIN_SPAWN_X,URCHIN_MAX_SPAWN_X);
     entity->y = SCREEN_H;
     entity->frame = 0;
     entity->active = false;
 
     entity->vx = 0;
     entity->vy = -URCHIN_SPEED;
-    rotate_vec2(&entity->vx, &entity->vy, random_float_range(-(M_PI/4), (M_PI/4)));
+    rotate_vec2(&entity->vx, &entity->vy, random_float_range(-URCHIN_SPAWN_ANGLE,URCHIN_SPAWN_ANGLE));
 }
 INTERNAL void update_urchin (Entity* entity, float dt)
 {
@@ -408,9 +452,15 @@ INTERNAL Entity* create_entity (EntityID id)
             // Specific creation logic for the different entity types.
             switch (entity->type)
             {
-                case (ENT_FISH  ): create_fish  (entity); break;
-                case (ENT_SQUID ): create_squid (entity); break;
-                case (ENT_URCHIN): create_urchin(entity); break;
+                case (ENT_CRATE_LIFE):
+                case (ENT_CRATE_TIME):
+                case (ENT_CRATE_MULT):
+                case (ENT_CRATE_RAPD):
+                case (ENT_CRATE_SPRD):
+                case (ENT_CRATE_BOOM): create_crate (entity); break;
+                case (ENT_FISH      ): create_fish  (entity); break;
+                case (ENT_SQUID     ): create_squid (entity); break;
+                case (ENT_URCHIN    ): create_urchin(entity); break;
             }
 
             return entity;
@@ -429,9 +479,15 @@ INTERNAL void update_entity (float dt)
             // Specific update logic for the different entity types.
             switch (entity->type)
             {
-                case (ENT_FISH  ): update_fish  (entity, dt); break;
-                case (ENT_SQUID ): update_squid (entity, dt); break;
-                case (ENT_URCHIN): update_urchin(entity, dt); break;
+                case (ENT_CRATE_LIFE):
+                case (ENT_CRATE_TIME):
+                case (ENT_CRATE_MULT):
+                case (ENT_CRATE_RAPD):
+                case (ENT_CRATE_SPRD):
+                case (ENT_CRATE_BOOM): update_crate (entity, dt); break;
+                case (ENT_FISH      ): update_fish  (entity, dt); break;
+                case (ENT_SQUID     ): update_squid (entity, dt); break;
+                case (ENT_URCHIN    ): update_urchin(entity, dt); break;
             }
         }
     }
@@ -463,9 +519,15 @@ INTERNAL void render_entity (float dt)
             const Clip* frame = NULL;
             switch (entity->type)
             {
-                case (ENT_FISH  ): frame = render_fish  (entity, dt); break;
-                case (ENT_SQUID ): frame = render_squid (entity, dt); break;
-                case (ENT_URCHIN): frame = render_urchin(entity, dt); break;
+                case (ENT_CRATE_LIFE):
+                case (ENT_CRATE_TIME):
+                case (ENT_CRATE_MULT):
+                case (ENT_CRATE_RAPD):
+                case (ENT_CRATE_SPRD):
+                case (ENT_CRATE_BOOM): frame = render_crate (entity, dt); break;
+                case (ENT_FISH      ): frame = render_fish  (entity, dt); break;
+                case (ENT_SQUID     ): frame = render_squid (entity, dt); break;
+                case (ENT_URCHIN    ): frame = render_urchin(entity, dt); break;
             }
             render_bitmap(entity->x,entity->y,entity->palette,frame);
         }
@@ -492,9 +554,15 @@ INTERNAL void collide_entity (bool shot)
             // Specific collision logic for the different entity types.
             switch (entity->type)
             {
-                case (ENT_FISH  ): collide_fish  (entity, x,y,w,h, shot); break;
-                case (ENT_SQUID ): collide_squid (entity, x,y,w,h, shot); break;
-                case (ENT_URCHIN): collide_urchin(entity, x,y,w,h, shot); break;
+                case (ENT_CRATE_LIFE):
+                case (ENT_CRATE_TIME):
+                case (ENT_CRATE_MULT):
+                case (ENT_CRATE_RAPD):
+                case (ENT_CRATE_SPRD):
+                case (ENT_CRATE_BOOM): collide_crate (entity, x,y,w,h, shot); break;
+                case (ENT_FISH      ): collide_fish  (entity, x,y,w,h, shot); break;
+                case (ENT_SQUID     ): collide_squid (entity, x,y,w,h, shot); break;
+                case (ENT_URCHIN    ): collide_urchin(entity, x,y,w,h, shot); break;
             }
         }
     }
@@ -502,6 +570,8 @@ INTERNAL void collide_entity (bool shot)
 
 INTERNAL void create_spawner ()
 {
+    gSpawner.crate_spawn_timer = CRATE_SPAWN_START;
+
     gSpawner.fish_spawn_timer = FISH_SPAWN_START;
 
     gSpawner.urchin_spawn_timer = URCHIN_SPAWN_START;
@@ -512,6 +582,14 @@ INTERNAL void create_spawner ()
 
 INTERNAL void update_spawner (float dt)
 {
+    // Spawn crates at fixed intervals.
+    gSpawner.crate_spawn_timer -= dt;
+    if (gSpawner.crate_spawn_timer <= 0.0f)
+    {
+        gSpawner.crate_spawn_timer = CRATE_SPAWN_RATE;
+        create_entity(random_int_range(ENT_CRATE_LIFE,ENT_CRATE_BOOM));
+    }
+
     // Spawn fish at fixed intervals.
     gSpawner.fish_spawn_timer -= dt;
     if (gSpawner.fish_spawn_timer <= 0.0f)

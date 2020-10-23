@@ -3,6 +3,12 @@
 
 typedef enum EntityID__
 {
+    ENT_CRATE_LIFE,
+    ENT_CRATE_TIME,
+    ENT_CRATE_MULT,
+    ENT_CRATE_RAPD,
+    ENT_CRATE_SPRD,
+    ENT_CRATE_BOOM,
     ENT_FISH,
     ENT_SQUID,
     ENT_URCHIN,
@@ -26,6 +32,8 @@ typedef struct Entity__
 
 typedef struct Spawner__
 {
+    float crate_spawn_timer;
+
     float fish_spawn_timer;
 
     float urchin_spawn_timer;
