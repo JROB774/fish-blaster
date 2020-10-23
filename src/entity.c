@@ -612,7 +612,7 @@ INTERNAL void collide_entity (bool shot)
 
 INTERNAL void create_spawner ()
 {
-    gSpawner.crate_spawn_timer = 0.0f;
+    gSpawner.crate_spawn_timer = CRATE_SPAWN_START;
 
     gSpawner.fish_spawn_timer = FISH_SPAWN_START;
 
@@ -632,7 +632,6 @@ INTERNAL void update_spawner (float dt)
         create_entity(random_int_range(ENT_CRATE_LIFE,ENT_CRATE_BOOM));
     }
 
-    #if 0
     // Spawn fish at fixed intervals.
     gSpawner.fish_spawn_timer -= dt;
     if (gSpawner.fish_spawn_timer <= 0.0f)
@@ -673,5 +672,4 @@ INTERNAL void update_spawner (float dt)
         gSpawner.urchin_max_count++;
         gSpawner.urchin_increment_timer = URCHIN_INCREMENT_RATE;
     }
-    #endif
 }
