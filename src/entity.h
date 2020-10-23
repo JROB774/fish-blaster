@@ -18,6 +18,7 @@ typedef struct Entity__
     int frame;
     int dir;
     float t;
+    float t2;
     bool alive;
     bool active;
 
@@ -34,7 +35,7 @@ typedef struct Spawner__
 
 } Spawner;
 
-#define ENTITY_MAX 512
+#define ENTITY_MAX 128
 
 GLOBAL Entity  gEntity[ENTITY_MAX];
 GLOBAL Spawner gSpawner;
@@ -42,7 +43,7 @@ GLOBAL Spawner gSpawner;
 INTERNAL void  create_entity (EntityID id);
 INTERNAL void  update_entity (float dt);
 INTERNAL void  render_entity (float dt);
-INTERNAL void collide_entity (bool shot); // Whether a shot was fired ot its just normal collision.
+INTERNAL void collide_entity (bool shot); // Whether a shot was fired or its just normal collision.
 INTERNAL void create_spawner ();
 INTERNAL void update_spawner (float dt);
 

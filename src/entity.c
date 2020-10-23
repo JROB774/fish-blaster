@@ -133,6 +133,51 @@ INTERNAL void create_urchin (Entity* entity)
 }
 INTERNAL void update_urchin (Entity* entity, float dt)
 {
+    // Urchin bouncing.
+    if (entity->t2 > 0.0f) entity->t2 -= dt;
+    if (entity->active && entity->t2 <= 0.0f)
+    {
+        for (int i=0; i<ENTITY_MAX; ++i)
+        {
+            Entity* other = gEntity+i;
+            if (entity != other) // Do not collide with self!
+            {
+                if (other->alive)
+                {
+                    if (other->type == ENT_URCHIN)
+                    {
+                        int ax = CAST(int,entity->x)+4;
+                        int ay = CAST(int,entity->y)+4;
+                        int aw = 8;
+                        int ah = 8;
+                        int bx = CAST(int,other->x)+4;
+                        int by = CAST(int,other->y)+4;
+                        int bw = 8;
+                        int bh = 8;
+
+                        bool collision = false;
+                        if (rect_vs_rect_collision(ax+(entity->vx*dt),ay,aw,ah, bx,by,bw,bh)) // Horizontal.
+                        {
+                            entity->vx *= -1;
+                            other->vx *= -1;
+                            collision = true;
+                        }
+                        if (rect_vs_rect_collision(ax,ay+(entity->vy*dt),aw,ah, bx,by,bw,bh)) // Vertical.
+                        {
+                            entity->vy *= -1;
+                            other->vy *= -1;
+                            collision = true;
+                        }
+                        if (collision)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // Slowly move the urchin.
     entity->x += entity->vx * dt;
     entity->y += entity->vy * dt;
@@ -143,6 +188,7 @@ INTERNAL void update_urchin (Entity* entity, float dt)
     // Once we're on screen we can activate vertical bouncing.
     if (!entity->active && (y < SCREEN_H)) entity->active = true;
 
+    // Wall bouncing.
     if ((x < 0) || (x > SCREEN_W)) // Horizontal bounce.
     {
         entity->vx = -(entity->vx);
