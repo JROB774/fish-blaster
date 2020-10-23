@@ -29,15 +29,29 @@ INTERNAL void create_crate (Entity* entity)
 }
 INTERNAL void update_crate (Entity* entity, float dt)
 {
+    entity->frame++;
     entity->y += CRATE_SPEED * dt;
     if (entity->y > SCREEN_H) // Deactivate the crate if it goes off-screen.
     {
         entity->alive = false;
     }
 }
-INTERNAL const Clip* render_crate (Entity* entity, float dt)
+INTERNAL void render_crate (Entity* entity, float dt)
 {
-    return &SPR_CRATE;
+    render_bitmap(entity->x,entity->y,entity->palette,&SPR_CRATE);
+    // Draw the identifiying icon for the crate.
+    if (entity->frame % 2 == 0)
+    {
+        switch (entity->type)
+        {
+            case (ENT_CRATE_LIFE): render_bitmap(entity->x+4,entity->y+4,PAL_ICO_LIFE,ANM_ICO_LIFE[0]); break;
+            case (ENT_CRATE_TIME): render_bitmap(entity->x+4,entity->y+4,PAL_ICO_TIME,ANM_ICO_TIME[0]); break;
+            case (ENT_CRATE_MULT): render_bitmap(entity->x+4,entity->y+4,PAL_ICO_MULT,ANM_ICO_MULT[0]); break;
+            case (ENT_CRATE_RAPD): render_bitmap(entity->x+4,entity->y+4,PAL_ICO_RAPD,ANM_ICO_RAPD[0]); break;
+            case (ENT_CRATE_SPRD): render_bitmap(entity->x+4,entity->y+4,PAL_ICO_SPRD,ANM_ICO_SPRD[0]); break;
+            case (ENT_CRATE_BOOM): render_bitmap(entity->x+4,entity->y+4,PAL_ICO_BOOM,ANM_ICO_BOOM[0]); break;
+        }
+    }
 }
 INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
@@ -94,7 +108,7 @@ INTERNAL void update_fish (Entity* entity, float dt)
         if (entity->x > SCREEN_W) entity->alive = false;
     }
 }
-INTERNAL const Clip* render_fish (Entity* entity, float dt)
+INTERNAL void render_fish (Entity* entity, float dt)
 {
     entity->t -= dt;
     if (entity->t <= 0.0f)
@@ -106,7 +120,9 @@ INTERNAL const Clip* render_fish (Entity* entity, float dt)
             entity->frame = 0;
         }
     }
-    return ((entity->dir == FISH_DIR_L) ? ANM_FISH_L[entity->frame] : ANM_FISH_R[entity->frame]);
+    const Clip* clip = ((entity->dir == FISH_DIR_L) ? ANM_FISH_L[entity->frame] : ANM_FISH_R[entity->frame]);
+    render_bitmap(entity->x,entity->y,entity->palette,clip);
+
 }
 INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
@@ -140,10 +156,9 @@ INTERNAL void update_squid (Entity* entity, float dt)
 {
     // @Incomplete: ...
 }
-INTERNAL const Clip* render_squid (Entity* entity, float dt)
+INTERNAL void render_squid (Entity* entity, float dt)
 {
     // @Incomplete: ...
-    return NULL;
 }
 INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
@@ -248,7 +263,7 @@ INTERNAL void update_urchin (Entity* entity, float dt)
         }
     }
 }
-INTERNAL const Clip* render_urchin (Entity* entity, float dt)
+INTERNAL void render_urchin (Entity* entity, float dt)
 {
     entity->t -= dt;
     if (entity->t <= 0.0f)
@@ -260,7 +275,7 @@ INTERNAL const Clip* render_urchin (Entity* entity, float dt)
             entity->frame = 0;
         }
     }
-    return ANM_URCHIN[entity->frame];
+    render_bitmap(entity->x,entity->y,entity->palette,ANM_URCHIN[entity->frame]);
 }
 INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
@@ -524,12 +539,11 @@ INTERNAL void render_entity (float dt)
                 case (ENT_CRATE_MULT):
                 case (ENT_CRATE_RAPD):
                 case (ENT_CRATE_SPRD):
-                case (ENT_CRATE_BOOM): frame = render_crate (entity, dt); break;
-                case (ENT_FISH      ): frame = render_fish  (entity, dt); break;
-                case (ENT_SQUID     ): frame = render_squid (entity, dt); break;
-                case (ENT_URCHIN    ): frame = render_urchin(entity, dt); break;
+                case (ENT_CRATE_BOOM): render_crate (entity, dt); break;
+                case (ENT_FISH      ): render_fish  (entity, dt); break;
+                case (ENT_SQUID     ): render_squid (entity, dt); break;
+                case (ENT_URCHIN    ): render_urchin(entity, dt); break;
             }
-            render_bitmap(entity->x,entity->y,entity->palette,frame);
         }
     }
 }
