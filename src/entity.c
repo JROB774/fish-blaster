@@ -86,6 +86,8 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
             create_effect(EFX_CHIP_0, x+(CRATE_WIDTH/2),y+(CRATE_HEIGHT/2),1,1, CRATE_MIN_CHIP_0,CRATE_MAX_CHIP_0);
             create_effect(effect_id, x+(CRATE_WIDTH/2),y+(CRATE_HEIGHT/2),1,1, 1,1);
             create_effect(EFX_BUBBLE, x,y,w,h, CRATE_MIN_BUBBLE,CRATE_MAX_BUBBLE);
+            play_sound(SND_BREAK,0);
+            play_sound(SND_ITEM,0);
             entity->alive = false;
         }
     }
