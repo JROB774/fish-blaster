@@ -66,14 +66,21 @@ INTERNAL void render_hud (int y, bool extra)
     }
     else
     {
-        switch (gApp.current_item)
+        if (floor(gApp.item_time) <= 0.0f) // Flash the icon and text just before the item goes away.
         {
-            case (ITEM_TIME): render_bitmap(SCREEN_W-32,y,PAL_ICO_TIME, &SPR_ICO_TIME_0); break;
-            case (ITEM_MULT): render_bitmap(SCREEN_W-32,y,PAL_ICO_MULT, &SPR_ICO_MULT_0); break;
-            case (ITEM_RAPD): render_bitmap(SCREEN_W-33,y,PAL_ICO_RAPD, &SPR_ICO_RAPD_0); break; // Kind of hacky but we draw this 1px left so it doesn't hug/touch the number to the right!
-            case (ITEM_SPRD): render_bitmap(SCREEN_W-32,y,PAL_ICO_SPRD, &SPR_ICO_SPRD_0); break;
+            gApp.item_flash = !gApp.item_flash;
         }
-        render_text(SCREEN_W-24,y, PAL_TEXT_SHADE, "%d", CAST(int, floor(gApp.item_time)));
+        if (!gApp.item_flash)
+        {
+            render_text(SCREEN_W-24,y, PAL_TEXT_SHADE, "%d", CAST(int, floor(gApp.item_time)));
+            switch (gApp.current_item)
+            {
+                case (ITEM_TIME): render_bitmap(SCREEN_W-32,y,PAL_ICO_TIME, &SPR_ICO_TIME_0); break;
+                case (ITEM_MULT): render_bitmap(SCREEN_W-32,y,PAL_ICO_MULT, &SPR_ICO_MULT_0); break;
+                case (ITEM_RAPD): render_bitmap(SCREEN_W-33,y,PAL_ICO_RAPD, &SPR_ICO_RAPD_0); break; // Kind of hacky but we draw this 1px left so it doesn't hug/touch the number to the right!
+                case (ITEM_SPRD): render_bitmap(SCREEN_W-32,y,PAL_ICO_SPRD, &SPR_ICO_SPRD_0); break;
+            }
+        }
     }
 }
 INTERNAL void shoot ()
@@ -300,6 +307,7 @@ INTERNAL void start_game ()
 
     gApp.current_item = ITEM_NONE;
     gApp.item_time = 0.0f;
+    gApp.item_flash = false;
     gApp.score = 0;
     gApp.life = MAX_LIFE;
     gApp.god_time = 0;
