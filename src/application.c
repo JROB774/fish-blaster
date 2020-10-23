@@ -18,9 +18,20 @@ INTERNAL void render_cursor ()
     }
 
     // Draw the actual cursor graphic.
-    int x = gApp.cursor_x-(SPR_CURSOR_0.w/2);
-    int y = gApp.cursor_y-(SPR_CURSOR_0.h/2);
-    render_bitmap(x,y,PAL_CURSOR,&SPR_CURSOR_0);
+    bool visible = true;
+    if (gApp.itime > 0.0f)
+    {
+        if (gApp.frame % 2 == 0) // Flicker when invincible!
+        {
+            visible = false;
+        }
+    }
+    if (visible)
+    {
+        int x = gApp.cursor_x-(SPR_CURSOR_0.w/2);
+        int y = gApp.cursor_y-(SPR_CURSOR_0.h/2);
+        render_bitmap(x,y,PAL_CURSOR,&SPR_CURSOR_0);
+    }
 }
 INTERNAL void render_hud (int y, bool extra)
 {
@@ -42,8 +53,8 @@ INTERNAL void render_hud (int y, bool extra)
     render_bitmap(0,y, PAL_BLACK, &SPR_SCOREBGL);
     render_fill(16,y,16,8, get_palette_color(PAL_BLACK,0));
     render_bitmap(32,y, PAL_BLACK, &SPR_SCOREBGR);
-    render_bitmap(16,y, PAL_HEART, &SPR_HEART);
-    render_bitmap(24,y, PAL_HEART, &SPR_HEART);
+    render_bitmap(16,y, (gApp.life >= 1) ? PAL_HEART : PAL_NOHEART, &SPR_HEART);
+    render_bitmap(24,y, (gApp.life >= 2) ? PAL_HEART : PAL_NOHEART, &SPR_HEART);
 
     // Draw the player's current bonus.
     render_bitmap(SCREEN_W-48,y, PAL_BLACK, &SPR_SCOREBGL);
@@ -71,6 +82,8 @@ INTERNAL void shoot ()
 
 INTERNAL void update_game (float dt)
 {
+    if (gApp.itime > 0.0f) gApp.itime -= dt;
+
     update_spawner(dt);
     update_entity (dt);
     update_effect (dt);
@@ -187,6 +200,8 @@ INTERNAL void handle_application (SDL_Event* event)
 }
 INTERNAL void update_application (float dt)
 {
+    gApp.frame++;
+
     update_camera(dt);
 
     switch (gApp.state)
@@ -206,19 +221,39 @@ INTERNAL void render_application (float dt)
     }
 }
 
+INTERNAL void cursor_hit ()
+{
+    if (gApp.itime <= 0.0f) // If we don't have invincibility frames.
+    {
+        gApp.itime = ITIME;
+        gApp.life--;
+
+        shake_camera(3,3,0.3f);
+
+        if (gApp.life <= 0)
+        {
+            game_over();
+        }
+    }
+}
+
 // STATES
 
 INTERNAL void start_game ()
 {
+    gApp.state = APP_STATE_GAME;
+
     memset(gEntity, 0, sizeof(gEntity));
     memset(gEffect, 0, sizeof(gEffect));
 
     create_spawner();
 
     gApp.score = 0;
-    gApp.state = APP_STATE_GAME;
+    gApp.life = START_LIFE;
+    gApp.itime = 0;
 }
 INTERNAL void game_over ()
 {
     gApp.state = APP_STATE_GAMEOVER;
+    gApp.itime = 0.0f;
 }

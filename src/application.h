@@ -7,13 +7,21 @@ typedef enum AppState__ { APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } 
 #define CODE_RETRO "retro"
 #define CODE_BLOOD "blood"
 
+#define START_LIFE 2
+#define ITIME   1.0f
+
 GLOBAL struct
 {
     int cursor_x, cursor_prev_x;
     int cursor_y, cursor_prev_y;
 
     AppState state;
+
     int score;
+    int life;
+    int frame;
+
+    float itime;
 
     char code[CODE_LENGTH];
     int code_length;
@@ -28,6 +36,8 @@ INTERNAL void   quit_application ();
 INTERNAL void handle_application (SDL_Event* event);
 INTERNAL void update_application (float dt);
 INTERNAL void render_application (float dt);
+
+INTERNAL void cursor_hit ();
 
 // Switches the state of the game.
 INTERNAL void start_game ();

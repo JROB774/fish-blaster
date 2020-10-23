@@ -99,6 +99,7 @@ GLOBAL const Clip* ANM_SHOT  [] = { &SPR_SHOT_0,   &SPR_SHOT_1,   &SPR_SHOT_2   
 #define PAL_SHOT       3
 #define PAL_BLOOD_0    4
 #define PAL_BLOOD_1    5
+#define PAL_NOHEART    5
 #define PAL_HEART      6
 #define PAL_FISH_0     6
 #define PAL_FISH_1     7

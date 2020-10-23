@@ -230,7 +230,7 @@ INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bo
 
     if (point_vs_rect_collision(mx,my, x,y,w,h))
     {
-        game_over();
+        cursor_hit();
     }
 }
 
