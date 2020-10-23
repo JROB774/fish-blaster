@@ -277,7 +277,7 @@ INTERNAL void start_game ()
     create_spawner();
 
     gApp.score = 0;
-    gApp.life = START_LIFE;
+    gApp.life = MAX_LIFE;
     gApp.itime = 0;
 }
 INTERNAL void game_over ()

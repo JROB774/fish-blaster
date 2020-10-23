@@ -70,16 +70,40 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
 
         if (rect_vs_rect_collision(mx,my,mw,mh, x,y,w,h))
         {
-            // Determine which item graphic to display.
+            // Determine which item graphic to display and perform the crate's effect.
             EffectID effect_id = 0;
             switch (entity->type)
             {
-                case (ENT_CRATE_LIFE): effect_id = EFX_ICO_LIFE; break;
-                case (ENT_CRATE_TIME): effect_id = EFX_ICO_TIME; break;
-                case (ENT_CRATE_MULT): effect_id = EFX_ICO_MULT; break;
-                case (ENT_CRATE_RAPD): effect_id = EFX_ICO_RAPD; break;
-                case (ENT_CRATE_SPRD): effect_id = EFX_ICO_SPRD; break;
-                case (ENT_CRATE_BOOM): effect_id = EFX_ICO_BOOM; break;
+                case (ENT_CRATE_LIFE):
+                {
+                    if (gApp.life < MAX_LIFE) gApp.life++;
+                    effect_id = EFX_ICO_LIFE;
+                } break;
+                case (ENT_CRATE_TIME):
+                {
+                    // @Incomplete: ...
+                    effect_id = EFX_ICO_TIME;
+                } break;
+                case (ENT_CRATE_MULT):
+                {
+                    // @Incomplete; ...
+                    effect_id = EFX_ICO_MULT;
+                } break;
+                case (ENT_CRATE_RAPD):
+                {
+                    // @Incomplete; ...
+                    effect_id = EFX_ICO_RAPD;
+                } break;
+                case (ENT_CRATE_SPRD):
+                {
+                    // @Incomplete; ...
+                    effect_id = EFX_ICO_SPRD;
+                } break;
+                case (ENT_CRATE_BOOM):
+                {
+                    // @Incomplete; ...
+                    effect_id = EFX_ICO_BOOM;
+                } break;
             }
 
             // Kill the crate.

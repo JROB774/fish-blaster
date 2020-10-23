@@ -9,8 +9,8 @@ typedef enum AppState__ { APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } 
 
 #define GAMEOVER_COOLDOWN 0.25f
 
-#define START_LIFE 2
-#define ITIME   1.0f
+#define MAX_LIFE 2
+#define ITIME    1.0f
 
 GLOBAL struct
 {
