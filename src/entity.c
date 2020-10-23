@@ -19,6 +19,10 @@ INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, fl
 #define CRATE_SPEED  30
 #define CRATE_MIN_SPAWN_X 8
 #define CRATE_MAX_SPAWN_X (SCREEN_W-CRATE_WIDTH-8)
+#define CRATE_MIN_CHIP  12
+#define CRATE_MAX_CHIP  20
+#define CRATE_MIN_BUBBLE 3
+#define CRATE_MAX_BUBBLE 7
 
 INTERNAL void create_crate (Entity* entity)
 {
@@ -57,9 +61,16 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
 {
     if (shot)
     {
-        if (rect_vs_rect_collision(mx,my,mw,mh, entity->x,entity->y,CRATE_WIDTH,CRATE_HEIGHT))
+        int x = entity->x;
+        int y = entity->y;
+        int w = CRATE_WIDTH;
+        int h = CRATE_HEIGHT;
+
+        if (rect_vs_rect_collision(mx,my,mw,mh, x,y,w,h))
         {
             // Kill the crate.
+            create_effect(EFX_CHIP, x+(CRATE_WIDTH/2),y+(CRATE_HEIGHT/2),1,1, CRATE_MIN_CHIP,CRATE_MAX_CHIP);
+            create_effect(EFX_BUBBLE, x,y,w,h, CRATE_MIN_BUBBLE,CRATE_MAX_BUBBLE);
             entity->alive = false;
         }
     }

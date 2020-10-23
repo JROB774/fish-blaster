@@ -91,6 +91,14 @@ GLOBAL const Clip SPR_ICO_SPRD_0 = { 16,  24,  8,  8 };
 GLOBAL const Clip SPR_ICO_SPRD_1 = { 24,  24,  8,  8 };
 GLOBAL const Clip SPR_ICO_BOOM_0 = { 32,  24,  8,  8 };
 GLOBAL const Clip SPR_ICO_BOOM_1 = { 40,  24,  8,  8 };
+GLOBAL const Clip SPR_CHIP_0     = {  0,  40,  8,  8 };
+GLOBAL const Clip SPR_CHIP_1     = {  8,  40,  8,  8 };
+GLOBAL const Clip SPR_CHIP_2     = { 16,  40,  8,  8 };
+GLOBAL const Clip SPR_CHIP_3     = { 24,  40,  8,  8 };
+GLOBAL const Clip SPR_CHIP_4     = { 32,  40,  8,  8 };
+GLOBAL const Clip SPR_CHIP_5     = { 40,  40,  8,  8 };
+GLOBAL const Clip SPR_CHIP_6     = { 48,  40,  8,  8 };
+GLOBAL const Clip SPR_CHIP_7     = { 56,  40,  8,  8 };
 
 // ANIMATIONS
 
@@ -107,6 +115,7 @@ GLOBAL const Clip* ANM_ICO_MULT[] = { &SPR_ICO_MULT_0, &SPR_ICO_MULT_1          
 GLOBAL const Clip* ANM_ICO_RAPD[] = { &SPR_ICO_RAPD_0, &SPR_ICO_RAPD_1                                                                                     };
 GLOBAL const Clip* ANM_ICO_SPRD[] = { &SPR_ICO_SPRD_0, &SPR_ICO_SPRD_1                                                                                     };
 GLOBAL const Clip* ANM_ICO_BOOM[] = { &SPR_ICO_BOOM_0, &SPR_ICO_BOOM_1                                                                                     };
+GLOBAL const Clip* ANM_CHIP    [] = { &SPR_CHIP_0,     &SPR_CHIP_1,    &SPR_CHIP_2,   &SPR_CHIP_3,  &SPR_CHIP_4,  &SPR_CHIP_5,  &SPR_CHIP_6,  &SPR_CHIP_7  };
 
 // PALETTES
 
@@ -127,6 +136,7 @@ GLOBAL const Clip* ANM_ICO_BOOM[] = { &SPR_ICO_BOOM_0, &SPR_ICO_BOOM_1          
 #define PAL_BUBBLE      8
 #define PAL_BONE        9
 #define PAL_CRATE      10
+#define PAL_CHIP       10
 #define PAL_ICO_LIFE    6
 #define PAL_ICO_TIME    8
 #define PAL_ICO_MULT   11

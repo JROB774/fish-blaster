@@ -136,6 +136,48 @@ INTERNAL void update_gib (Effect* effect, float dt)
     }
 }
 
+// EFX_CHIP
+
+#define CHIP_MIN_BLINKTIME  0.7f
+#define CHIP_MAX_BLINKTIME  1.5f
+#define CHIP_LIFETIME      -0.5f
+#define CHIP_VELOCITY_INC   0.5f
+#define CHIP_START_VELOCITY 10
+#define CHIP_MAX_VELOCITY   8
+
+INTERNAL void create_chip (Effect* effect)
+{
+    effect->t = random_float_range(CHIP_MIN_BLINKTIME,CHIP_MAX_BLINKTIME);
+    effect->palette = PAL_CHIP;
+    effect->frame = random_int_range(0, ARRAYSIZE(ANM_BLOOD)-2);
+    effect->vx = CHIP_START_VELOCITY;
+    effect->vy = 0;
+    rotate_vec2(&effect->vx, &effect->vy, random_float_range(0,M_PI*2));
+}
+INTERNAL void update_chip (Effect* effect, float dt)
+{
+    // Slowly apply an upward force to the chip.
+    effect->vy -= CHIP_VELOCITY_INC;
+    if (effect->vy < -CHIP_MAX_VELOCITY)
+    {
+        effect->vy = -CHIP_MAX_VELOCITY;
+    }
+
+    effect->x += effect->vx * dt;
+    effect->y += effect->vy * dt;
+
+    // After a while start blinking and eventually vanish.
+    effect->t -= dt;
+    if (effect->t <= 0.0f)
+    {
+        effect->invis = !effect->invis;
+        if (effect->t < CHIP_LIFETIME)
+        {
+            effect->alive = false;
+        }
+    }
+}
+
 // EFX_BUBBLE
 
 #define BUBBLE_MAX_VELOCITY  100
@@ -274,6 +316,7 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
                 case (EFX_BLOOD    ): fw =  8, fh = 8; break;
                 case (EFX_GIB_BLOOD): fw =  8, fh = 8; break;
                 case (EFX_GIB      ): fw =  8, fh = 8; break;
+                case (EFX_CHIP     ): fw =  8, fh = 8; break;
                 case (EFX_BUBBLE   ): fw =  8, fh = 8; break;
                 case (EFX_SHOT     ): fw =  8, fh = 8; break;
                 case (EFX_SCORE10  ):
@@ -294,6 +337,7 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
                 case (EFX_BLOOD    ): create_blood    (effect); break;
                 case (EFX_GIB_BLOOD): create_gib_blood(effect); break;
                 case (EFX_GIB      ): create_gib      (effect); break;
+                case (EFX_CHIP     ): create_chip     (effect); break;
                 case (EFX_BUBBLE   ): create_bubble   (effect); break;
                 case (EFX_SHOT     ): create_shot     (effect); break;
                 case (EFX_SCORE10  ):
@@ -324,6 +368,7 @@ INTERNAL void update_effect (float dt)
                 case (EFX_BLOOD    ): update_blood     (effect, dt); break;
                 case (EFX_GIB_BLOOD): update_gib_blood (effect, dt); break;
                 case (EFX_GIB      ): update_gib       (effect, dt); break;
+                case (EFX_CHIP     ): update_chip      (effect, dt); break;
                 case (EFX_BUBBLE   ): update_bubble    (effect, dt); break;
                 case (EFX_SHOT     ): update_shot      (effect, dt); break;
                 case (EFX_SCORE10  ):
@@ -370,6 +415,7 @@ INTERNAL void render_effect_lo (float dt)
                     case (EFX_BLOOD    ): clip = ANM_BLOOD [effect->frame]; break;
                     case (EFX_GIB_BLOOD): clip = ANM_BLOOD [effect->frame]; break;
                     case (EFX_GIB      ): clip = ANM_BLOOD [effect->frame]; break;
+                    case (EFX_CHIP     ): clip = ANM_CHIP  [effect->frame]; break;
                     case (EFX_BUBBLE   ): clip = ANM_BUBBLE[effect->frame]; break;
                     case (EFX_SHOT     ): clip = ANM_SHOT  [effect->frame]; break;
                 }
