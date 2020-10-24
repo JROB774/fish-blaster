@@ -295,6 +295,13 @@ INTERNAL void handle_application (SDL_Event* event)
 }
 INTERNAL void update_application (float dt)
 {
+    // Quit the game.
+    if (key_pressed(ESCAPE))
+    {
+        gWindow.running = false;
+        return;
+    }
+
     gApp.frame++;
 
     if (gApp.shoot_cooldown > 0.0f)
