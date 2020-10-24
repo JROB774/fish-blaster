@@ -398,6 +398,9 @@ INTERNAL void kill_urchin (Entity* entity)
         create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += URCHIN_SCORE;
     }
+
+    // This needs to be decremented for urchin spawning to work correctly!
+    gSpawner.urchin_count--;
 }
 INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
