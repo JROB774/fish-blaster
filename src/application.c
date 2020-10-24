@@ -178,10 +178,17 @@ INTERNAL void update_game (float dt)
 }
 INTERNAL void render_game (float dt)
 {
+    // Half the speed of everything if the slowdown item was recieved.
+    float gamedt = dt;
+    if (gApp.current_item == ITEM_TIME)
+    {
+        gamedt /= 2.0f;
+    }
+
     begin_camera();
-    render_effect_lo(dt);
-    render_entity(dt);
-    render_effect_hi(dt);
+    render_effect_lo(gamedt);
+    render_entity(gamedt);
+    render_effect_hi(gamedt);
     end_camera();
 
     render_cursor();
