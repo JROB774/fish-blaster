@@ -280,7 +280,14 @@ INTERNAL void handle_application (SDL_Event* event)
                 }
                 else
                 {
-                    set_palette_mode(PAL_MODE_DEFAULT);
+                    if (gApp.current_item == ITEM_TIME)
+                    {
+                        set_palette_mode(PAL_MODE_SLOWDOWN);
+                    }
+                    else
+                    {
+                        set_palette_mode(PAL_MODE_DEFAULT);
+                    }
                 }
             }
         }
