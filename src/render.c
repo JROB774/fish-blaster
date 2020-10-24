@@ -541,6 +541,70 @@ INTERNAL void render_fill (int x, int y, int w, int h, ARGBColor color)
     }
 }
 
+void xLine(int x1, int x2, int y, ARGBColor colour)
+{
+    while (x1 <= x2) render_point(x1++, y, colour);
+}
+
+void yLine(int x, int y1, int y2, ARGBColor colour)
+{
+    while (y1 <= y2) render_point(x, y1++, colour);
+}
+
+// Circle drawing algorithm, with thickness, taken from here: https://stackoverflow.com/a/27756701
+INTERNAL void render_circle (int x, int y, int r, int thickness, ARGBColor color)
+{
+    int outer = r;
+    int inner = outer-thickness+1;
+
+    int xo   = outer;
+    int xi   = inner;
+    int yy   = 0;
+    int erro = 1-xo;
+    int erri = 1-xi;
+
+    while (xo >= yy)
+    {
+        render_line(x+xi, y+yy, x+xo, y+yy, color);
+        render_line(x+yy, y+xi, x+yy, y+xo, color);
+        render_line(x-xo, y+yy, x-xi, y+yy, color);
+        render_line(x-yy, y+xi, x-yy, y+xo, color);
+        render_line(x-xo, y-yy, x-xi, y-yy, color);
+        render_line(x-yy, y-xo, x-yy, y-xi, color);
+        render_line(x+xi, y-yy, x+xo, y-yy, color);
+        render_line(x+yy, y-xo, x+yy, y-xi, color);
+
+        yy++;
+
+        if (erro < 0)
+        {
+            erro += 2*yy+1;
+        }
+        else
+        {
+            xo--;
+            erro += 2*(yy-xo+1);
+        }
+
+        if (yy > inner)
+        {
+            xi = yy;
+        }
+        else
+        {
+            if (erri < 0)
+            {
+                erri += 2*yy+1;
+            }
+            else
+            {
+                xi--;
+                erri += 2*(yy-xi+1);
+            }
+        }
+    }
+}
+
 INTERNAL void set_palette_mode (int palette_mode)
 {
     gRenderer.palette_mode = palette_mode;
