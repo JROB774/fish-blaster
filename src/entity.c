@@ -509,7 +509,19 @@ INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, fl
 
 INTERNAL bool circle_vs_rect_collision (float cx, float cy, float cr, float rx, float ry, float rw, float rh)
 {
-    return false;
+    int x = cx;
+    int y = cy;
+
+    if      (cx < (rx   )) x = rx;
+    else if (cx > (rx+rw)) x = rx+rw;
+    if      (cy < (ry   )) y = ry;
+    else if (cy > (ry+rh)) y = ry+rh;
+
+    float dx = CAST(float, cx-x);
+    float dy = CAST(float, cy-y);
+    float d  = sqrt((dx*dx)+(dy*dy));
+
+    return (d <= cr);
 }
 
 // ENTITIES
