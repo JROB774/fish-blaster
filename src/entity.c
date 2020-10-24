@@ -14,6 +14,17 @@
 #define CRATE_MIN_BUBBLE 3
 #define CRATE_MAX_BUBBLE 7
 
+GLOBAL const Rect CRATE_COLLIDER = { 0,0,CRATE_WIDTH,CRATE_HEIGHT };
+
+INTERNAL Rect get_crate_collider (Entity* entity)
+{
+    Rect collider;
+    collider.x = CRATE_COLLIDER.x + entity->x;
+    collider.y = CRATE_COLLIDER.y + entity->y;
+    collider.w = CRATE_COLLIDER.w;
+    collider.h = CRATE_COLLIDER.h;
+    return collider;
+}
 INTERNAL void create_crate (Entity* entity)
 {
     entity->palette = PAL_CRATE;
@@ -47,16 +58,21 @@ INTERNAL void render_crate (Entity* entity, float dt)
         }
     }
 }
+INTERNAL void kill_crate (Entity* entity)
+{
+    Rect c = get_crate_collider(entity);
+    create_effect(EFX_CHIP_0, entity->x+(CRATE_WIDTH/2),entity->y+(CRATE_HEIGHT/2),1,1, CRATE_MIN_CHIP_0,CRATE_MAX_CHIP_0);
+    create_effect(EFX_BUBBLE, c.x,c.y,c.w,c.h, CRATE_MIN_BUBBLE,CRATE_MAX_BUBBLE);
+    play_sound(SND_BREAK,0);
+    play_sound(SND_ITEM,0);
+    entity->alive = false;
+}
 INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
     if (shot)
     {
-        int x = entity->x;
-        int y = entity->y;
-        int w = CRATE_WIDTH;
-        int h = CRATE_HEIGHT;
-
-        if (rect_vs_rect_collision(mx,my,mw,mh, x,y,w,h))
+        Rect c = get_crate_collider(entity);
+        if (rect_vs_rect_collision(mx,my,mw,mh, c.x,c.y,c.w,c.h))
         {
             // Determine which item graphic to display and perform the crate's effect.
             EffectID effect_id = 0;
@@ -98,18 +114,16 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
                 } break;
                 case (ENT_CRATE_BOOM):
                 {
-                    // @Incomplete; ...
+                    Entity* boom = create_entity(ENT_BOOM);
+                    boom->x = entity->x+(CRATE_WIDTH/2);
+                    boom->y = entity->y+(CRATE_HEIGHT/2);
                     effect_id = EFX_ICO_BOOM;
                 } break;
             }
 
-            // Kill the crate.
-            create_effect(EFX_CHIP_0, x+(CRATE_WIDTH/2),y+(CRATE_HEIGHT/2),1,1, CRATE_MIN_CHIP_0,CRATE_MAX_CHIP_0);
-            create_effect(effect_id, x+(CRATE_WIDTH/2),y+(CRATE_HEIGHT/2),1,1, 1,1);
-            create_effect(EFX_BUBBLE, x,y,w,h, CRATE_MIN_BUBBLE,CRATE_MAX_BUBBLE);
-            play_sound(SND_BREAK,0);
-            play_sound(SND_ITEM,0);
-            entity->alive = false;
+            create_effect(effect_id, entity->x+(CRATE_WIDTH/2),entity->y+(CRATE_HEIGHT/2),1,1, 1,1);
+
+            kill_crate(entity);
         }
     }
 }
@@ -131,6 +145,17 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
 #define FISH_MIN_GIB   1
 #define FISH_MAX_GIB   4
 
+GLOBAL const Rect FISH_COLLIDER = { 2,1,12,6 };
+
+INTERNAL Rect get_fish_collider (Entity* entity)
+{
+    Rect collider;
+    collider.x = FISH_COLLIDER.x + entity->x;
+    collider.y = FISH_COLLIDER.y + entity->y;
+    collider.w = FISH_COLLIDER.w;
+    collider.h = FISH_COLLIDER.h;
+    return collider;
+}
 INTERNAL void create_fish (Entity* entity)
 {
     entity->palette = random_int_range(PAL_FISH_0,PAL_FISH_2);
@@ -175,23 +200,20 @@ INTERNAL void render_fish (Entity* entity, float dt)
 }
 INTERNAL void kill_fish (Entity* entity)
 {
-    int x = CAST(int,entity->x)+2;
-    int y = CAST(int,entity->y)+1;
-    int w = 12;
-    int h = 6;
+    Rect c = get_fish_collider(entity);
 
-    create_effect(EFX_BLOOD, x,y,w,h, FISH_MIN_BLOOD,FISH_MAX_BLOOD);
-    create_effect(EFX_GIB, x,y,w,h, FISH_MIN_GIB,FISH_MAX_GIB);
+    create_effect(EFX_BLOOD, c.x,c.y,c.w,c.h, FISH_MIN_BLOOD,FISH_MAX_BLOOD);
+    create_effect(EFX_GIB, c.x,c.y,c.w,c.h, FISH_MIN_GIB,FISH_MAX_GIB);
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
     entity->alive = false;
     if (gApp.current_item == ITEM_MULT)
     {
-        create_effect(EFX_SCORE20, x+w/2,y+h/2,1,1, 1,1);
+        create_effect(EFX_SCORE20, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += (FISH_SCORE*2);
     }
     else
     {
-        create_effect(EFX_SCORE10, x+w/2,y+h/2,1,1, 1,1);
+        create_effect(EFX_SCORE10, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += FISH_SCORE;
     }
 }
@@ -199,12 +221,8 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
 {
     if (shot)
     {
-        int x = CAST(int,entity->x)+2;
-        int y = CAST(int,entity->y)+1;
-        int w = 12;
-        int h = 6;
-
-        if (rect_vs_rect_collision(mx,my,mw,mh, x,y,w,h))
+        Rect c = get_fish_collider(entity);
+        if (rect_vs_rect_collision(mx,my,mw,mh, c.x,c.y,c.w,c.h))
         {
             kill_fish(entity);
         }
@@ -213,6 +231,12 @@ INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool
 
 // ENT_SQUID
 
+INTERNAL Rect get_squid_collider (Entity* entity)
+{
+    Rect collider;
+    // @Incomplete; ...
+    return collider;
+}
 INTERNAL void create_squid (Entity* entity)
 {
     // @Incomplete: ...
@@ -222,6 +246,10 @@ INTERNAL void update_squid (Entity* entity, float dt)
     // @Incomplete: ...
 }
 INTERNAL void render_squid (Entity* entity, float dt)
+{
+    // @Incomplete: ...
+}
+INTERNAL void kill_squid (Entity* entity)
 {
     // @Incomplete: ...
 }
@@ -241,10 +269,26 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 #define URCHIN_WIDTH    16
 #define URCHIN_HEIGHT   16
 #define URCHIN_SPEED    40
+#define URCHIN_SCORE    40
 #define URCHIN_MIN_SPAWN_X 0
 #define URCHIN_MAX_SPAWN_X (SCREEN_W-URCHIN_WIDTH)
 #define URCHIN_SPAWN_ANGLE (M_PI/4)
+#define URCHIN_MIN_BLOOD 20
+#define URCHIN_MAX_BLOOD 35
+#define URCHIN_MIN_GIB   2
+#define URCHIN_MAX_GIB   5
 
+GLOBAL const Rect URCHIN_COLLIDER = { 4,4,8,8 };
+
+INTERNAL Rect get_urchin_collider (Entity* entity)
+{
+    Rect collider;
+    collider.x = URCHIN_COLLIDER.x + entity->x;
+    collider.y = URCHIN_COLLIDER.y + entity->y;
+    collider.w = URCHIN_COLLIDER.w;
+    collider.h = URCHIN_COLLIDER.h;
+    return collider;
+}
 INTERNAL void create_urchin (Entity* entity)
 {
     entity->palette = PAL_URCHIN;
@@ -273,23 +317,17 @@ INTERNAL void update_urchin (Entity* entity, float dt)
                 {
                     if (other->type == ENT_URCHIN)
                     {
-                        int ax = CAST(int,entity->x)+4;
-                        int ay = CAST(int,entity->y)+4;
-                        int aw = 8;
-                        int ah = 8;
-                        int bx = CAST(int,other->x)+4;
-                        int by = CAST(int,other->y)+4;
-                        int bw = 8;
-                        int bh = 8;
+                        Rect a = get_urchin_collider(entity);
+                        Rect b = get_urchin_collider(other);
 
                         bool collision = false;
-                        if (rect_vs_rect_collision(ax+(entity->vx*dt),ay,aw,ah, bx,by,bw,bh)) // Horizontal.
+                        if (rect_vs_rect_collision(a.x+(entity->vx*dt),a.y,a.w,a.h, b.x,b.y,b.w,b.h)) // Horizontal.
                         {
                             entity->vx *= -1;
                             other->vx *= -1;
                             collision = true;
                         }
-                        if (rect_vs_rect_collision(ax,ay+(entity->vy*dt),aw,ah, bx,by,bw,bh)) // Vertical.
+                        if (rect_vs_rect_collision(a.x,a.y+(entity->vy*dt),a.w,a.h, b.x,b.y,b.w,b.h)) // Vertical.
                         {
                             entity->vy *= -1;
                             other->vy *= -1;
@@ -342,20 +380,105 @@ INTERNAL void render_urchin (Entity* entity, float dt)
     }
     render_bitmap(entity->x,entity->y,entity->palette,ANM_URCHIN[entity->frame]);
 }
+INTERNAL void kill_urchin (Entity* entity)
+{
+    Rect c = get_urchin_collider(entity);
+
+    create_effect(EFX_BLOOD, c.x,c.y,c.w,c.h, URCHIN_MIN_BLOOD,URCHIN_MAX_BLOOD);
+    create_effect(EFX_GIB, c.x,c.y,c.w,c.h, URCHIN_MIN_GIB,URCHIN_MAX_GIB);
+    play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
+    entity->alive = false;
+    if (gApp.current_item == ITEM_MULT)
+    {
+        create_effect(EFX_SCORE80, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+        gApp.score += (URCHIN_SCORE*2);
+    }
+    else
+    {
+        create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+        gApp.score += URCHIN_SCORE;
+    }
+}
 INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
-    int x = CAST(int,entity->x)+4;
-    int y = CAST(int,entity->y)+4;
-    int w = 8;
-    int h = 8;
+    Rect c = get_urchin_collider(entity);
 
     mx += mw/2;
     my += mh/2;
 
-    if (point_vs_rect_collision(mx,my, x,y,w,h))
+    if (point_vs_rect_collision(mx,my, c.x,c.y,c.w,c.h))
     {
         cursor_hit();
     }
+}
+
+// ENT_BOOM
+
+#define BOOM_EXPAND_SPEED 300
+#define BOOM_MAX_RADIUS   (SCREEN_W*2)
+#define BOOM_THICKNESS    20
+
+INTERNAL void create_boom (Entity* entity)
+{
+    // The default position is just the current mouse location. But the caller of create_entity(ENT_BOOM)
+    // can get the returned entity and assign an x and y themselves. This is what the item crate does.
+    entity->x = get_mouse_x();
+    entity->y = get_mouse_y();
+
+    entity->t = 0.0f; // This value is used to mark the boom's radius.
+}
+INTERNAL void update_boom (Entity* entity, float dt)
+{
+    entity->t += BOOM_EXPAND_SPEED * dt;
+    if (entity->t >= BOOM_MAX_RADIUS)
+    {
+        entity->alive = false;
+    }
+
+    // Kill all entities the explosion comes into contact with.
+    for (int i=0; i<ENTITY_MAX; ++i)
+    {
+        Entity* other = gEntity+i;
+        if (other->alive)
+        {
+            if (other->type != ENT_BOOM)
+            {
+                Rect c = {0};
+                switch (other->type)
+                {
+                    case (ENT_CRATE_LIFE):
+                    case (ENT_CRATE_TIME):
+                    case (ENT_CRATE_MULT):
+                    case (ENT_CRATE_RAPD):
+                    case (ENT_CRATE_SPRD):
+                    case (ENT_CRATE_BOOM): c = get_crate_collider (other); break;
+                    case (ENT_FISH      ): c = get_fish_collider  (other); break;
+                    case (ENT_SQUID     ): c = get_squid_collider (other); break;
+                    case (ENT_URCHIN    ): c = get_urchin_collider(other); break;
+                }
+
+                if (circle_vs_rect_collision(entity->x,entity->y,entity->t, c.x,c.y,c.w,c.h))
+                {
+                    switch (other->type)
+                    {
+                        case (ENT_CRATE_LIFE):
+                        case (ENT_CRATE_TIME):
+                        case (ENT_CRATE_MULT):
+                        case (ENT_CRATE_RAPD):
+                        case (ENT_CRATE_SPRD):
+                        case (ENT_CRATE_BOOM): kill_crate (other); break;
+                        case (ENT_FISH      ): kill_fish  (other); break;
+                        case (ENT_SQUID     ): kill_squid (other); break;
+                        case (ENT_URCHIN    ): kill_urchin(other); break;
+                    }
+                }
+            }
+        }
+    }
+}
+INTERNAL void render_boom (Entity* entity, float dt)
+{
+    render_circle(entity->x,entity->y, entity->t,BOOM_THICKNESS, get_palette_color(PAL_WHITE,0));
 }
 
 // SCHOOLS
@@ -570,6 +693,7 @@ INTERNAL Entity* create_entity (EntityID id)
                 case (ENT_FISH      ): create_fish  (entity); break;
                 case (ENT_SQUID     ): create_squid (entity); break;
                 case (ENT_URCHIN    ): create_urchin(entity); break;
+                case (ENT_BOOM      ): create_boom  (entity); break;
             }
 
             return entity;
@@ -597,6 +721,7 @@ INTERNAL void update_entity (float dt)
                 case (ENT_FISH      ): update_fish  (entity, dt); break;
                 case (ENT_SQUID     ): update_squid (entity, dt); break;
                 case (ENT_URCHIN    ): update_urchin(entity, dt); break;
+                case (ENT_BOOM      ): update_boom  (entity, dt); break;
             }
         }
     }
@@ -637,6 +762,7 @@ INTERNAL void render_entity (float dt)
                 case (ENT_FISH      ): render_fish  (entity, dt); break;
                 case (ENT_SQUID     ): render_squid (entity, dt); break;
                 case (ENT_URCHIN    ): render_urchin(entity, dt); break;
+                case (ENT_BOOM      ): render_boom  (entity, dt); break;
             }
         }
     }

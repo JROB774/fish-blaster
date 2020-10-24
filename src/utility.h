@@ -17,6 +17,8 @@
 
 #define CAST(t,x) ((t)(x))
 
+typedef struct Rect__ { int x,y,w,h; } Rect;
+
 typedef int bool;
 #define false 0
 #define true  1
