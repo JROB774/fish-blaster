@@ -450,6 +450,8 @@ INTERNAL void render_line (int x1, int y1, int x2, int y2, ARGBColor color)
 
     if (x1 > get_render_target_max_x() && x2 > get_render_target_max_x()) return;
     if (y1 > get_render_target_max_y() && y2 > get_render_target_max_y()) return;
+    if (x1 < get_render_target_min_x() && x2 < get_render_target_min_x()) return;
+    if (y1 < get_render_target_min_y() && y2 < get_render_target_min_y()) return;
 
     // Clamp the bounds to avoid overflows.
     x1 = CLAMP(x1, get_render_target_min_x(), get_render_target_max_x());
