@@ -48,6 +48,8 @@ GLOBAL struct
     bool code_retro_enabled;
     bool code_blood_enabled;
 
+    bool flash_white;
+
 } gApp;
 
 INTERNAL bool   init_application ();
@@ -56,6 +58,10 @@ INTERNAL void handle_application (SDL_Event* event);
 INTERNAL void update_application (float dt);
 INTERNAL void render_application (float dt);
 
+// Not reaally sure where to put this?
+INTERNAL void flash_screen_white ();
+
+// Cursor stuff.
 INTERNAL bool is_cursor_in_screen_bounds ();
 INTERNAL void cursor_hit ();
 

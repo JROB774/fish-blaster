@@ -305,6 +305,19 @@ INTERNAL void render_application (float dt)
         case (APP_STATE_GAME    ): render_game    (dt); break;
         case (APP_STATE_GAMEOVER): render_gameover(dt); break;
     }
+
+    if (gApp.flash_white)
+    {
+        render_clear(get_palette_color(PAL_WHITE,0));
+        gApp.flash_white = false;
+    }
+}
+
+// MISC
+
+INTERNAL void flash_screen_white ()
+{
+    gApp.flash_white = true;
 }
 
 // CURSOR
