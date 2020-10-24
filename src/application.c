@@ -124,6 +124,25 @@ INTERNAL void update_game (float dt)
         if (gApp.item_time < 0.0f)
         {
             gApp.current_item = ITEM_NONE;
+            // We also reset the palette because ITEM_TIME changes it.
+            if (!gApp.code_retro_enabled)
+            {
+                set_palette_mode(PAL_MODE_DEFAULT);
+            }
+        }
+    }
+
+    // Special case for the time item that towards the end the custom palette
+    // starts blinking back to the original to show the power is ending.
+    if (gApp.current_item == ITEM_TIME)
+    {
+        if (!gApp.code_retro_enabled)
+        {
+            if (floor(gApp.item_time) <= 0.0f)
+            {
+                if (gApp.frame % 2 == 0) set_palette_mode(PAL_MODE_DEFAULT);
+                else set_palette_mode(PAL_MODE_SLOWDOWN);
+            }
         }
     }
 
@@ -335,4 +354,8 @@ INTERNAL void game_over ()
     gApp.shoot_cooldown = GAMEOVER_COOLDOWN;
     gApp.state = APP_STATE_GAMEOVER;
     gApp.god_time = 0.0f;
+    if (!gApp.code_retro_enabled)
+    {
+        set_palette_mode(PAL_MODE_DEFAULT);
+    }
 }

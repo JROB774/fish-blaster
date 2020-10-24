@@ -81,6 +81,11 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
                 } break;
                 case (ENT_CRATE_TIME):
                 {
+                    // Don't want to change palette if using the special RETRO code.
+                    if (!gApp.code_retro_enabled)
+                    {
+                        set_palette_mode(PAL_MODE_SLOWDOWN);
+                    }
                     gApp.current_item = ITEM_TIME;
                     gApp.item_time = ITEM_DURATION;
                     effect_id = EFX_ICO_TIME;
