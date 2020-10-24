@@ -48,6 +48,10 @@ typedef struct Spawner__
 GLOBAL Entity  gEntity[ENTITY_MAX];
 GLOBAL Spawner gSpawner;
 
+INTERNAL bool  point_vs_rect_collision (float px, float py, float rx, float ry, float rw, float rh);
+INTERNAL bool   rect_vs_rect_collision (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh);
+INTERNAL bool circle_vs_rect_collision (float cx, float cy, float cr, float rx, float ry, float rw, float rh);
+
 INTERNAL bool have_space_for_num_entities (int num);
 
 INTERNAL Entity*  create_entity (EntityID id);

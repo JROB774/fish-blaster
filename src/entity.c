@@ -1,15 +1,3 @@
-// COLLISION
-
-INTERNAL bool point_vs_rect_collision (float px, float py, float rx, float ry, float rw, float rh)
-{
-    return ((px >= rx) && (py >= ry) && (px < (rx+rw)) && (py < (ry+rh)));
-}
-
-INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh)
-{
-    return ((ax < (bx+bw)) && ((ax+aw) > bx) && (ay < (by+bh)) && ((ay+ah) > by));
-}
-
 // ENT_CRATE
 
 #define CRATE_SPAWN_START 20.0f
@@ -507,6 +495,23 @@ INTERNAL void spawn_school_of_fish_formation_largev ()
     }
 }
 
+// COLLISION
+
+INTERNAL bool point_vs_rect_collision (float px, float py, float rx, float ry, float rw, float rh)
+{
+    return ((px >= rx) && (py >= ry) && (px < (rx+rw)) && (py < (ry+rh)));
+}
+
+INTERNAL bool rect_vs_rect_collision (float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh)
+{
+    return ((ax < (bx+bw)) && ((ax+aw) > bx) && (ay < (by+bh)) && ((ay+ah) > by));
+}
+
+INTERNAL bool circle_vs_rect_collision (float cx, float cy, float cr, float rx, float ry, float rw, float rh)
+{
+    return false;
+}
+
 // ENTITIES
 
 INTERNAL bool have_space_for_num_entities (int num)
@@ -658,6 +663,8 @@ INTERNAL void collide_entity (bool shot)
         }
     }
 }
+
+// SPAWNER
 
 INTERNAL void create_spawner ()
 {
