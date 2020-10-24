@@ -824,6 +824,19 @@ INTERNAL void create_spawner ()
 
 INTERNAL void update_spawner (float dt)
 {
+    // We do not spawn anything whilst a boom effect is active.
+    for (int i=0; i<ENTITY_MAX; ++i)
+    {
+        Entity* entity = gEntity+i;
+        if (entity->alive)
+        {
+            if (entity->type == ENT_BOOM)
+            {
+                return;
+            }
+        }
+    }
+
     // Spawn crates at fixed intervals.
     gSpawner.crate_spawn_timer -= dt;
     if (gSpawner.crate_spawn_timer <= 0.0f)
