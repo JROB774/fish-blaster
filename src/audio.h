@@ -16,6 +16,7 @@ typedef enum SoundID__
     SND_SMACK,
     SND_BREAK,
     SND_ITEM,
+    SND_BOOM,
     SND_TOTAL
 
 } SoundID;

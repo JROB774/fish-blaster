@@ -430,6 +430,8 @@ INTERNAL void create_boom (Entity* entity)
 
     entity->t = 0.0f; // This value is used to mark the boom's radius.
 
+    play_sound(SND_BOOM,0);
+
     flash_screen_white();
     shake_camera(4,4,0.5f);
 }

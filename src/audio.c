@@ -94,6 +94,7 @@ INTERNAL void init_audio ()
         load_sound(&gAudio.sound[SND_SMACK   ], "assets/smack.wav"  );
         load_sound(&gAudio.sound[SND_BREAK   ], "assets/break.wav"  );
         load_sound(&gAudio.sound[SND_ITEM    ], "assets/item.wav"   );
+        load_sound(&gAudio.sound[SND_BOOM    ], "assets/boom.wav"   );
 
         // Load all of the music.
         // ...
@@ -117,6 +118,7 @@ INTERNAL void quit_audio ()
         free_sound(&gAudio.sound[SND_SMACK   ]);
         free_sound(&gAudio.sound[SND_BREAK   ]);
         free_sound(&gAudio.sound[SND_ITEM    ]);
+        free_sound(&gAudio.sound[SND_BOOM    ]);
 
         Mix_CloseAudio();
     }
