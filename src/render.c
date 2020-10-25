@@ -8,7 +8,7 @@
 #define PALETTE_CLEAR 0xFFC1C1C1
 
 #define RENDER_TEXT_BUFFER_SIZE 1024
-#define FIRST_GLYPH_TILE_INDEX   265
+#define FIRST_GLYPH_TILE_INDEX   225
 
 #pragma pack(push,1)
 typedef struct BMPHeader__
