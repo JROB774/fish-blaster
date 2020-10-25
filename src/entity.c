@@ -271,13 +271,13 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 #define JELLY_FLASH_DURATION  1.0f
 #define JELLY_FLASH_LEEWAY    0.1f
 #define JELLY_SPAWN_START    30.0f
-#define JELLY_SPAWN_RATE      3.0f
+#define JELLY_SPAWN_RATE      2.0f
 #define JELLY_ANM_SPEED       0.2f
 #define JELLY_MAX     5
 #define JELLY_WIDTH  16
 #define JELLY_HEIGHT 16
 #define JELLY_SPEED  40
-#define JELLY_SCORE  20
+#define JELLY_SCORE  40
 #define JELLY_FLASH_SPEED 6
 #define JELLY_MIN_SPAWN_X 8
 #define JELLY_MAX_SPAWN_X (SCREEN_W-JELLY_WIDTH-8)
@@ -360,12 +360,12 @@ INTERNAL void kill_jelly (Entity* entity)
     entity->alive = false;
     if (gApp.current_item == ITEM_MULT)
     {
-        create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+        create_effect(EFX_SCORE80, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += (JELLY_SCORE*2);
     }
     else
     {
-        create_effect(EFX_SCORE20, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+        create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += JELLY_SCORE;
     }
 }
@@ -406,7 +406,7 @@ INTERNAL void collide_jelly (Entity* entity, int mx, int my, int mw, int mh, boo
 #define URCHIN_WIDTH    16
 #define URCHIN_HEIGHT   16
 #define URCHIN_SPEED    40
-#define URCHIN_SCORE    40
+#define URCHIN_SCORE    20
 #define URCHIN_MIN_SPAWN_X 0
 #define URCHIN_MAX_SPAWN_X (SCREEN_W-URCHIN_WIDTH)
 #define URCHIN_SPAWN_ANGLE (M_PI/4)
@@ -545,12 +545,12 @@ INTERNAL void kill_urchin (Entity* entity)
     entity->alive = false;
     if (gApp.current_item == ITEM_MULT)
     {
-        create_effect(EFX_SCORE80, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+        create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += (URCHIN_SCORE*2);
     }
     else
     {
-        create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+        create_effect(EFX_SCORE20, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += URCHIN_SCORE;
     }
 
