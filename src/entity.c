@@ -286,7 +286,7 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 #define JELLY_MIN_GIB   2
 #define JELLY_MAX_GIB   5
 
-GLOBAL const Rect JELLY_COLLIDER = { 2,3,12,11 };
+GLOBAL const Rect JELLY_COLLIDER = { 2,2,12,12 };
 
 INTERNAL Rect get_jelly_collider (Entity* entity)
 {
