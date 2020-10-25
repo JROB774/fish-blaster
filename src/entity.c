@@ -275,8 +275,13 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 #define JELLY_WIDTH  16
 #define JELLY_HEIGHT 16
 #define JELLY_SPEED  40
+#define JELLY_SCORE  20
 #define JELLY_MIN_SPAWN_X 8
 #define JELLY_MAX_SPAWN_X (SCREEN_W-JELLY_WIDTH-8)
+#define JELLY_MIN_BLOOD 20
+#define JELLY_MAX_BLOOD 35
+#define JELLY_MIN_GIB   2
+#define JELLY_MAX_GIB   5
 
 GLOBAL const Rect JELLY_COLLIDER = { 2,3,12,11 };
 
@@ -323,14 +328,34 @@ INTERNAL void render_jelly (Entity* entity, float dt)
 }
 INTERNAL void kill_jelly (Entity* entity)
 {
-    // @Incomplete: ...
+    Rect c = get_jelly_collider(entity);
 
+    create_effect(EFX_BLOOD, c.x,c.y,c.w,c.h, JELLY_MIN_BLOOD,JELLY_MAX_BLOOD);
+    create_effect(EFX_GIB, c.x,c.y,c.w,c.h, JELLY_MIN_GIB,JELLY_MAX_GIB);
+    play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
     gSpawner.jelly_count--;
     entity->alive = false;
+    if (gApp.current_item == ITEM_MULT)
+    {
+        create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+        gApp.score += (JELLY_SCORE*2);
+    }
+    else
+    {
+        create_effect(EFX_SCORE20, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+        gApp.score += JELLY_SCORE;
+    }
 }
 INTERNAL void collide_jelly (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
-    // @Incomplete: ...
+    if (shot)
+    {
+        Rect c = get_jelly_collider(entity);
+        if (rect_vs_rect_collision(mx,my,mw,mh, c.x,c.y,c.w,c.h))
+        {
+            kill_jelly(entity);
+        }
+    }
 }
 
 // ENT_URCHIN
