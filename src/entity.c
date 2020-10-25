@@ -267,7 +267,8 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 
 // ENT_JELLY
 
-#define JELLY_FLASH_COUNTDOWN 5.0f
+#define JELLY_FLASH_COOLDOWN  1.5f
+#define JELLY_FLASH_DURATION  1.0f
 #define JELLY_SPAWN_START    30.0f
 #define JELLY_SPAWN_RATE      3.0f
 #define JELLY_ANM_SPEED       0.2f
@@ -276,6 +277,7 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 #define JELLY_HEIGHT 16
 #define JELLY_SPEED  40
 #define JELLY_SCORE  20
+#define JELLY_FLASH_SPEED 6
 #define JELLY_MIN_SPAWN_X 8
 #define JELLY_MAX_SPAWN_X (SCREEN_W-JELLY_WIDTH-8)
 #define JELLY_MIN_BLOOD 20
@@ -299,32 +301,52 @@ INTERNAL void create_jelly (Entity* entity)
     entity->palette = PAL_JELLY;
     entity->frame = 0;
     entity->t = JELLY_ANM_SPEED;
-    entity->t2 = JELLY_FLASH_COUNTDOWN;
+    entity->t2 = JELLY_FLASH_COOLDOWN;
     entity->x = random_int_range(JELLY_MIN_SPAWN_X,JELLY_MAX_SPAWN_X);
     entity->y = SCREEN_H;
 }
 INTERNAL void update_jelly (Entity* entity, float dt)
 {
-    entity->y -= JELLY_SPEED * dt;
-    if (entity->y < -JELLY_HEIGHT) // Deactivate the jelly if ity goes off-screen.
+    // Handle the timings for making the jelly go electric/deadly.
+    entity->t2 -= dt;
+    if (entity->t2 <= -JELLY_FLASH_DURATION)
     {
-        gSpawner.jelly_count--;
-        entity->alive = false;
+        entity->t2 = JELLY_FLASH_COOLDOWN;
+        entity->frame = 0;
+    }
+    // Move the jelly.
+    if (entity->t2 > 0.0f) // Don't move the jelly if flashing.
+    {
+        entity->y -= JELLY_SPEED * dt;
+        if (entity->y < -JELLY_HEIGHT) // Deactivate the jelly if ity goes off-screen.
+        {
+            gSpawner.jelly_count--;
+            entity->alive = false;
+        }
     }
 }
 INTERNAL void render_jelly (Entity* entity, float dt)
 {
-    entity->t -= dt;
-    if (entity->t <= 0.0f)
+    if (entity->t2 <= 0.0f) // Jelly is electric!
     {
-        entity->t = JELLY_ANM_SPEED;
-        entity->frame++;
-        if (entity->frame >= ARRAYSIZE(ANM_JELLY))
-        {
-            entity->frame = 0;
-        }
+        if ((++entity->frame) >= JELLY_FLASH_SPEED) entity->frame = 0;
+        int palette = (entity->frame < (JELLY_FLASH_SPEED/2)) ? PAL_JELLYFLASH0 : PAL_JELLYFLASH1;
+        render_bitmap(entity->x,entity->y,palette,&SPR_JELLY_0);
     }
-    render_bitmap(entity->x,entity->y,entity->palette,ANM_JELLY[entity->frame]);
+    else // Jelly is normal!
+    {
+        entity->t -= dt;
+        if (entity->t <= 0.0f)
+        {
+            entity->t = JELLY_ANM_SPEED;
+            entity->frame++;
+            if (entity->frame >= ARRAYSIZE(ANM_JELLY))
+            {
+                entity->frame = 0;
+            }
+        }
+        render_bitmap(entity->x,entity->y,entity->palette,ANM_JELLY[entity->frame]);
+    }
 }
 INTERNAL void kill_jelly (Entity* entity)
 {
@@ -348,9 +370,22 @@ INTERNAL void kill_jelly (Entity* entity)
 }
 INTERNAL void collide_jelly (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
+    Rect c = get_jelly_collider(entity);
+
+    int x = mx+(mw/2);
+    int y = my+(mh/2);
+
+    // Hurt the player if they mouse over an electric jelly.
+    if (entity->t2 <= 0.0f)
+    {
+        if (point_vs_rect_collision(x,y, c.x,c.y,c.w,c.h))
+        {
+            cursor_hit();
+        }
+    }
+    // Handle killing the jelly if its shot at any time.
     if (shot)
     {
-        Rect c = get_jelly_collider(entity);
         if (rect_vs_rect_collision(mx,my,mw,mh, c.x,c.y,c.w,c.h))
         {
             kill_jelly(entity);
@@ -525,13 +560,13 @@ INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bo
 {
     Rect c = get_urchin_collider(entity);
 
-    mx += mw/2;
-    my += mh/2;
+    int x = mx+(mw/2);
+    int y = my+(mh/2);
 
     // Cannot get hurt by an urchin whilst it isn't deadly!
     if (entity->t2 <= 0.0f)
     {
-        if (point_vs_rect_collision(mx,my, c.x,c.y,c.w,c.h))
+        if (point_vs_rect_collision(x,y, c.x,c.y,c.w,c.h))
         {
             cursor_hit();
         }
@@ -958,7 +993,7 @@ INTERNAL void create_spawner ()
 
     gSpawner.fish_spawn_timer = FISH_SPAWN_START;
 
-    gSpawner.jelly_spawn_timer = JELLY_SPAWN_START;
+    gSpawner.jelly_spawn_timer = 0.0f;
     gSpawner.jelly_count = 0;
     gSpawner.jelly_max_count = JELLY_MAX;
 
