@@ -262,6 +262,7 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 
 #define URCHIN_SPAWN_START      8.0f
 #define URCHIN_SPAWN_RATE       1.0f
+#define URCHIN_START_COOLDOWN   1.5f
 #define URCHIN_INCREMENT_START 10.0f
 #define URCHIN_INCREMENT_RATE  10.0f
 #define URCHIN_ANM_SPEED        0.2f
@@ -293,6 +294,7 @@ INTERNAL void create_urchin (Entity* entity)
 {
     entity->palette = PAL_URCHIN;
     entity->t = URCHIN_ANM_SPEED;
+    entity->t2 = URCHIN_START_COOLDOWN;
     entity->x = random_int_range(URCHIN_MIN_SPAWN_X,URCHIN_MAX_SPAWN_X);
     entity->y = SCREEN_H;
     entity->frame = 0;
@@ -304,9 +306,14 @@ INTERNAL void create_urchin (Entity* entity)
 }
 INTERNAL void update_urchin (Entity* entity, float dt)
 {
+    // When urchin's spawn they have a period before they are deadly.
+    if (entity->t2 > 0.0f)
+    {
+        entity->t2 -= dt;
+    }
+
     // Urchin bouncing.
-    if (entity->t2 > 0.0f) entity->t2 -= dt;
-    if (entity->active && entity->t2 <= 0.0f)
+    if (entity->active)
     {
         for (int i=0; i<ENTITY_MAX; ++i)
         {
@@ -368,6 +375,13 @@ INTERNAL void update_urchin (Entity* entity, float dt)
 }
 INTERNAL void render_urchin (Entity* entity, float dt)
 {
+    // Whilst urchin's arent deadly (just after spawn) they flash.
+    bool visible = true;
+    if (entity->t2 > 0.0f)
+    {
+        visible = (gApp.frame % 2 == 0);
+    }
+
     entity->t -= dt;
     if (entity->t <= 0.0f)
     {
@@ -378,7 +392,12 @@ INTERNAL void render_urchin (Entity* entity, float dt)
             entity->frame = 0;
         }
     }
-    render_bitmap(entity->x,entity->y,entity->palette,ANM_URCHIN[entity->frame]);
+
+    if (visible)
+    {
+        render_bitmap(entity->x,entity->y,entity->palette,ANM_URCHIN[entity->frame]);
+    }
+
 }
 INTERNAL void kill_urchin (Entity* entity)
 {
@@ -404,6 +423,8 @@ INTERNAL void kill_urchin (Entity* entity)
 }
 INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
+    if (entity->t2 > 0.0f) return; // Cannot collide whilst urchin isn't deadly!
+
     Rect c = get_urchin_collider(entity);
 
     mx += mw/2;
