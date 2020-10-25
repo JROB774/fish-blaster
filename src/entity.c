@@ -954,7 +954,10 @@ INTERNAL void update_spawner (float dt)
     if (gSpawner.crate_spawn_timer <= 0.0f)
     {
         gSpawner.crate_spawn_timer = CRATE_SPAWN_RATE;
-        create_entity(random_int_range(ENT_CRATE_LIFE,ENT_CRATE_BOOM));
+        EntityID min_choice = ENT_CRATE_LIFE;
+        EntityID max_choice = ENT_CRATE_BOOM;
+        if (gApp.life >= MAX_LIFE) min_choice++; // Don't spawn life crates if we're at max life!
+        create_entity(random_int_range(min_choice,max_choice));
     }
 
     // Spawn fish at fixed intervals.
