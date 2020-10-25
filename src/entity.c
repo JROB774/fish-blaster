@@ -632,6 +632,7 @@ INTERNAL void update_boom (Entity* entity, float dt)
                     case (ENT_CRATE_BOOM): c = get_crate_collider (other); break;
                     case (ENT_FISH      ): c = get_fish_collider  (other); break;
                     case (ENT_SQUID     ): c = get_squid_collider (other); break;
+                    case (ENT_JELLY     ): c = get_jelly_collider (other); break;
                     case (ENT_URCHIN    ): c = get_urchin_collider(other); break;
                 }
 
@@ -647,6 +648,7 @@ INTERNAL void update_boom (Entity* entity, float dt)
                         case (ENT_CRATE_BOOM): kill_crate (other); break;
                         case (ENT_FISH      ): kill_fish  (other); break;
                         case (ENT_SQUID     ): kill_squid (other); break;
+                        case (ENT_JELLY     ): kill_jelly (other); break;
                         case (ENT_URCHIN    ): kill_urchin(other); break;
                     }
                 }
@@ -993,7 +995,7 @@ INTERNAL void create_spawner ()
 
     gSpawner.fish_spawn_timer = FISH_SPAWN_START;
 
-    gSpawner.jelly_spawn_timer = 0.0f;
+    gSpawner.jelly_spawn_timer = JELLY_SPAWN_START;
     gSpawner.jelly_count = 0;
     gSpawner.jelly_max_count = JELLY_MAX;
 
@@ -1018,7 +1020,7 @@ INTERNAL void update_spawner (float dt)
         }
     }
 
-    // Spawn crates at fixed intervals.
+    // ENT_CRATE
     gSpawner.crate_spawn_timer -= dt;
     if (gSpawner.crate_spawn_timer <= 0.0f)
     {
@@ -1029,7 +1031,7 @@ INTERNAL void update_spawner (float dt)
         create_entity(random_int_range(min_choice,max_choice));
     }
 
-    // Spawn fish at fixed intervals.
+    // ENT_FISH
     gSpawner.fish_spawn_timer -= dt;
     if (gSpawner.fish_spawn_timer <= 0.0f)
     {
@@ -1051,7 +1053,7 @@ INTERNAL void update_spawner (float dt)
         }
     }
 
-    // Spawn jellys at fixed intervals.
+    // ENT_JELLY
     gSpawner.jelly_spawn_timer -= dt;
     if (gSpawner.jelly_spawn_timer <= 0.0f)
     {
@@ -1063,7 +1065,7 @@ INTERNAL void update_spawner (float dt)
         }
     }
 
-    // Spawn urchin at fixed intervals.
+    // ENT_URCHIN
     gSpawner.urchin_spawn_timer -= dt;
     if (gSpawner.urchin_spawn_timer <= 0.0f)
     {
