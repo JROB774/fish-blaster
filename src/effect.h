@@ -36,7 +36,7 @@ typedef struct Effect__
 
 } Effect;
 
-#define EFFECT_MAX 2048
+#define EFFECT_MAX 4096
 
 GLOBAL Effect gEffect[EFFECT_MAX];
 
