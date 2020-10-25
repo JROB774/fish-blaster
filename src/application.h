@@ -6,6 +6,7 @@ typedef enum AppState__ { APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } 
 #define CODE_LENGTH 5
 #define CODE_RETRO "retro"
 #define CODE_BLOOD "blood"
+#define CODE_1BITS "1bits"
 
 #define GAMEOVER_COOLDOWN 0.25f
 
@@ -47,6 +48,7 @@ GLOBAL struct
 
     bool code_retro_enabled;
     bool code_blood_enabled;
+    bool code_1bits_enabled;
 
     bool flash_white;
 

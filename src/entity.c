@@ -118,7 +118,7 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
             create_effect(effect_id, entity->x+(CRATE_WIDTH/2),entity->y+(CRATE_HEIGHT/2),1,1, 1,1);
 
             // Handle swapping the palette.
-            if (!gApp.code_retro_enabled) // Don't want to change palette if using the special RETRO code.
+            if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled) // Don't want to change palette if using the special RETRO or 1BITS codes.
             {
                 if (gApp.current_item == ITEM_TIME)
                 {
@@ -707,7 +707,6 @@ INTERNAL void spawn_school_of_fish_formation_smallv ()
         b->y -= 8;
         c->y -= 8;
     }
-
 }
 INTERNAL void spawn_school_of_fish_formation_line ()
 {

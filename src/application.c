@@ -125,7 +125,7 @@ INTERNAL void update_game (float dt)
         {
             gApp.current_item = ITEM_NONE;
             // We also reset the palette because ITEM_TIME changes it.
-            if (!gApp.code_retro_enabled)
+            if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled)
             {
                 set_palette_mode(PAL_MODE_DEFAULT);
             }
@@ -136,7 +136,7 @@ INTERNAL void update_game (float dt)
     // starts blinking back to the original to show the power is ending.
     if (gApp.current_item == ITEM_TIME)
     {
-        if (!gApp.code_retro_enabled)
+        if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled)
         {
             if (floor(gApp.item_time) <= 0.0f)
             {
@@ -246,7 +246,7 @@ INTERNAL void handle_application (SDL_Event* event)
     if (event->type == SDL_KEYDOWN)
     {
         int keycode = event->key.keysym.sym;
-        if (keycode >= 'a' && keycode <= 'z')
+        if ((keycode >= 'a' && keycode <= 'z') || (keycode >= '0' && keycode <= '9'))
         {
             if (gApp.code_length >= CODE_LENGTH) gApp.code_length = 0;
             gApp.code[gApp.code_length++] = CAST(char, keycode);
@@ -254,7 +254,8 @@ INTERNAL void handle_application (SDL_Event* event)
             // Make sure we're matching at least one of the codes so far and if not
             // reset the length of our input to zero to avoid messing up the buffer.
              if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) != 0 &&
-                 strncmp(gApp.code, CODE_BLOOD, gApp.code_length) != 0)
+                 strncmp(gApp.code, CODE_BLOOD, gApp.code_length) != 0 &&
+                 strncmp(gApp.code, CODE_1BITS, gApp.code_length) != 0)
             {
                 gApp.code_length = 0;
             }
@@ -265,6 +266,7 @@ INTERNAL void handle_application (SDL_Event* event)
                 if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) == 0)
                 {
                     gApp.code_retro_enabled = !gApp.code_retro_enabled;
+                    if (gApp.code_retro_enabled) gApp.code_1bits_enabled = false;
                     play_sound(SND_CODE,0);
                 }
                 if (strncmp(gApp.code, CODE_BLOOD, gApp.code_length) == 0)
@@ -272,11 +274,21 @@ INTERNAL void handle_application (SDL_Event* event)
                     gApp.code_blood_enabled = !gApp.code_blood_enabled;
                     play_sound(SND_CODE,0);
                 }
+                if (strncmp(gApp.code, CODE_1BITS, gApp.code_length) == 0)
+                {
+                    gApp.code_1bits_enabled = !gApp.code_1bits_enabled;
+                    if (gApp.code_1bits_enabled) gApp.code_retro_enabled = false;
+                    play_sound(SND_CODE,0);
+                }
 
-                // Special case for the RETRO code when setting the palette.
+                // Special case for the RETRO and 1BITS code when setting the palette.
                 if (gApp.code_retro_enabled)
                 {
                     set_palette_mode(PAL_MODE_GAMEBOY);
+                }
+                else if (gApp.code_1bits_enabled)
+                {
+                    set_palette_mode(PAL_MODE_1BIT);
                 }
                 else
                 {
@@ -388,7 +400,7 @@ INTERNAL void game_over ()
     gApp.shoot_cooldown = GAMEOVER_COOLDOWN;
     gApp.state = APP_STATE_GAMEOVER;
     gApp.god_time = 0.0f;
-    if (!gApp.code_retro_enabled)
+    if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled)
     {
         set_palette_mode(PAL_MODE_DEFAULT);
     }
