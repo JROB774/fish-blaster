@@ -11,6 +11,7 @@ typedef enum EntityID__
     ENT_CRATE_BOOM,
     ENT_FISH,
     ENT_SQUID,
+    ENT_JELLY,
     ENT_URCHIN,
     ENT_BOOM,
     ENT_TOTAL
@@ -37,10 +38,14 @@ typedef struct Spawner__
 
     float fish_spawn_timer;
 
+    float jelly_spawn_timer;
+    int   jelly_count;
+    int   jelly_max_count;
+
     float urchin_spawn_timer;
     float urchin_increment_timer;
-    int   urchin_max_count;
     int   urchin_count;
+    int   urchin_max_count;
 
 } Spawner;
 

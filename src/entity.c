@@ -28,13 +28,11 @@ INTERNAL Rect get_crate_collider (Entity* entity)
 INTERNAL void create_crate (Entity* entity)
 {
     entity->palette = PAL_CRATE;
-    entity->frame = 0;
     entity->x = random_int_range(CRATE_MIN_SPAWN_X,CRATE_MAX_SPAWN_X);
     entity->y = -CRATE_HEIGHT;
 }
 INTERNAL void update_crate (Entity* entity, float dt)
 {
-    entity->frame++;
     entity->y += CRATE_SPEED * dt;
     if (entity->y > SCREEN_H) // Deactivate the crate if it goes off-screen.
     {
@@ -45,7 +43,7 @@ INTERNAL void render_crate (Entity* entity, float dt)
 {
     render_bitmap(entity->x,entity->y,entity->palette,&SPR_CRATE);
     // Draw the identifiying icon for the crate.
-    if (entity->frame % 2 == 0)
+    if (gApp.frame % 2 == 0)
     {
         switch (entity->type)
         {
@@ -254,6 +252,74 @@ INTERNAL void kill_squid (Entity* entity)
     // @Incomplete: ...
 }
 INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, bool shot)
+{
+    // @Incomplete: ...
+}
+
+// ENT_JELLY
+
+#define JELLY_FLASH_COUNTDOWN 5.0f
+#define JELLY_SPAWN_START    30.0f
+#define JELLY_SPAWN_RATE      3.0f
+#define JELLY_ANM_SPEED       0.2f
+#define JELLY_MAX     5
+#define JELLY_WIDTH  16
+#define JELLY_HEIGHT 16
+#define JELLY_SPEED  40
+#define JELLY_MIN_SPAWN_X 8
+#define JELLY_MAX_SPAWN_X (SCREEN_W-JELLY_WIDTH-8)
+
+GLOBAL const Rect JELLY_COLLIDER = { 2,3,12,11 };
+
+INTERNAL Rect get_jelly_collider (Entity* entity)
+{
+    Rect collider;
+    collider.x = JELLY_COLLIDER.x + entity->x;
+    collider.y = JELLY_COLLIDER.y + entity->y;
+    collider.w = JELLY_COLLIDER.w;
+    collider.h = JELLY_COLLIDER.h;
+    return collider;
+}
+INTERNAL void create_jelly (Entity* entity)
+{
+    entity->palette = PAL_JELLY;
+    entity->frame = 0;
+    entity->t = JELLY_ANM_SPEED;
+    entity->t2 = JELLY_FLASH_COUNTDOWN;
+    entity->x = random_int_range(JELLY_MIN_SPAWN_X,JELLY_MAX_SPAWN_X);
+    entity->y = SCREEN_H;
+}
+INTERNAL void update_jelly (Entity* entity, float dt)
+{
+    entity->y -= JELLY_SPEED * dt;
+    if (entity->y < -JELLY_HEIGHT) // Deactivate the jelly if ity goes off-screen.
+    {
+        gSpawner.jelly_count--;
+        entity->alive = false;
+    }
+}
+INTERNAL void render_jelly (Entity* entity, float dt)
+{
+    entity->t -= dt;
+    if (entity->t <= 0.0f)
+    {
+        entity->t = JELLY_ANM_SPEED;
+        entity->frame++;
+        if (entity->frame >= ARRAYSIZE(ANM_JELLY))
+        {
+            entity->frame = 0;
+        }
+    }
+    render_bitmap(entity->x,entity->y,entity->palette,ANM_JELLY[entity->frame]);
+}
+INTERNAL void kill_jelly (Entity* entity)
+{
+    // @Incomplete: ...
+
+    gSpawner.jelly_count--;
+    entity->alive = false;
+}
+INTERNAL void collide_jelly (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
     // @Incomplete: ...
 }
@@ -722,6 +788,7 @@ INTERNAL Entity* create_entity (EntityID id)
             entity->vx = 0;
             entity->vy = 0;
             entity->t = 0.0f;
+            entity->t2 = 0.0f;
             entity->alive = true;
 
             // Specific creation logic for the different entity types.
@@ -735,6 +802,7 @@ INTERNAL Entity* create_entity (EntityID id)
                 case (ENT_CRATE_BOOM): create_crate (entity); break;
                 case (ENT_FISH      ): create_fish  (entity); break;
                 case (ENT_SQUID     ): create_squid (entity); break;
+                case (ENT_JELLY     ): create_jelly (entity); break;
                 case (ENT_URCHIN    ): create_urchin(entity); break;
                 case (ENT_BOOM      ): create_boom  (entity); break;
             }
@@ -763,6 +831,7 @@ INTERNAL void update_entity (float dt)
                 case (ENT_CRATE_BOOM): update_crate (entity, dt); break;
                 case (ENT_FISH      ): update_fish  (entity, dt); break;
                 case (ENT_SQUID     ): update_squid (entity, dt); break;
+                case (ENT_JELLY     ): update_jelly (entity, dt); break;
                 case (ENT_URCHIN    ): update_urchin(entity, dt); break;
                 case (ENT_BOOM      ): update_boom  (entity, dt); break;
             }
@@ -804,6 +873,7 @@ INTERNAL void render_entity (float dt)
                 case (ENT_CRATE_BOOM): render_crate (entity, dt); break;
                 case (ENT_FISH      ): render_fish  (entity, dt); break;
                 case (ENT_SQUID     ): render_squid (entity, dt); break;
+                case (ENT_JELLY     ): render_jelly (entity, dt); break;
                 case (ENT_URCHIN    ): render_urchin(entity, dt); break;
                 case (ENT_BOOM      ): render_boom  (entity, dt); break;
             }
@@ -839,6 +909,7 @@ INTERNAL void collide_entity (bool shot)
                 case (ENT_CRATE_BOOM): collide_crate (entity, x,y,w,h, shot); break;
                 case (ENT_FISH      ): collide_fish  (entity, x,y,w,h, shot); break;
                 case (ENT_SQUID     ): collide_squid (entity, x,y,w,h, shot); break;
+                case (ENT_JELLY     ): collide_jelly (entity, x,y,w,h, shot); break;
                 case (ENT_URCHIN    ): collide_urchin(entity, x,y,w,h, shot); break;
             }
         }
@@ -853,10 +924,14 @@ INTERNAL void create_spawner ()
 
     gSpawner.fish_spawn_timer = FISH_SPAWN_START;
 
+    gSpawner.jelly_spawn_timer = JELLY_SPAWN_START;
+    gSpawner.jelly_count = 0;
+    gSpawner.jelly_max_count = JELLY_MAX;
+
     gSpawner.urchin_spawn_timer = URCHIN_SPAWN_START;
     gSpawner.urchin_increment_timer = URCHIN_INCREMENT_START;
-    gSpawner.urchin_max_count = URCHIN_MAX_START;
     gSpawner.urchin_count = 0;
+    gSpawner.urchin_max_count = URCHIN_MAX_START;
 }
 
 INTERNAL void update_spawner (float dt)
@@ -901,6 +976,18 @@ INTERNAL void update_spawner (float dt)
         {
             gSpawner.fish_spawn_timer = FISH_SPAWN_RATE;
             create_entity(ENT_FISH);
+        }
+    }
+
+    // Spawn jellys at fixed intervals.
+    gSpawner.jelly_spawn_timer -= dt;
+    if (gSpawner.jelly_spawn_timer <= 0.0f)
+    {
+        gSpawner.jelly_spawn_timer = JELLY_SPAWN_RATE;
+        if (gSpawner.jelly_count < gSpawner.jelly_max_count)
+        {
+            gSpawner.jelly_count++;
+            create_entity(ENT_JELLY);
         }
     }
 
