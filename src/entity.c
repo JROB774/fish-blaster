@@ -929,7 +929,7 @@ INTERNAL void collide_entity (bool shot)
 
 INTERNAL void create_spawner ()
 {
-    gSpawner.crate_spawn_timer = 0.0f;
+    gSpawner.crate_spawn_timer = CRATE_SPAWN_START;
 
     gSpawner.fish_spawn_timer = FISH_SPAWN_START;
 
@@ -962,7 +962,7 @@ INTERNAL void update_spawner (float dt)
     gSpawner.crate_spawn_timer -= dt;
     if (gSpawner.crate_spawn_timer <= 0.0f)
     {
-        gSpawner.crate_spawn_timer = 0.5f;
+        gSpawner.crate_spawn_timer = CRATE_SPAWN_RATE;
         EntityID min_choice = ENT_CRATE_LIFE;
         EntityID max_choice = ENT_CRATE_BOOM;
         if (gApp.life >= MAX_LIFE) min_choice++; // Don't spawn life crates if we're at max life!
