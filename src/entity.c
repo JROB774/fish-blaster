@@ -269,6 +269,7 @@ INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, boo
 
 #define JELLY_FLASH_COOLDOWN  1.5f
 #define JELLY_FLASH_DURATION  1.0f
+#define JELLY_FLASH_LEEWAY    0.1f
 #define JELLY_SPAWN_START    30.0f
 #define JELLY_SPAWN_RATE      3.0f
 #define JELLY_ANM_SPEED       0.2f
@@ -376,7 +377,7 @@ INTERNAL void collide_jelly (Entity* entity, int mx, int my, int mw, int mh, boo
     int y = my+(mh/2);
 
     // Hurt the player if they mouse over an electric jelly.
-    if (entity->t2 <= 0.0f)
+    if (entity->t2 <= -JELLY_FLASH_LEEWAY) // We have some leeway where the player won't get hurt.
     {
         if (point_vs_rect_collision(x,y, c.x,c.y,c.w,c.h))
         {
