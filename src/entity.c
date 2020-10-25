@@ -423,16 +423,30 @@ INTERNAL void kill_urchin (Entity* entity)
 }
 INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bool shot)
 {
-    if (entity->t2 > 0.0f) return; // Cannot collide whilst urchin isn't deadly!
-
     Rect c = get_urchin_collider(entity);
 
     mx += mw/2;
     my += mh/2;
 
-    if (point_vs_rect_collision(mx,my, c.x,c.y,c.w,c.h))
+    // Cannot get hurt by an urchin whilst it isn't deadly!
+    if (entity->t2 <= 0.0f)
     {
-        cursor_hit();
+        if (point_vs_rect_collision(mx,my, c.x,c.y,c.w,c.h))
+        {
+            cursor_hit();
+        }
+    }
+    else
+    {
+        // Because urchins aren't immediately deadly the player can technically shoot them.
+        // So we play a ting sound effect to make it clear they aren't hurt by bullets.
+        if (shot)
+        {
+            if (rect_vs_rect_collision(mx,my,mw,mh, c.x,c.y,c.w,c.h))
+            {
+                play_sound(SND_TING[random_int_range(0,ARRAYSIZE(SND_TING)-1)],0);
+            }
+        }
     }
 }
 
