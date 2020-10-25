@@ -83,11 +83,6 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
                 } break;
                 case (ENT_CRATE_TIME):
                 {
-                    // Don't want to change palette if using the special RETRO code.
-                    if (!gApp.code_retro_enabled)
-                    {
-                        set_palette_mode(PAL_MODE_SLOWDOWN);
-                    }
                     gApp.current_item = ITEM_TIME;
                     gApp.item_time = ITEM_DURATION;
                     effect_id = EFX_ICO_TIME;
@@ -119,7 +114,21 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
                 } break;
             }
 
+            // Spawn the icon effect for the item that was collected from the crate.
             create_effect(effect_id, entity->x+(CRATE_WIDTH/2),entity->y+(CRATE_HEIGHT/2),1,1, 1,1);
+
+            // Handle swapping the palette.
+            if (!gApp.code_retro_enabled) // Don't want to change palette if using the special RETRO code.
+            {
+                if (gApp.current_item == ITEM_TIME)
+                {
+                    set_palette_mode(PAL_MODE_SLOWDOWN);
+                }
+                else
+                {
+                    set_palette_mode(PAL_MODE_DEFAULT);
+                }
+            }
 
             kill_crate(entity);
         }
@@ -920,7 +929,7 @@ INTERNAL void collide_entity (bool shot)
 
 INTERNAL void create_spawner ()
 {
-    gSpawner.crate_spawn_timer = CRATE_SPAWN_START;
+    gSpawner.crate_spawn_timer = 0.0f;
 
     gSpawner.fish_spawn_timer = FISH_SPAWN_START;
 
@@ -953,7 +962,7 @@ INTERNAL void update_spawner (float dt)
     gSpawner.crate_spawn_timer -= dt;
     if (gSpawner.crate_spawn_timer <= 0.0f)
     {
-        gSpawner.crate_spawn_timer = CRATE_SPAWN_RATE;
+        gSpawner.crate_spawn_timer = 0.5f;
         EntityID min_choice = ENT_CRATE_LIFE;
         EntityID max_choice = ENT_CRATE_BOOM;
         if (gApp.life >= MAX_LIFE) min_choice++; // Don't spawn life crates if we're at max life!
