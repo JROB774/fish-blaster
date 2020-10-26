@@ -96,6 +96,9 @@ INTERNAL void init_audio ()
         load_sound(&gAudio.sound[SND_ITEM    ], "assets/item.wav"   );
         load_sound(&gAudio.sound[SND_BOOM    ], "assets/boom.wav"   );
         load_sound(&gAudio.sound[SND_SWISH   ], "assets/swish.wav"  );
+        load_sound(&gAudio.sound[SND_RSHOT_0 ], "assets/rshot0.wav" );
+        load_sound(&gAudio.sound[SND_RSHOT_1 ], "assets/rshot1.wav" );
+        load_sound(&gAudio.sound[SND_RSHOT_2 ], "assets/rshot2.wav" );
 
         // Load all of the music.
         // ...
@@ -121,6 +124,9 @@ INTERNAL void quit_audio ()
         free_sound(&gAudio.sound[SND_ITEM    ]);
         free_sound(&gAudio.sound[SND_BOOM    ]);
         free_sound(&gAudio.sound[SND_SWISH   ]);
+        free_sound(&gAudio.sound[SND_RSHOT_0 ]);
+        free_sound(&gAudio.sound[SND_RSHOT_1 ]);
+        free_sound(&gAudio.sound[SND_RSHOT_2 ]);
 
         Mix_CloseAudio();
     }

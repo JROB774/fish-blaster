@@ -18,6 +18,9 @@ typedef enum SoundID__
     SND_ITEM,
     SND_BOOM,
     SND_SWISH,
+    SND_RSHOT_0,
+    SND_RSHOT_1,
+    SND_RSHOT_2,
     SND_TOTAL
 
 } SoundID;
@@ -46,5 +49,6 @@ INTERNAL void set_music_volume (float volume); // [0-1]
 GLOBAL const SoundID SND_NSHOT [] = { SND_NSHOT_0,  SND_NSHOT_1,  SND_NSHOT_2  };
 GLOBAL const SoundID SND_SQUEAK[] = { SND_SQUEAK_0, SND_SQUEAK_1, SND_SQUEAK_2 };
 GLOBAL const SoundID SND_TING  [] = { SND_TING_0,   SND_TING_1,   SND_TING_2   };
+GLOBAL const SoundID SND_RSHOT [] = { SND_RSHOT_0,  SND_RSHOT_1,  SND_RSHOT_2  };
 
 #endif /* AUDIO_H */

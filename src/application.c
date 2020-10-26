@@ -99,8 +99,17 @@ INTERNAL void shoot ()
 
     create_effect(EFX_BUBBLE, x,y,w,h, 2,3);
     create_effect(EFX_SHOT, mx,my,1,1, 1,1);
-    play_sound(SND_NSHOT[random_int_range(0,ARRAYSIZE(SND_NSHOT)-1)],0);
+
     shake_camera(1,1,0.1f);
+
+    if (gApp.current_item == ITEM_RAPD)
+    {
+        play_sound(SND_RSHOT[random_int_range(0,ARRAYSIZE(SND_RSHOT)-1)],0);
+    }
+    else
+    {
+        play_sound(SND_NSHOT[random_int_range(0,ARRAYSIZE(SND_NSHOT)-1)],0);
+    }
 }
 
 // APP_STATE_MENU
