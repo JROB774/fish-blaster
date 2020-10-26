@@ -9,6 +9,11 @@ INTERNAL void rotate_vec2 (float* x, float* y, float rad)
     *y = ny;
 }
 
+INTERNAL float lerp (float a, float b, float t)
+{
+    return a + t * (b - a);
+}
+
 INTERNAL void seed_random ()
 {
     srand(CAST(unsigned int, time(NULL)));

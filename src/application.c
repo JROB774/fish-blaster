@@ -105,32 +105,54 @@ INTERNAL void shoot ()
 
 // APP_STATE_MENU
 
-INTERNAL bool do_menu_button (int* x, int* y, const char* text)
+INTERNAL bool do_menu_button (int* x, int* y, const char* text, float* target, float* current, float dt)
 {
-    assert(x && y);
+    assert(x && y && target && current);
 
     int rw = get_text_w(text);
     int rh = TILE_H;
     int rx = (SCREEN_W-rw)/2;
     int ry = *y;
 
+    int mx = get_mouse_x();
+    int my = get_mouse_y();
+
+    // Handle hovering and pressing the button.
+    bool pressed = false;
+    if (point_vs_rect_collision(mx,my, rx,ry,rw,rh))
+    {
+        *target = rw;
+
+        if (button_pressed(LMB))
+        {
+            pressed = true;
+        }
+    }
+    else
+    {
+        *target = 0.0f;
+    }
+
+    // Animate the backing of the button.
+    *current = floor(lerp(*current, *target, 20*dt));
+    if (*current != 0.0f)
+    {
+        int bx = rx+((rw-(ceil(*current)))/2);
+        int by = ry;
+        int bw = ceil(*current);
+        int bh = rh;
+
+        render_bitmap(bx-SPR_SCOREBGL.w,by,PAL_BLACK,&SPR_SCOREBGL);
+        render_fill(bx,by,bw,bh,get_palette_color(PAL_BLACK,0));
+        render_bitmap(bx+bw,by,PAL_BLACK,&SPR_SCOREBGR);
+    }
+
     render_text(rx,ry,PAL_TEXT_SHADE,text);
 
     *x  = rx;
     *y += rh+2;
 
-    int mx = get_mouse_x();
-    int my = get_mouse_y();
-
-    if (point_vs_rect_collision(mx,my, rx,ry,rw,rh))
-    {
-        if (button_pressed(LMB))
-        {
-            return true;
-        }
-    }
-
-    return false;
+    return pressed;
 }
 
 INTERNAL void update_menu (float dt)
@@ -150,28 +172,34 @@ INTERNAL void update_menu (float dt)
 }
 INTERNAL void render_menu (float dt)
 {
+    static float play_target = 0.0f;
+    static float options_target = 0.0f;
+    static float scores_target = 0.0f;
+    static float credits_target = 0.0f;
+    static float exit_target = 0.0f;
+
+    static float play_current = 0.0f;
+    static float options_current = 0.0f;
+    static float scores_current = 0.0f;
+    static float credits_current = 0.0f;
+    static float exit_current = 0.0f;
+
     begin_camera();
     render_effect_lo(dt);
     render_entity(dt);
     render_effect_hi(dt);
     end_camera();
 
-    const char* TXT_PLAY    = "PLAY";
-    const char* TXT_OPTIONS = "OPTIONS";
-    const char* TXT_SCORES  = "SCORES";
-    const char* TXT_CREDITS = "CREDITS";
-    const char* TXT_EXIT    = "EXIT";
-
     render_bitmap(0,12,PAL_TEXT_SHADE,&SPR_TITLE);
 
     int x =  0;
     int y = 76;
 
-    if (do_menu_button(&x,&y,TXT_PLAY   )) start_game();
-    if (do_menu_button(&x,&y,TXT_OPTIONS)) {}
-    if (do_menu_button(&x,&y,TXT_SCORES )) {}
-    if (do_menu_button(&x,&y,TXT_CREDITS)) {}
-    if (do_menu_button(&x,&y,TXT_EXIT   )) gWindow.running = false;
+    if (do_menu_button(&x,&y,"PLAY",    &/*gApp.*/play_target,   &/*gApp.*/play_current,    dt)) start_game();
+    if (do_menu_button(&x,&y,"OPTIONS", &/*gApp.*/options_target,&/*gApp.*/options_current, dt)) {}
+    if (do_menu_button(&x,&y,"SCORES",  &/*gApp.*/scores_target, &/*gApp.*/scores_current,  dt)) {}
+    if (do_menu_button(&x,&y,"CREDITS", &/*gApp.*/credits_target,&/*gApp.*/credits_current, dt)) {}
+    if (do_menu_button(&x,&y,"EXIT",    &/*gApp.*/exit_target,   &/*gApp.*/exit_current,    dt)) gWindow.running = false;
 
     render_cursor();
 }
