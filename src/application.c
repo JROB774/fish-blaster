@@ -134,10 +134,10 @@ INTERNAL bool do_menu_button (int* x, int* y, const char* text, float* target, f
     }
 
     // Animate the backing of the button.
-    *current = floor(lerp(*current, *target, 20*dt));
-    if (*current != 0.0f)
+    *current = lerp(*current, *target, 20*dt);
+    if (*current > 1.0f)
     {
-        int bx = rx+((rw-(ceil(*current)))/2);
+        int bx = rx+((rw-(round(*current)))/2);
         int by = ry;
         int bw = ceil(*current);
         int bh = rh;
