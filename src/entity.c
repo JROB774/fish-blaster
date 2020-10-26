@@ -205,20 +205,22 @@ INTERNAL void render_fish (Entity* entity, float dt)
 INTERNAL void kill_fish (Entity* entity)
 {
     Rect c = get_fish_collider(entity);
-
     create_effect(EFX_BLOOD, c.x,c.y,c.w,c.h, FISH_MIN_BLOOD,FISH_MAX_BLOOD);
     create_effect(EFX_GIB, c.x,c.y,c.w,c.h, FISH_MIN_GIB,FISH_MAX_GIB);
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
     entity->alive = false;
-    if (gPlayer.current_item == ITEM_MULT)
+    if (gApp.state == APP_STATE_GAME)
     {
-        create_effect(EFX_SCORE20, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
-        gApp.score += (FISH_SCORE*2);
-    }
-    else
-    {
-        create_effect(EFX_SCORE10, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
-        gApp.score += FISH_SCORE;
+        if (gPlayer.current_item == ITEM_MULT)
+        {
+            create_effect(EFX_SCORE20, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+            gApp.score += (FISH_SCORE*2);
+        }
+        else
+        {
+            create_effect(EFX_SCORE10, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+            gApp.score += FISH_SCORE;
+        }
     }
 }
 INTERNAL void collide_fish_vs_shot (Entity* entity, int sx, int sy, int sw, int sh)
@@ -347,21 +349,23 @@ INTERNAL void render_jelly (Entity* entity, float dt)
 INTERNAL void kill_jelly (Entity* entity)
 {
     Rect c = get_jelly_collider(entity);
-
     create_effect(EFX_BLOOD, c.x,c.y,c.w,c.h, JELLY_MIN_BLOOD,JELLY_MAX_BLOOD);
     create_effect(EFX_GIB, c.x,c.y,c.w,c.h, JELLY_MIN_GIB,JELLY_MAX_GIB);
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
     gSpawner.jelly_count--;
     entity->alive = false;
-    if (gPlayer.current_item == ITEM_MULT)
+    if (gApp.state == APP_STATE_GAME)
     {
-        create_effect(EFX_SCORE80, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
-        gApp.score += (JELLY_SCORE*2);
-    }
-    else
-    {
-        create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
-        gApp.score += JELLY_SCORE;
+        if (gPlayer.current_item == ITEM_MULT)
+        {
+            create_effect(EFX_SCORE80, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+            gApp.score += (JELLY_SCORE*2);
+        }
+        else
+        {
+            create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+            gApp.score += JELLY_SCORE;
+        }
     }
 }
 INTERNAL void collide_jelly_vs_player (Entity* entity, int px, int py)
@@ -530,24 +534,24 @@ INTERNAL void render_urchin (Entity* entity, float dt)
 INTERNAL void kill_urchin (Entity* entity)
 {
     Rect c = get_urchin_collider(entity);
-
     create_effect(EFX_BLOOD, c.x,c.y,c.w,c.h, URCHIN_MIN_BLOOD,URCHIN_MAX_BLOOD);
     create_effect(EFX_GIB, c.x,c.y,c.w,c.h, URCHIN_MIN_GIB,URCHIN_MAX_GIB);
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
-    entity->alive = false;
-    if (gPlayer.current_item == ITEM_MULT)
-    {
-        create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
-        gApp.score += (URCHIN_SCORE*2);
-    }
-    else
-    {
-        create_effect(EFX_SCORE20, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
-        gApp.score += URCHIN_SCORE;
-    }
-
-    // This needs to be decremented for urchin spawning to work correctly!
     gSpawner.urchin_count--;
+    entity->alive = false;
+    if (gApp.state == APP_STATE_GAME)
+    {
+        if (gPlayer.current_item == ITEM_MULT)
+        {
+            create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+            gApp.score += (URCHIN_SCORE*2);
+        }
+        else
+        {
+            create_effect(EFX_SCORE20, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
+            gApp.score += URCHIN_SCORE;
+        }
+    }
 }
 INTERNAL void collide_urchin_vs_player (Entity* entity, int px, int py)
 {
