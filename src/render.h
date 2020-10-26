@@ -14,10 +14,10 @@ typedef U32 ARGBColor;
 
 typedef struct Clip__ { int x, y, w, h; } Clip;
 
-#define PAL_MODE_DEFAULT  0
-#define PAL_MODE_SLOWDOWN 1
-#define PAL_MODE_GAMEBOY  2
-#define PAL_MODE_1BIT     3
+#define PAL_MODE_DEFAULT   0
+#define PAL_MODE_SLOWDOWN  1
+#define PAL_MODE_GAMEBOY   2
+#define PAL_MODE_NOPALETTE 3
 
 // INTERFACE
 

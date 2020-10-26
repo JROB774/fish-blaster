@@ -116,7 +116,7 @@ INTERNAL void collide_crate_vs_shot (Entity* entity, int sx, int sy, int sw, int
         create_effect(effect_id, entity->x+(CRATE_WIDTH/2),entity->y+(CRATE_HEIGHT/2),1,1, 1,1);
 
         // Handle swapping the palette.
-        if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled) // Don't want to change palette if using the special RETRO or 1BITS codes.
+        if (!gApp.code_retro_enabled && !gApp.code_nopal_enabled) // Don't want to change palette if using the special RETRO or NOPAL codes.
         {
             if (gPlayer.current_item == ITEM_TIME)
             {

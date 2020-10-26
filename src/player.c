@@ -96,7 +96,7 @@ INTERNAL void update_player (float dt)
         {
             gPlayer.current_item = ITEM_NONE;
             // We also reset the palette because ITEM_TIME changes it.
-            if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled)
+            if (!gApp.code_retro_enabled && !gApp.code_nopal_enabled)
             {
                 set_palette_mode(PAL_MODE_DEFAULT);
             }
@@ -111,7 +111,7 @@ INTERNAL void update_player (float dt)
     // starts blinking back to the original to show the power is ending.
     if (gPlayer.current_item == ITEM_TIME)
     {
-        if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled)
+        if (!gApp.code_retro_enabled && !gApp.code_nopal_enabled)
         {
             if (floor(gPlayer.item_time) <= 0.0f)
             {

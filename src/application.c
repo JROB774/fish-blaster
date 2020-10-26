@@ -261,7 +261,7 @@ INTERNAL void handle_application (SDL_Event* event)
             // reset the length of our input to zero to avoid messing up the buffer.
              if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) != 0 &&
                  strncmp(gApp.code, CODE_BLOOD, gApp.code_length) != 0 &&
-                 strncmp(gApp.code, CODE_1BITS, gApp.code_length) != 0)
+                 strncmp(gApp.code, CODE_NOPAL, gApp.code_length) != 0)
             {
                 gApp.code_length = 0;
                 gApp.code[gApp.code_length++] = CAST(char, keycode);
@@ -273,7 +273,7 @@ INTERNAL void handle_application (SDL_Event* event)
                 if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) == 0)
                 {
                     gApp.code_retro_enabled = !gApp.code_retro_enabled;
-                    if (gApp.code_retro_enabled) gApp.code_1bits_enabled = false;
+                    if (gApp.code_retro_enabled) gApp.code_nopal_enabled = false;
                     play_sound(SND_CODE,0);
                 }
                 if (strncmp(gApp.code, CODE_BLOOD, gApp.code_length) == 0)
@@ -281,21 +281,21 @@ INTERNAL void handle_application (SDL_Event* event)
                     gApp.code_blood_enabled = !gApp.code_blood_enabled;
                     play_sound(SND_CODE,0);
                 }
-                if (strncmp(gApp.code, CODE_1BITS, gApp.code_length) == 0)
+                if (strncmp(gApp.code, CODE_NOPAL, gApp.code_length) == 0)
                 {
-                    gApp.code_1bits_enabled = !gApp.code_1bits_enabled;
-                    if (gApp.code_1bits_enabled) gApp.code_retro_enabled = false;
+                    gApp.code_nopal_enabled = !gApp.code_nopal_enabled;
+                    if (gApp.code_nopal_enabled) gApp.code_retro_enabled = false;
                     play_sound(SND_CODE,0);
                 }
 
-                // Special case for the RETRO and 1BITS code when setting the palette.
+                // Special case for the RETRO and NOPAL code when setting the palette.
                 if (gApp.code_retro_enabled)
                 {
                     set_palette_mode(PAL_MODE_GAMEBOY);
                 }
-                else if (gApp.code_1bits_enabled)
+                else if (gApp.code_nopal_enabled)
                 {
-                    set_palette_mode(PAL_MODE_1BIT);
+                    set_palette_mode(PAL_MODE_NOPALETTE);
                 }
                 else
                 {
@@ -392,7 +392,7 @@ INTERNAL void game_over ()
     gPlayer.god_time = 0.0f;
     gPlayer.current_item = ITEM_NONE;
 
-    if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled)
+    if (!gApp.code_retro_enabled && !gApp.code_nopal_enabled)
     {
         set_palette_mode(PAL_MODE_DEFAULT);
     }
