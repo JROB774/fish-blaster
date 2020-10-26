@@ -78,31 +78,31 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
             {
                 case (ENT_CRATE_LIFE):
                 {
-                    if (gApp.life < MAX_LIFE) gApp.life++;
+                    if (gPlayer.life < MAX_LIFE) gPlayer.life++;
                     effect_id = EFX_ICO_LIFE;
                 } break;
                 case (ENT_CRATE_TIME):
                 {
-                    gApp.current_item = ITEM_TIME;
-                    gApp.item_time = ITEM_DURATION;
+                    gPlayer.current_item = ITEM_TIME;
+                    gPlayer.item_time = ITEM_DURATION;
                     effect_id = EFX_ICO_TIME;
                 } break;
                 case (ENT_CRATE_MULT):
                 {
-                    gApp.current_item = ITEM_MULT;
-                    gApp.item_time = ITEM_DURATION;
+                    gPlayer.current_item = ITEM_MULT;
+                    gPlayer.item_time = ITEM_DURATION;
                     effect_id = EFX_ICO_MULT;
                 } break;
                 case (ENT_CRATE_RAPD):
                 {
-                    gApp.current_item = ITEM_RAPD;
-                    gApp.item_time = ITEM_DURATION;
+                    gPlayer.current_item = ITEM_RAPD;
+                    gPlayer.item_time = ITEM_DURATION;
                     effect_id = EFX_ICO_RAPD;
                 } break;
                 case (ENT_CRATE_SPRD):
                 {
-                    gApp.current_item = ITEM_SPRD;
-                    gApp.item_time = ITEM_DURATION;
+                    gPlayer.current_item = ITEM_SPRD;
+                    gPlayer.item_time = ITEM_DURATION;
                     effect_id = EFX_ICO_SPRD;
                 } break;
                 case (ENT_CRATE_BOOM):
@@ -120,7 +120,7 @@ INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, boo
             // Handle swapping the palette.
             if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled) // Don't want to change palette if using the special RETRO or 1BITS codes.
             {
-                if (gApp.current_item == ITEM_TIME)
+                if (gPlayer.current_item == ITEM_TIME)
                 {
                     set_palette_mode(PAL_MODE_SLOWDOWN);
                 }
@@ -213,7 +213,7 @@ INTERNAL void kill_fish (Entity* entity)
     create_effect(EFX_GIB, c.x,c.y,c.w,c.h, FISH_MIN_GIB,FISH_MAX_GIB);
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
     entity->alive = false;
-    if (gApp.current_item == ITEM_MULT)
+    if (gPlayer.current_item == ITEM_MULT)
     {
         create_effect(EFX_SCORE20, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += (FISH_SCORE*2);
@@ -358,7 +358,7 @@ INTERNAL void kill_jelly (Entity* entity)
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
     gSpawner.jelly_count--;
     entity->alive = false;
-    if (gApp.current_item == ITEM_MULT)
+    if (gPlayer.current_item == ITEM_MULT)
     {
         create_effect(EFX_SCORE80, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += (JELLY_SCORE*2);
@@ -381,7 +381,7 @@ INTERNAL void collide_jelly (Entity* entity, int mx, int my, int mw, int mh, boo
     {
         if (point_vs_rect_collision(x,y, c.x,c.y,c.w,c.h))
         {
-            cursor_hit();
+            hit_player();
         }
     }
     // Handle killing the jelly if its shot at any time.
@@ -543,7 +543,7 @@ INTERNAL void kill_urchin (Entity* entity)
     create_effect(EFX_GIB, c.x,c.y,c.w,c.h, URCHIN_MIN_GIB,URCHIN_MAX_GIB);
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
     entity->alive = false;
-    if (gApp.current_item == ITEM_MULT)
+    if (gPlayer.current_item == ITEM_MULT)
     {
         create_effect(EFX_SCORE40, c.x+c.w/2,c.y+c.h/2,1,1, 1,1);
         gApp.score += (URCHIN_SCORE*2);
@@ -569,7 +569,7 @@ INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bo
     {
         if (point_vs_rect_collision(x,y, c.x,c.y,c.w,c.h))
         {
-            cursor_hit();
+            hit_player();
         }
     }
     else
@@ -955,7 +955,7 @@ INTERNAL void render_entity (float dt)
 INTERNAL void collide_entity (bool shot)
 {
     // Don't handle collisions if the cursor is out of bounds.
-    if (!is_cursor_in_screen_bounds()) return;
+    if (!is_player_in_screen_bounds()) return;
 
     // We use a box around the mouse point for collision as it feels better to give
     // some leeway when shooting entities, rather than needing a point collision.
@@ -1055,7 +1055,7 @@ INTERNAL void update_spawner (float dt)
         gSpawner.crate_spawn_timer = CRATE_SPAWN_RATE;
         EntityID min_choice = ENT_CRATE_LIFE;
         EntityID max_choice = ENT_CRATE_BOOM;
-        if (gApp.life >= MAX_LIFE) min_choice++; // Don't spawn life crates if we're at max life!
+        if (gPlayer.life >= MAX_LIFE) min_choice++; // Don't spawn life crates if we're at max life!
         create_entity(random_int_range(min_choice,max_choice));
     }
 
