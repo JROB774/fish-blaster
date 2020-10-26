@@ -121,7 +121,11 @@ INTERNAL bool do_menu_button (int* x, int* y, const char* text, float* target, f
     bool pressed = false;
     if (point_vs_rect_collision(mx,my, rx,ry,rw,rh))
     {
-        *target = rw;
+        if (*target == 0.0f)
+        {
+            play_sound_channel(SND_SWISH,0,1);
+            *target = rw;
+        }
 
         if (button_pressed(LMB))
         {

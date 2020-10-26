@@ -95,6 +95,7 @@ INTERNAL void init_audio ()
         load_sound(&gAudio.sound[SND_BREAK   ], "assets/break.wav"  );
         load_sound(&gAudio.sound[SND_ITEM    ], "assets/item.wav"   );
         load_sound(&gAudio.sound[SND_BOOM    ], "assets/boom.wav"   );
+        load_sound(&gAudio.sound[SND_SWISH   ], "assets/swish.wav"  );
 
         // Load all of the music.
         // ...
@@ -119,6 +120,7 @@ INTERNAL void quit_audio ()
         free_sound(&gAudio.sound[SND_BREAK   ]);
         free_sound(&gAudio.sound[SND_ITEM    ]);
         free_sound(&gAudio.sound[SND_BOOM    ]);
+        free_sound(&gAudio.sound[SND_SWISH   ]);
 
         Mix_CloseAudio();
     }
@@ -126,10 +128,14 @@ INTERNAL void quit_audio ()
 
 INTERNAL void play_sound (SoundID id, int loops)
 {
+    play_sound_channel(id,loops,-1);
+}
+INTERNAL void play_sound_channel (SoundID id, int loops, int channel)
+{
     assert((id >= 0) && (id < SND_TOTAL));
     if (gAudio.initialized)
     {
-        if (Mix_PlayChannel(-1, gAudio.sound[id].data, loops) == -1)
+        if (Mix_PlayChannel(channel, gAudio.sound[id].data, loops) == -1)
         {
             LOGDEBUG("Failed to play sound! (%s)", Mix_GetError());
         }
