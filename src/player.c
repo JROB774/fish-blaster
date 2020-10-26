@@ -1,27 +1,47 @@
+INTERNAL void spawn_shot (int x, int y)
+{
+    // Region for spawning bubbles.
+    int bx = x-6;
+    int by = y-6;
+    int bw = 12;
+    int bh = 12;
+
+    create_effect(EFX_BUBBLE, bx,by,bw,bh, 2,3);
+    create_effect(EFX_SHOT, x,y,1,1, 1,1);
+}
+
 INTERNAL void shoot ()
 {
     int mx = get_mouse_x();
     int my = get_mouse_y();
 
-    // Region for spawning bubbles.
-    int bx = mx-6;
-    int by = my-6;
-    int bw = 12;
-    int bh = 12;
-
-    create_effect(EFX_BUBBLE, bx,by,bw,bh, 2,3);
-    create_effect(EFX_SHOT, mx,my,1,1, 1,1);
-
     shake_camera(1,1,0.1f);
 
-    if (gPlayer.current_item == ITEM_RAPD) play_sound(SND_RSHOT[random_int_range(0,ARRAYSIZE(SND_RSHOT)-1)],0);
-    else play_sound(SND_NSHOT[random_int_range(0,ARRAYSIZE(SND_NSHOT)-1)],0);
+    switch (gPlayer.current_item)
+    {
+        case (ITEM_RAPD): play_sound(SND_RSHOT[random_int_range(0,ARRAYSIZE(SND_RSHOT)-1)],0); break;
+        case (ITEM_SPRD): play_sound(SND_RSHOT[random_int_range(0,ARRAYSIZE(SND_RSHOT)-1)],0); break;
+        default:          play_sound(SND_NSHOT[random_int_range(0,ARRAYSIZE(SND_NSHOT)-1)],0); break;
+    }
 
-    // Region that is deadly for entities.
-    int sx = mx-2;
-    int sy = my-2;
-    int sw = 4;
-    int sh = 4;
+    spawn_shot(mx,my);
+
+    // If the player has spread shot spawn extra bullets.
+    if (gPlayer.current_item == ITEM_SPRD)
+    {
+        for (int i=0; i<NUM_SPREAD_SHOT; ++i)
+        {
+            int x = random_int_range(mx-8,mx+8);
+            int y = random_int_range(my-7,my+7);
+
+            spawn_shot(x,y);
+        }
+    }
+
+    // The deadly region changes baesd on if spread is being used.
+    int sx,sy,sw,sh;
+    if (gPlayer.current_item == ITEM_SPRD) sx = mx-10, sy = my-10, sw = 20, sh = 20;
+    else                                   sx = mx- 2, sy = my- 2, sw =  4, sh =  4;
 
     collide_entity_vs_shot(sx,sy,sw,sh);
 }

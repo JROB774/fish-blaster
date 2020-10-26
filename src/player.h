@@ -6,6 +6,8 @@
 
 #define MAX_LIFE 2
 
+#define NUM_SPREAD_SHOT 4
+
 typedef enum ItemID__
 {
     ITEM_NONE,

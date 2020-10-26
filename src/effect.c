@@ -260,7 +260,7 @@ INTERNAL void update_bubble (Effect* effect, float dt)
 // EFX_SHOT
 
 #define SHOT_MIN_ANM_SPEED 0.05f
-#define SHOT_MAX_ANM_SPEED 0.10f
+#define SHOT_MAX_ANM_SPEED 0.20f
 
 INTERNAL void create_shot (Effect* effect)
 {
