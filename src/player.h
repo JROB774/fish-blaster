@@ -6,7 +6,8 @@
 
 #define MAX_LIFE 2
 
-#define NUM_SPREAD_SHOT 4
+#define NUM_SPRD_SHOT 4
+#define SPRD_COOLDOWN 0.25f
 
 typedef enum ItemID__
 {
