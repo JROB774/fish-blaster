@@ -306,14 +306,19 @@ INTERNAL void handle_application (SDL_Event* event)
 }
 INTERNAL void update_application (float dt)
 {
-    // Debug keys for spawning different crates.
+    // Debug keys for spawning the different entity types.
     #if defined(BUILD_DEBUG)
-    if (key_pressed(SDLK_1)) create_entity(ENT_CRATE_LIFE);
-    if (key_pressed(SDLK_2)) create_entity(ENT_CRATE_TIME);
-    if (key_pressed(SDLK_3)) create_entity(ENT_CRATE_MULT);
-    if (key_pressed(SDLK_4)) create_entity(ENT_CRATE_RAPD);
-    if (key_pressed(SDLK_5)) create_entity(ENT_CRATE_SPRD);
-    if (key_pressed(SDLK_6)) create_entity(ENT_CRATE_BOOM);
+    if (key_pressed(SDLK_F1 )) create_entity(ENT_CRATE_LIFE);
+    if (key_pressed(SDLK_F2 )) create_entity(ENT_CRATE_TIME);
+    if (key_pressed(SDLK_F3 )) create_entity(ENT_CRATE_MULT);
+    if (key_pressed(SDLK_F4 )) create_entity(ENT_CRATE_RAPD);
+    if (key_pressed(SDLK_F5 )) create_entity(ENT_CRATE_SPRD);
+    if (key_pressed(SDLK_F6 )) create_entity(ENT_CRATE_BOOM);
+    if (key_pressed(SDLK_F7 )) create_entity(ENT_FISH);
+    if (key_pressed(SDLK_F8 )) create_entity(ENT_SQUID);
+    if (key_pressed(SDLK_F9 )) create_entity(ENT_JELLY);
+    if (key_pressed(SDLK_F10)) create_entity(ENT_URCHIN);
+    if (key_pressed(SDLK_F11)) create_entity(ENT_BOOM);
     #endif
 
     gApp.frame++;
