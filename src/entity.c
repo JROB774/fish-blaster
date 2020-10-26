@@ -1,7 +1,6 @@
 // ENT_CRATE
 
-#define CRATE_SPAWN_START 20.0f
-#define CRATE_SPAWN_RATE  15.0f
+#define CRATE_SPAWN_COUNT 20
 #define CRATE_WIDTH  16
 #define CRATE_HEIGHT 16
 #define CRATE_SPEED  30
@@ -229,6 +228,7 @@ INTERNAL void collide_fish_vs_shot (Entity* entity, int sx, int sy, int sw, int 
     Rect c = get_fish_collider(entity);
     if (rect_vs_rect_collision(sx,sy,sw,sh, c.x,c.y,c.w,c.h))
     {
+        gSpawner.crate_spawn_counter++;
         kill_fish(entity);
     }
 }
@@ -386,6 +386,7 @@ INTERNAL void collide_jelly_vs_shot (Entity* entity, int sx, int sy, int sw, int
     Rect c = get_jelly_collider(entity);
     if (rect_vs_rect_collision(sx,sy,sw,sh, c.x,c.y,c.w,c.h))
     {
+        gSpawner.crate_spawn_counter++;
         kill_jelly(entity);
     }
 }
@@ -994,7 +995,7 @@ INTERNAL void collide_entity_vs_shot (int sx, int sy, int sw, int sh)
 
 INTERNAL void create_spawner ()
 {
-    gSpawner.crate_spawn_timer = CRATE_SPAWN_START;
+    gSpawner.crate_spawn_counter = 0;
 
     gSpawner.fish_spawn_timer = FISH_SPAWN_START;
 
@@ -1052,10 +1053,9 @@ INTERNAL void update_spawner (float dt)
     }
 
     // ENT_CRATE
-    gSpawner.crate_spawn_timer -= dt;
-    if (gSpawner.crate_spawn_timer <= 0.0f)
+    while (gSpawner.crate_spawn_counter >= CRATE_SPAWN_COUNT)
     {
-        gSpawner.crate_spawn_timer = CRATE_SPAWN_RATE;
+        gSpawner.crate_spawn_counter -= CRATE_SPAWN_COUNT;
         EntityID min_choice = ENT_CRATE_LIFE;
         EntityID max_choice = ENT_CRATE_BOOM;
         if (gPlayer.life >= MAX_LIFE) min_choice++; // Don't spawn life crates if we're at max life!

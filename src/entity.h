@@ -34,7 +34,10 @@ typedef struct Entity__
 
 typedef struct Spawner__
 {
-    float crate_spawn_timer;
+    // Crates are spawned using kills as this is more fun and also fair as it stops
+    // people from just hovering their cursor outside the window and waiting for
+    // a crate to spawn (e.g. the boom crate) and getting points without any risk.
+    int   crate_spawn_counter;
 
     float fish_spawn_timer;
 
