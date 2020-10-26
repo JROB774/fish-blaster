@@ -438,6 +438,16 @@ INTERNAL void handle_application (SDL_Event* event)
 }
 INTERNAL void update_application (float dt)
 {
+    // Debug keys for spawning different crates.
+    #if defined(BUILD_DEBUG)
+    if (key_pressed(SDLK_1)) create_entity(ENT_CRATE_LIFE);
+    if (key_pressed(SDLK_2)) create_entity(ENT_CRATE_TIME);
+    if (key_pressed(SDLK_3)) create_entity(ENT_CRATE_MULT);
+    if (key_pressed(SDLK_4)) create_entity(ENT_CRATE_RAPD);
+    if (key_pressed(SDLK_5)) create_entity(ENT_CRATE_SPRD);
+    if (key_pressed(SDLK_6)) create_entity(ENT_CRATE_BOOM);
+    #endif
+
     gApp.frame++;
 
     if (gApp.shoot_cooldown > 0.0f)
