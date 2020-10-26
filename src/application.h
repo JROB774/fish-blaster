@@ -1,7 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-typedef enum AppState__ { APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } AppState;
+typedef enum AppState__ { APP_STATE_MENU, APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } AppState;
 
 #define CODE_LENGTH 5
 #define CODE_RETRO "retro"
@@ -68,6 +68,7 @@ INTERNAL bool is_cursor_in_screen_bounds ();
 INTERNAL void cursor_hit ();
 
 // Switches the state of the game.
+INTERNAL void start_menu ();
 INTERNAL void start_game ();
 INTERNAL void game_over  ();
 

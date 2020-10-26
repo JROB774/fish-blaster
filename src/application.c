@@ -1,4 +1,4 @@
-// HELPER FUNCTIONS
+// HELPERS
 
 INTERNAL void render_cursor ()
 {
@@ -103,7 +103,80 @@ INTERNAL void shoot ()
     shake_camera(1,1,0.1f);
 }
 
-// GAME
+// APP_STATE_MENU
+
+INTERNAL bool do_menu_button (int* x, int* y, const char* text)
+{
+    assert(x && y);
+
+    int rw = get_text_w(text);
+    int rh = TILE_H;
+    int rx = (SCREEN_W-rw)/2;
+    int ry = *y;
+
+    render_text(rx,ry,PAL_TEXT_SHADE,text);
+
+    *x  = rx;
+    *y += rh+2;
+
+    int mx = get_mouse_x();
+    int my = get_mouse_y();
+
+    if (point_vs_rect_collision(mx,my, rx,ry,rw,rh))
+    {
+        if (button_pressed(LMB))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+INTERNAL void update_menu (float dt)
+{
+    update_spawner(dt);
+    update_entity (dt);
+    update_effect (dt);
+
+    // Handle shooting.
+    if (button_pressed(LMB))
+    {
+        if (is_cursor_in_screen_bounds())
+        {
+            shoot();
+        }
+    }
+}
+INTERNAL void render_menu (float dt)
+{
+    begin_camera();
+    render_effect_lo(dt);
+    render_entity(dt);
+    render_effect_hi(dt);
+    end_camera();
+
+    const char* TXT_PLAY    = "PLAY";
+    const char* TXT_OPTIONS = "OPTIONS";
+    const char* TXT_SCORES  = "SCORES";
+    const char* TXT_CREDITS = "CREDITS";
+    const char* TXT_EXIT    = "EXIT";
+
+    render_bitmap(0,12,PAL_TEXT_SHADE,&SPR_TITLE);
+
+    int x =  0;
+    int y = 76;
+
+    if (do_menu_button(&x,&y,TXT_PLAY   )) start_game();
+    if (do_menu_button(&x,&y,TXT_OPTIONS)) {}
+    if (do_menu_button(&x,&y,TXT_SCORES )) {}
+    if (do_menu_button(&x,&y,TXT_CREDITS)) {}
+    if (do_menu_button(&x,&y,TXT_EXIT   )) gWindow.running = false;
+
+    render_cursor();
+}
+
+// APP_STATE_GAME
 
 INTERNAL void update_game (float dt)
 {
@@ -195,7 +268,7 @@ INTERNAL void render_game (float dt)
     render_hud(2,true);
 }
 
-// GAME OVER
+// APP_STATE_GAMEOVER
 
 INTERNAL void update_gameover (float dt)
 {
@@ -232,7 +305,7 @@ INTERNAL bool init_application ()
     gApp.cursor_prev_y = gApp.cursor_y;
 
     seed_random();
-    start_game();
+    start_menu();
 
     return true;
 }
@@ -325,6 +398,7 @@ INTERNAL void update_application (float dt)
 
     switch (gApp.state)
     {
+        case (APP_STATE_MENU    ): update_menu    (dt); break;
         case (APP_STATE_GAME    ): update_game    (dt); break;
         case (APP_STATE_GAMEOVER): update_gameover(dt); break;
     }
@@ -335,6 +409,7 @@ INTERNAL void render_application (float dt)
 
     switch (gApp.state)
     {
+        case (APP_STATE_MENU    ): render_menu    (dt); break;
         case (APP_STATE_GAME    ): render_game    (dt); break;
         case (APP_STATE_GAMEOVER): render_gameover(dt); break;
     }
@@ -346,7 +421,7 @@ INTERNAL void render_application (float dt)
     }
 }
 
-// MISC
+// MISCELLANEOUS
 
 INTERNAL void flash_screen_white ()
 {
@@ -378,8 +453,17 @@ INTERNAL void cursor_hit ()
     }
 }
 
-// STATES
+// STATE CHANGES
 
+INTERNAL void start_menu ()
+{
+    gApp.state = APP_STATE_MENU;
+
+    memset(gEntity, 0, sizeof(gEntity));
+    memset(gEffect, 0, sizeof(gEffect));
+
+    create_spawner();
+}
 INTERNAL void start_game ()
 {
     gApp.state = APP_STATE_GAME;

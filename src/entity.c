@@ -1020,17 +1020,6 @@ INTERNAL void update_spawner (float dt)
         }
     }
 
-    // ENT_CRATE
-    gSpawner.crate_spawn_timer -= dt;
-    if (gSpawner.crate_spawn_timer <= 0.0f)
-    {
-        gSpawner.crate_spawn_timer = CRATE_SPAWN_RATE;
-        EntityID min_choice = ENT_CRATE_LIFE;
-        EntityID max_choice = ENT_CRATE_BOOM;
-        if (gApp.life >= MAX_LIFE) min_choice++; // Don't spawn life crates if we're at max life!
-        create_entity(random_int_range(min_choice,max_choice));
-    }
-
     // ENT_FISH
     gSpawner.fish_spawn_timer -= dt;
     if (gSpawner.fish_spawn_timer <= 0.0f)
@@ -1051,6 +1040,23 @@ INTERNAL void update_spawner (float dt)
             gSpawner.fish_spawn_timer = FISH_SPAWN_RATE;
             create_entity(ENT_FISH);
         }
+    }
+
+    // We only spawn fish on the main menu.
+    if (gApp.state == APP_STATE_MENU)
+    {
+        return;
+    }
+
+    // ENT_CRATE
+    gSpawner.crate_spawn_timer -= dt;
+    if (gSpawner.crate_spawn_timer <= 0.0f)
+    {
+        gSpawner.crate_spawn_timer = CRATE_SPAWN_RATE;
+        EntityID min_choice = ENT_CRATE_LIFE;
+        EntityID max_choice = ENT_CRATE_BOOM;
+        if (gApp.life >= MAX_LIFE) min_choice++; // Don't spawn life crates if we're at max life!
+        create_entity(random_int_range(min_choice,max_choice));
     }
 
     // ENT_JELLY
