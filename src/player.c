@@ -54,7 +54,7 @@ INTERNAL void shoot ()
     }
     else
     {
-        sx = mx-2, sy = my-2, sw = 4, sh = 4;
+        sx = mx-3, sy = my-3, sw = 6, sh = 6;
     }
 
     collide_entity_vs_shot(sx,sy,sw,sh);

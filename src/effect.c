@@ -220,6 +220,8 @@ INTERNAL void update_chip_1 (Effect* effect, float dt)
 #define BUBBLE_VELOCITY_INC  10
 #define BUBBLE_MIN_ANM_SPEED 0.2f
 #define BUBBLE_MAX_ANM_SPEED 0.3f
+#define BUBBLE_WIDTH  8
+#define BUBBLE_HEIGHT 8
 
 INTERNAL void create_bubble (Effect* effect)
 {
@@ -239,7 +241,7 @@ INTERNAL void update_bubble (Effect* effect, float dt)
     effect->y -= effect->vy * dt;
 
     // Kill any bubbles that go off the top of the screen.
-    if (effect->y + 8 < 0) // @Hardcoded: All effects are currently 8x8 pixels!
+    if (effect->y+BUBBLE_HEIGHT < 0)
     {
         effect->alive = false;
     }

@@ -120,6 +120,8 @@ INTERNAL void update_menu (float dt)
 }
 INTERNAL void render_menu (float dt)
 {
+    // @Incomplete: Remove static/persistent variables!!!
+
     static float play_target = 0.0f;
     static float options_target = 0.0f;
     static float scores_target = 0.0f;
