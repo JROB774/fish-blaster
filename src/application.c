@@ -371,11 +371,15 @@ INTERNAL void handle_application (SDL_Event* event)
 
             // Make sure we're matching at least one of the codes so far and if not
             // reset the length of our input to zero to avoid messing up the buffer.
+            for (int i=0; i<gApp.code_length; ++i) printf("%c", gApp.code[i]);
+            printf("\n");
+
              if (strncmp(gApp.code, CODE_RETRO, gApp.code_length) != 0 &&
                  strncmp(gApp.code, CODE_BLOOD, gApp.code_length) != 0 &&
                  strncmp(gApp.code, CODE_1BITS, gApp.code_length) != 0)
             {
                 gApp.code_length = 0;
+                gApp.code[gApp.code_length++] = CAST(char, keycode);
             }
 
             // If we've entered a full code then check which one matches and toggle it.
