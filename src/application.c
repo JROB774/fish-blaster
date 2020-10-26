@@ -136,7 +136,7 @@ INTERNAL void render_menu (float dt)
 
     begin_camera();
     render_effect_lo(dt);
-    render_entity(dt);
+    render_entity   (dt);
     render_effect_hi(dt);
     end_camera();
 
@@ -213,15 +213,21 @@ INTERNAL void update_gameover (float dt)
         return;
     }
 
-    update_player(dt);
+    update_spawner(dt);
+    update_player (dt);
+    update_entity (dt);
+    update_effect (dt);
 }
 INTERNAL void render_gameover (float dt)
 {
-    render_player(dt);
-
     begin_camera();
-    render_hud((SCREEN_H-TILE_H)/2,false);
+    render_effect_lo(dt);
+    render_entity   (dt);
+    render_effect_hi(dt);
     end_camera();
+
+    render_player(dt);
+    render_hud((SCREEN_H-TILE_H)/2,false);
 }
 
 // APPLICATION
@@ -364,10 +370,6 @@ INTERNAL void flash_screen_white ()
 INTERNAL void start_menu ()
 {
     gApp.state = APP_STATE_MENU;
-
-    memset(gEntity, 0, sizeof(gEntity));
-    memset(gEffect, 0, sizeof(gEffect));
-
     create_spawner();
 }
 INTERNAL void start_game ()
