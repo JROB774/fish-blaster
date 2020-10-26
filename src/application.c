@@ -212,6 +212,12 @@ INTERNAL void render_menu (float dt)
 
 INTERNAL void update_game (float dt)
 {
+    // Go to the menu if the player wants.
+    if (key_pressed(ESCAPE))
+    {
+        start_menu();
+        return;
+    }
     // Restart the game if the player wants.
     if (key_pressed(RESTART))
     {
@@ -304,6 +310,13 @@ INTERNAL void render_game (float dt)
 
 INTERNAL void update_gameover (float dt)
 {
+    // Go to the menu if the player wants.
+    if (key_pressed(ESCAPE))
+    {
+        start_menu();
+        return;
+    }
+
     if (button_pressed(LMB))
     {
         if (is_cursor_in_screen_bounds())
@@ -412,13 +425,6 @@ INTERNAL void handle_application (SDL_Event* event)
 }
 INTERNAL void update_application (float dt)
 {
-    // Quit the game.
-    if (key_pressed(ESCAPE))
-    {
-        gWindow.running = false;
-        return;
-    }
-
     gApp.frame++;
 
     if (gApp.shoot_cooldown > 0.0f)
