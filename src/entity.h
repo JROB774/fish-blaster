@@ -60,11 +60,13 @@ INTERNAL bool circle_vs_rect_collision (float cx, float cy, float cr, float rx, 
 
 INTERNAL bool have_space_for_num_entities (int num);
 
-INTERNAL Entity*  create_entity (EntityID id);
-INTERNAL void     update_entity (float dt);
-INTERNAL void     render_entity (float dt);
-INTERNAL void    collide_entity (bool shot); // Whether a shot was fired or its just normal collision.
-INTERNAL void    create_spawner ();
-INTERNAL void    update_spawner (float dt);
+INTERNAL Entity* create_entity (EntityID id);
+INTERNAL void    update_entity (float dt);
+INTERNAL void    render_entity (float dt);
+INTERNAL void   create_spawner ();
+INTERNAL void   update_spawner (float dt);
+
+INTERNAL void collide_entity_vs_player (int px, int py);
+INTERNAL void collide_entity_vs_shot   (int sx, int sy, int sw, int sh);
 
 #endif /* ENTITY_H */

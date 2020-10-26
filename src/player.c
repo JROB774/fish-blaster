@@ -3,24 +3,27 @@ INTERNAL void shoot ()
     int mx = get_mouse_x();
     int my = get_mouse_y();
 
-    int x = mx-6;
-    int y = my-6;
-    int w = 12;
-    int h = 12;
+    // Region for spawning bubbles.
+    int bx = mx-6;
+    int by = my-6;
+    int bw = 12;
+    int bh = 12;
 
-    create_effect(EFX_BUBBLE, x,y,w,h, 2,3);
+    create_effect(EFX_BUBBLE, bx,by,bw,bh, 2,3);
     create_effect(EFX_SHOT, mx,my,1,1, 1,1);
 
     shake_camera(1,1,0.1f);
 
-    if (gPlayer.current_item == ITEM_RAPD)
-    {
-        play_sound(SND_RSHOT[random_int_range(0,ARRAYSIZE(SND_RSHOT)-1)],0);
-    }
-    else
-    {
-        play_sound(SND_NSHOT[random_int_range(0,ARRAYSIZE(SND_NSHOT)-1)],0);
-    }
+    if (gPlayer.current_item == ITEM_RAPD) play_sound(SND_RSHOT[random_int_range(0,ARRAYSIZE(SND_RSHOT)-1)],0);
+    else play_sound(SND_NSHOT[random_int_range(0,ARRAYSIZE(SND_NSHOT)-1)],0);
+
+    // Region that is deadly for entities.
+    int sx = mx-2;
+    int sy = my-2;
+    int sw = 4;
+    int sh = 4;
+
+    collide_entity_vs_shot(sx,sy,sw,sh);
 }
 
 INTERNAL void init_player ()
@@ -111,10 +114,7 @@ INTERNAL void update_player (float dt)
         }
     }
 
-    if (gApp.state == APP_STATE_GAME)
-    {
-        collide_entity(shot);
-    }
+    collide_entity_vs_player(get_mouse_x(),get_mouse_y());
 }
 
 INTERNAL void render_player (float dt)

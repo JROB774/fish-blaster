@@ -65,73 +65,70 @@ INTERNAL void kill_crate (Entity* entity)
     play_sound(SND_ITEM,0);
     entity->alive = false;
 }
-INTERNAL void collide_crate (Entity* entity, int mx, int my, int mw, int mh, bool shot)
+INTERNAL void collide_crate_vs_shot (Entity* entity, int sx, int sy, int sw, int sh)
 {
-    if (shot)
+    Rect c = get_crate_collider(entity);
+    if (rect_vs_rect_collision(sx,sy,sw,sh, c.x,c.y,c.w,c.h))
     {
-        Rect c = get_crate_collider(entity);
-        if (rect_vs_rect_collision(mx,my,mw,mh, c.x,c.y,c.w,c.h))
+        // Determine which item graphic to display and perform the crate's effect.
+        EffectID effect_id = 0;
+        switch (entity->type)
         {
-            // Determine which item graphic to display and perform the crate's effect.
-            EffectID effect_id = 0;
-            switch (entity->type)
+            case (ENT_CRATE_LIFE):
             {
-                case (ENT_CRATE_LIFE):
-                {
-                    if (gPlayer.life < MAX_LIFE) gPlayer.life++;
-                    effect_id = EFX_ICO_LIFE;
-                } break;
-                case (ENT_CRATE_TIME):
-                {
-                    gPlayer.current_item = ITEM_TIME;
-                    gPlayer.item_time = ITEM_DURATION;
-                    effect_id = EFX_ICO_TIME;
-                } break;
-                case (ENT_CRATE_MULT):
-                {
-                    gPlayer.current_item = ITEM_MULT;
-                    gPlayer.item_time = ITEM_DURATION;
-                    effect_id = EFX_ICO_MULT;
-                } break;
-                case (ENT_CRATE_RAPD):
-                {
-                    gPlayer.current_item = ITEM_RAPD;
-                    gPlayer.item_time = ITEM_DURATION;
-                    effect_id = EFX_ICO_RAPD;
-                } break;
-                case (ENT_CRATE_SPRD):
-                {
-                    gPlayer.current_item = ITEM_SPRD;
-                    gPlayer.item_time = ITEM_DURATION;
-                    effect_id = EFX_ICO_SPRD;
-                } break;
-                case (ENT_CRATE_BOOM):
-                {
-                    Entity* boom = create_entity(ENT_BOOM);
-                    boom->x = entity->x+(CRATE_WIDTH/2);
-                    boom->y = entity->y+(CRATE_HEIGHT/2);
-                    effect_id = EFX_ICO_BOOM;
-                } break;
-            }
-
-            // Spawn the icon effect for the item that was collected from the crate.
-            create_effect(effect_id, entity->x+(CRATE_WIDTH/2),entity->y+(CRATE_HEIGHT/2),1,1, 1,1);
-
-            // Handle swapping the palette.
-            if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled) // Don't want to change palette if using the special RETRO or 1BITS codes.
+                if (gPlayer.life < MAX_LIFE) gPlayer.life++;
+                effect_id = EFX_ICO_LIFE;
+            } break;
+            case (ENT_CRATE_TIME):
             {
-                if (gPlayer.current_item == ITEM_TIME)
-                {
-                    set_palette_mode(PAL_MODE_SLOWDOWN);
-                }
-                else
-                {
-                    set_palette_mode(PAL_MODE_DEFAULT);
-                }
-            }
-
-            kill_crate(entity);
+                gPlayer.current_item = ITEM_TIME;
+                gPlayer.item_time = ITEM_DURATION;
+                effect_id = EFX_ICO_TIME;
+            } break;
+            case (ENT_CRATE_MULT):
+            {
+                gPlayer.current_item = ITEM_MULT;
+                gPlayer.item_time = ITEM_DURATION;
+                effect_id = EFX_ICO_MULT;
+            } break;
+            case (ENT_CRATE_RAPD):
+            {
+                gPlayer.current_item = ITEM_RAPD;
+                gPlayer.item_time = ITEM_DURATION;
+                effect_id = EFX_ICO_RAPD;
+            } break;
+            case (ENT_CRATE_SPRD):
+            {
+                gPlayer.current_item = ITEM_SPRD;
+                gPlayer.item_time = ITEM_DURATION;
+                effect_id = EFX_ICO_SPRD;
+            } break;
+            case (ENT_CRATE_BOOM):
+            {
+                Entity* boom = create_entity(ENT_BOOM);
+                boom->x = entity->x+(CRATE_WIDTH/2);
+                boom->y = entity->y+(CRATE_HEIGHT/2);
+                effect_id = EFX_ICO_BOOM;
+            } break;
         }
+
+        // Spawn the icon effect for the item that was collected from the crate.
+        create_effect(effect_id, entity->x+(CRATE_WIDTH/2),entity->y+(CRATE_HEIGHT/2),1,1, 1,1);
+
+        // Handle swapping the palette.
+        if (!gApp.code_retro_enabled && !gApp.code_1bits_enabled) // Don't want to change palette if using the special RETRO or 1BITS codes.
+        {
+            if (gPlayer.current_item == ITEM_TIME)
+            {
+                set_palette_mode(PAL_MODE_SLOWDOWN);
+            }
+            else
+            {
+                set_palette_mode(PAL_MODE_DEFAULT);
+            }
+        }
+
+        kill_crate(entity);
     }
 }
 
@@ -224,15 +221,13 @@ INTERNAL void kill_fish (Entity* entity)
         gApp.score += FISH_SCORE;
     }
 }
-INTERNAL void collide_fish (Entity* entity, int mx, int my, int mw, int mh, bool shot)
+INTERNAL void collide_fish_vs_shot (Entity* entity, int sx, int sy, int sw, int sh)
 {
-    if (shot)
+    // Handle killing the fish if its shot at any time.
+    Rect c = get_fish_collider(entity);
+    if (rect_vs_rect_collision(sx,sy,sw,sh, c.x,c.y,c.w,c.h))
     {
-        Rect c = get_fish_collider(entity);
-        if (rect_vs_rect_collision(mx,my,mw,mh, c.x,c.y,c.w,c.h))
-        {
-            kill_fish(entity);
-        }
+        kill_fish(entity);
     }
 }
 
@@ -260,7 +255,7 @@ INTERNAL void kill_squid (Entity* entity)
 {
     // @Incomplete: ...
 }
-INTERNAL void collide_squid (Entity* entity, int mx, int my, int mw, int mh, bool shot)
+INTERNAL void collide_squid_vs_shot (Entity* entity, int sx, int sy, int sw, int sh)
 {
     // @Incomplete: ...
 }
@@ -369,28 +364,25 @@ INTERNAL void kill_jelly (Entity* entity)
         gApp.score += JELLY_SCORE;
     }
 }
-INTERNAL void collide_jelly (Entity* entity, int mx, int my, int mw, int mh, bool shot)
+INTERNAL void collide_jelly_vs_player (Entity* entity, int px, int py)
 {
-    Rect c = get_jelly_collider(entity);
-
-    int x = mx+(mw/2);
-    int y = my+(mh/2);
-
     // Hurt the player if they mouse over an electric jelly.
+    Rect c = get_jelly_collider(entity);
     if (entity->t2 <= -JELLY_FLASH_LEEWAY) // We have some leeway where the player won't get hurt.
     {
-        if (point_vs_rect_collision(x,y, c.x,c.y,c.w,c.h))
+        if (point_vs_rect_collision(px,py, c.x,c.y,c.w,c.h))
         {
             hit_player();
         }
     }
+}
+INTERNAL void collide_jelly_vs_shot (Entity* entity, int sx, int sy, int sw, int sh)
+{
     // Handle killing the jelly if its shot at any time.
-    if (shot)
+    Rect c = get_jelly_collider(entity);
+    if (rect_vs_rect_collision(sx,sy,sw,sh, c.x,c.y,c.w,c.h))
     {
-        if (rect_vs_rect_collision(mx,my,mw,mh, c.x,c.y,c.w,c.h))
-        {
-            kill_jelly(entity);
-        }
+        kill_jelly(entity);
     }
 }
 
@@ -557,32 +549,26 @@ INTERNAL void kill_urchin (Entity* entity)
     // This needs to be decremented for urchin spawning to work correctly!
     gSpawner.urchin_count--;
 }
-INTERNAL void collide_urchin (Entity* entity, int mx, int my, int mw, int mh, bool shot)
+INTERNAL void collide_urchin_vs_player (Entity* entity, int px, int py)
 {
     Rect c = get_urchin_collider(entity);
-
-    int x = mx+(mw/2);
-    int y = my+(mh/2);
-
     // Cannot get hurt by an urchin whilst it isn't deadly!
     if (entity->t2 <= 0.0f)
     {
-        if (point_vs_rect_collision(x,y, c.x,c.y,c.w,c.h))
+        if (point_vs_rect_collision(px,py, c.x,c.y,c.w,c.h))
         {
             hit_player();
         }
     }
-    else
+}
+INTERNAL void collide_urchin_vs_shot (Entity* entity, int sx, int sy, int sw, int sh)
+{
+    // Because urchins aren't immediately deadly the player can technically shoot them.
+    // So we play a ting sound effect to make it clear they aren't hurt by bullets.
+    Rect c = get_urchin_collider(entity);
+    if (rect_vs_rect_collision(sx,sy,sw,sh, c.x,c.y,c.w,c.h))
     {
-        // Because urchins aren't immediately deadly the player can technically shoot them.
-        // So we play a ting sound effect to make it clear they aren't hurt by bullets.
-        if (shot)
-        {
-            if (rect_vs_rect_collision(mx,my,mw,mh, c.x,c.y,c.w,c.h))
-            {
-                play_sound(SND_TING[random_int_range(0,ARRAYSIZE(SND_TING)-1)],0);
-            }
-        }
+        play_sound(SND_TING[random_int_range(0,ARRAYSIZE(SND_TING)-1)],0);
     }
 }
 
@@ -952,19 +938,32 @@ INTERNAL void render_entity (float dt)
     }
 }
 
-INTERNAL void collide_entity (bool shot)
+// Collision against the player is done with a point so that the player has more
+// freedom to move and is less likely to get hit. Collision with shots is handled
+// using a box so the player is more likely to hit fish and creates when shooting.
+
+INTERNAL void collide_entity_vs_player (int px, int py)
 {
     // Don't handle collisions if the cursor is out of bounds.
     if (!is_player_in_screen_bounds()) return;
 
-    // We use a box around the mouse point for collision as it feels better to give
-    // some leeway when shooting entities, rather than needing a point collision.
-    int x = CAST(int,get_mouse_x())-2;
-    int y = CAST(int,get_mouse_y())-2;
-    int w = 4;
-    int h = 4;
-
     for (int i=0; i<ENTITY_MAX; ++i)
+    {
+        Entity* entity = gEntity+i;
+        if (entity->alive)
+        {
+            // Specific collision logic for the different entity types.
+            switch (entity->type)
+            {
+                case (ENT_JELLY ): collide_jelly_vs_player (entity, px,py); break;
+                case (ENT_URCHIN): collide_urchin_vs_player(entity, px,py); break;
+            }
+        }
+    }
+}
+
+INTERNAL void collide_entity_vs_shot (int sx, int sy, int sw, int sh)
+{    for (int i=0; i<ENTITY_MAX; ++i)
     {
         Entity* entity = gEntity+i;
         if (entity->alive)
@@ -977,11 +976,11 @@ INTERNAL void collide_entity (bool shot)
                 case (ENT_CRATE_MULT):
                 case (ENT_CRATE_RAPD):
                 case (ENT_CRATE_SPRD):
-                case (ENT_CRATE_BOOM): collide_crate (entity, x,y,w,h, shot); break;
-                case (ENT_FISH      ): collide_fish  (entity, x,y,w,h, shot); break;
-                case (ENT_SQUID     ): collide_squid (entity, x,y,w,h, shot); break;
-                case (ENT_JELLY     ): collide_jelly (entity, x,y,w,h, shot); break;
-                case (ENT_URCHIN    ): collide_urchin(entity, x,y,w,h, shot); break;
+                case (ENT_CRATE_BOOM): collide_crate_vs_shot (entity, sx,sy,sw,sh); break;
+                case (ENT_FISH      ): collide_fish_vs_shot  (entity, sx,sy,sw,sh); break;
+                case (ENT_SQUID     ): collide_squid_vs_shot (entity, sx,sy,sw,sh); break;
+                case (ENT_JELLY     ): collide_jelly_vs_shot (entity, sx,sy,sw,sh); break;
+                case (ENT_URCHIN    ): collide_urchin_vs_shot(entity, sx,sy,sw,sh); break;
             }
         }
     }
