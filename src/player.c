@@ -82,7 +82,6 @@ INTERNAL void update_player (float dt)
     }
 
     // Handle shooting.
-    bool shot = false;
     if (is_player_in_screen_bounds())
     {
         if (gPlayer.god_time <= 0.0f) // You cannot shoot after being hit!.
@@ -95,7 +94,6 @@ INTERNAL void update_player (float dt)
                     {
                         gPlayer.cooldown_time = 0.1f;
                         shoot();
-                        shot = true;
                     }
                 }
                 else
@@ -107,14 +105,17 @@ INTERNAL void update_player (float dt)
                             start_game();
                         }
                         shoot();
-                        shot = true;
                     }
                 }
             }
         }
     }
 
-    collide_entity_vs_player(get_mouse_x(),get_mouse_y());
+    // The player should only get hit whilst in the game.
+    if (gApp.state == APP_STATE_GAME)
+    {
+        collide_entity_vs_player(get_mouse_x(),get_mouse_y());
+    }
 }
 
 INTERNAL void render_player (float dt)
