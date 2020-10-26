@@ -15,7 +15,15 @@ INTERNAL void shoot ()
     int mx = get_mouse_x();
     int my = get_mouse_y();
 
-    shake_camera(1,1,0.1f);
+    // Less shake when using rapid-shot, because it's annoying.
+    if (gPlayer.current_item == ITEM_RAPD)
+    {
+        shake_camera(1,1,0.05f);
+    }
+    else
+    {
+        shake_camera(1,1,0.1f);
+    }
 
     switch (gPlayer.current_item)
     {
@@ -40,8 +48,14 @@ INTERNAL void shoot ()
 
     // The deadly region changes baesd on if spread is being used.
     int sx,sy,sw,sh;
-    if (gPlayer.current_item == ITEM_SPRD) sx = mx-10, sy = my-10, sw = 20, sh = 20;
-    else                                   sx = mx- 2, sy = my- 2, sw =  4, sh =  4;
+    if (gPlayer.current_item == ITEM_SPRD)
+    {
+        sx = mx-10, sy = my-10, sw = 20, sh = 20;
+    }
+    else
+    {
+        sx = mx-2, sy = my-2, sw = 4, sh = 4;
+    }
 
     collide_entity_vs_shot(sx,sy,sw,sh);
 
