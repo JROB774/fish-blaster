@@ -240,6 +240,8 @@ INTERNAL bool init_application ()
     start_menu();
     init_player();
 
+    play_music(MUS_TRACK,-1);
+
     return true;
 }
 INTERNAL void quit_application ()

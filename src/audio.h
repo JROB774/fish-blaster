@@ -30,6 +30,7 @@ typedef enum SoundID__
 
 typedef enum MusicID__
 {
+    MUS_TRACK,
     MUS_TOTAL
 
 } MusicID;

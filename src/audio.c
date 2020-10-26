@@ -66,6 +66,11 @@ INTERNAL void free_music (Music* music)
 
 INTERNAL void init_audio ()
 {
+    if (!(Mix_Init(MIX_INIT_OGG) & MIX_INIT_OGG))
+    {
+        LOGWARNING("Failed to initialize mixer OGG functionality! (%s)", Mix_GetError());
+    }
+
     if (Mix_OpenAudio(AUDIO_FREQUENCY, AUDIO_SAMPLE_FORMAT, AUDIO_CHANNELS, AUDIO_SAMPLE_SIZE) != 0)
     {
         LOGWARNING("Failed to open audio device! (%s)", Mix_GetError());
@@ -102,9 +107,8 @@ INTERNAL void init_audio ()
         load_sound(&gAudio.sound[SND_SSHOT_0 ], "assets/sshot0.wav" );
         load_sound(&gAudio.sound[SND_SSHOT_1 ], "assets/sshot1.wav" );
         load_sound(&gAudio.sound[SND_SSHOT_2 ], "assets/sshot2.wav" );
-
         // Load all of the music.
-        // ...
+        load_music(&gAudio.music[MUS_TRACK   ], "assets/track.ogg"  );
     }
 }
 
@@ -112,6 +116,7 @@ INTERNAL void quit_audio ()
 {
     if (gAudio.initialized)
     {
+        // Free all of the sounds.
         free_sound(&gAudio.sound[SND_NSHOT_0 ]);
         free_sound(&gAudio.sound[SND_NSHOT_1 ]);
         free_sound(&gAudio.sound[SND_NSHOT_2 ]);
@@ -133,9 +138,13 @@ INTERNAL void quit_audio ()
         free_sound(&gAudio.sound[SND_SSHOT_0 ]);
         free_sound(&gAudio.sound[SND_SSHOT_1 ]);
         free_sound(&gAudio.sound[SND_SSHOT_2 ]);
+        // Free all of the music.
+        free_music(&gAudio.music[MUS_TRACK   ]);
 
         Mix_CloseAudio();
     }
+
+    Mix_Quit();
 }
 
 INTERNAL void play_sound (SoundID id, int loops)
