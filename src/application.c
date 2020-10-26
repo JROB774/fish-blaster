@@ -270,16 +270,28 @@ INTERNAL void update_game (float dt)
 
     // Handle shooting.
     bool shot = false;
-    if (button_pressed(LMB))
+    if (is_cursor_in_screen_bounds())
     {
-        if (is_cursor_in_screen_bounds())
+        if (gApp.god_time <= 0.0f) // You cannot shoot after being hit!.
         {
-            if (gApp.god_time <= 0.0f) // You cannot shoot after being hit!.
+            if (gApp.shoot_cooldown <= 0.0f)
             {
-                if (gApp.shoot_cooldown <= 0.0f)
+                if (gApp.current_item == ITEM_RAPD)
                 {
-                    shoot();
-                    shot = true;
+                    if (button_down(LMB))
+                    {
+                        gApp.shoot_cooldown = 0.1f;
+                        shoot();
+                        shot = true;
+                    }
+                }
+                else
+                {
+                    if (button_pressed(LMB))
+                    {
+                        shoot();
+                        shot = true;
+                    }
                 }
             }
         }
