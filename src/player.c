@@ -140,7 +140,7 @@ INTERNAL void update_player (float dt)
                 {
                     if (button_pressed(LMB))
                     {
-                        if (gApp.state == APP_STATE_GAMEOVER)
+                        if (gApp.state == APP_STATE_LOSE)
                         {
                             start_game();
                         }
@@ -204,7 +204,7 @@ INTERNAL void hit_player ()
 
         if (gPlayer.life <= 0)
         {
-            game_over();
+            start_lose();
         }
     }
 }

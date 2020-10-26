@@ -1,14 +1,14 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-typedef enum AppState__ { APP_STATE_MENU, APP_STATE_GAME, APP_STATE_GAMEOVER, APP_STATE_TOTAL } AppState;
+typedef enum AppState__ { APP_STATE_MENU, APP_STATE_GAME, APP_STATE_LOSE, APP_STATE_TOTAL } AppState;
 
 #define CODE_LENGTH 5
 #define CODE_RETRO "retro"
 #define CODE_BLOOD "blood"
 #define CODE_NOPAL "nopal"
 
-#define GAMEOVER_COOLDOWN 0.25f
+#define LOSE_COOLDOWN 0.25f
 
 GLOBAL struct
 {
@@ -40,6 +40,6 @@ INTERNAL void flash_screen_white ();
 // Switches the state of the game.
 INTERNAL void start_menu ();
 INTERNAL void start_game ();
-INTERNAL void game_over  ();
+INTERNAL void start_lose ();
 
 #endif /* APPLICATION_H */

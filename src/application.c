@@ -202,9 +202,9 @@ INTERNAL void render_game (float dt)
     render_hud(2,true);
 }
 
-// APP_STATE_GAMEOVER
+// APP_STATE_LOSE
 
-INTERNAL void update_gameover (float dt)
+INTERNAL void update_lose (float dt)
 {
     // Go to the menu if the player wants.
     if (key_pressed(ESCAPE))
@@ -218,7 +218,7 @@ INTERNAL void update_gameover (float dt)
     update_entity (dt);
     update_effect (dt);
 }
-INTERNAL void render_gameover (float dt)
+INTERNAL void render_lose (float dt)
 {
     begin_camera();
     render_effect_lo(dt);
@@ -335,9 +335,9 @@ INTERNAL void update_application (float dt)
 
     switch (gApp.state)
     {
-        case (APP_STATE_MENU    ): update_menu    (dt); break;
-        case (APP_STATE_GAME    ): update_game    (dt); break;
-        case (APP_STATE_GAMEOVER): update_gameover(dt); break;
+        case (APP_STATE_MENU): update_menu(dt); break;
+        case (APP_STATE_GAME): update_game(dt); break;
+        case (APP_STATE_LOSE): update_game(dt); break;
     }
 }
 INTERNAL void render_application (float dt)
@@ -346,9 +346,9 @@ INTERNAL void render_application (float dt)
 
     switch (gApp.state)
     {
-        case (APP_STATE_MENU    ): render_menu    (dt); break;
-        case (APP_STATE_GAME    ): render_game    (dt); break;
-        case (APP_STATE_GAMEOVER): render_gameover(dt); break;
+        case (APP_STATE_MENU): render_menu(dt); break;
+        case (APP_STATE_GAME): render_game(dt); break;
+        case (APP_STATE_LOSE): render_lose(dt); break;
     }
 
     if (gApp.flash_white)
@@ -384,11 +384,11 @@ INTERNAL void start_game ()
 
     gApp.score = 0;
 }
-INTERNAL void game_over ()
+INTERNAL void start_lose ()
 {
-    gApp.state = APP_STATE_GAMEOVER;
+    gApp.state = APP_STATE_LOSE;
 
-    gPlayer.cooldown_time = GAMEOVER_COOLDOWN;
+    gPlayer.cooldown_time = LOSE_COOLDOWN;
     gPlayer.god_time = 0.0f;
     gPlayer.current_item = ITEM_NONE;
 
