@@ -140,10 +140,6 @@ INTERNAL void update_player (float dt)
                 {
                     if (button_pressed(LMB))
                     {
-                        if (gApp.state == APP_STATE_LOSE)
-                        {
-                            start_game();
-                        }
                         shoot();
                     }
                 }

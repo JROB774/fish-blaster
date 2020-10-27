@@ -1,6 +1,6 @@
 // HELPERS
 
-INTERNAL void render_hud (int y, bool extra)
+INTERNAL void render_score (int y)
 {
     // Draw the players'current score.
     const char* SCORE_TEXT = "%06d";
@@ -12,9 +12,11 @@ INTERNAL void render_hud (int y, bool extra)
     render_fill(sx,sy,sw,sh, get_palette_color(PAL_BLACK,0));
     render_bitmap(sx+sw,sy, PAL_BLACK, &SPR_SCOREBGR);
     render_text(sx,sy, PAL_TEXT_SHADE, SCORE_TEXT, gApp.score);
+}
 
-    // Don't draw the other parts of the display!
-    if (!extra) return;
+INTERNAL void render_hud (int y)
+{
+    render_score(y);
 
     // Draw the player's current health.
     render_bitmap(0,y, PAL_BLACK, &SPR_SCOREBGL);
@@ -243,7 +245,7 @@ INTERNAL void render_game (float dt)
     end_camera();
 
     render_player(dt);
-    render_hud(2,true);
+    render_hud(2);
 }
 
 // APP_STATE_LOSE
@@ -264,14 +266,44 @@ INTERNAL void update_lose (float dt)
 }
 INTERNAL void render_lose (float dt)
 {
+    // @Incomplete: Remove static/persistent variables!!!
+
+    static float retry_target  = 0.0f;
+    static float menu_target   = 0.0f;
+    static float retry_current = 0.0f;
+    static float menu_current  = 0.0f;
+
     begin_camera();
     render_effect_lo(dt);
     render_entity   (dt);
     render_effect_hi(dt);
     end_camera();
 
+    int x = 0;
+    int y = (SCREEN_H-TILE_H)/2;
+
+    render_score(y);
+    if (gApp.score == gScores[0]) // If we're the new highest score...
+    {
+        const char* HIGHSCORE_TEXT = "NEW HIGHSCORE!";
+
+        int sw = get_text_w(HIGHSCORE_TEXT);
+        int sh = TILE_H;
+        int sx = (SCREEN_W-sw)/2;
+        int sy = y-TILE_H-2;
+
+        render_bitmap(sx-SPR_SCOREBGL.w,sy, PAL_BLACK, &SPR_SCOREBGL);
+        render_fill(sx,sy,sw,sh, get_palette_color(PAL_BLACK,0));
+        render_bitmap(sx+sw,sy, PAL_BLACK, &SPR_SCOREBGR);
+        render_text(sx,sy,PAL_TEXT_SHADE,HIGHSCORE_TEXT);
+    }
+
+    y += 32;
+
+    if (do_menu_button(&x,&y,"RETRY",&retry_target,&retry_current,true,dt)) start_game();
+    if (do_menu_button(&x,&y,"MENU", &menu_target, &menu_current, true,dt)) start_menu();
+
     render_player(dt);
-    render_hud((SCREEN_H-TILE_H)/2,false);
 }
 
 // APPLICATION
