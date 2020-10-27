@@ -109,7 +109,9 @@ INTERNAL void init_audio ()
         load_sound(&gAudio.sound[SND_SSHOT_2 ], "assets/sshot2.wav" );
         load_sound(&gAudio.sound[SND_ZAP     ], "assets/zap.wav"    );
         // Load all of the music.
-        load_music(&gAudio.music[MUS_TRACK   ], "assets/track.ogg"  );
+        load_music(&gAudio.music[MUS_TRACK_0 ], "assets/track0.ogg" );
+        load_music(&gAudio.music[MUS_TRACK_1 ], "assets/track1.ogg" );
+        load_music(&gAudio.music[MUS_TRACK_2 ], "assets/track2.ogg" );
     }
 }
 
@@ -141,7 +143,9 @@ INTERNAL void quit_audio ()
         free_sound(&gAudio.sound[SND_SSHOT_2 ]);
         free_sound(&gAudio.sound[SND_ZAP     ]);
         // Free all of the music.
-        free_music(&gAudio.music[MUS_TRACK   ]);
+        free_music(&gAudio.music[MUS_TRACK_0 ]);
+        free_music(&gAudio.music[MUS_TRACK_1 ]);
+        free_music(&gAudio.music[MUS_TRACK_2 ]);
 
         Mix_CloseAudio();
     }

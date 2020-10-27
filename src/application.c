@@ -240,7 +240,7 @@ INTERNAL bool init_application ()
     start_menu();
     init_player();
 
-    play_music(MUS_TRACK,-1);
+    play_music(MUS_TRACK[random_int_range(0,ARRAYSIZE(MUS_TRACK)-1)],-1);
 
     return true;
 }
