@@ -239,6 +239,7 @@ INTERNAL bool init_application ()
     seed_random();
     start_menu();
     init_player();
+    load_scores();
 
     play_music(MUS_TRACK[random_int_range(0,ARRAYSIZE(MUS_TRACK)-1)],-1);
 
@@ -246,7 +247,7 @@ INTERNAL bool init_application ()
 }
 INTERNAL void quit_application ()
 {
-    SDL_ShowCursor(SDL_ENABLE);
+    save_scores();
 }
 INTERNAL void handle_application (SDL_Event* event)
 {
@@ -341,6 +342,12 @@ INTERNAL void update_application (float dt)
         case (APP_STATE_GAME): update_game(dt); break;
         case (APP_STATE_LOSE): update_game(dt); break;
     }
+
+    // Make sure the score cannot go over its maximum value.
+    if (gApp.score > MAX_SCORE)
+    {
+        gApp.score = MAX_SCORE;
+    }
 }
 INTERNAL void render_application (float dt)
 {
@@ -393,6 +400,8 @@ INTERNAL void start_lose ()
     gPlayer.cooldown_time = LOSE_COOLDOWN;
     gPlayer.god_time = 0.0f;
     gPlayer.current_item = ITEM_NONE;
+
+    add_highscore(gApp.score);
 
     if (!gApp.code_retro_enabled && !gApp.code_nopal_enabled)
     {

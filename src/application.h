@@ -8,6 +8,8 @@ typedef enum AppState__ { APP_STATE_MENU, APP_STATE_GAME, APP_STATE_LOSE, APP_ST
 #define CODE_BLOOD "blood"
 #define CODE_NOPAL "nopal"
 
+#define MAX_SCORE 999999
+
 #define LOSE_COOLDOWN 0.25f
 
 GLOBAL struct
