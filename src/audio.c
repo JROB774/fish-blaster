@@ -147,20 +147,23 @@ INTERNAL void quit_audio ()
     Mix_Quit();
 }
 
-INTERNAL void play_sound (SoundID id, int loops)
+INTERNAL int play_sound (SoundID id, int loops)
 {
-    play_sound_channel(id,loops,-1);
+    return play_sound_channel(id,loops,-1);
 }
-INTERNAL void play_sound_channel (SoundID id, int loops, int channel)
+INTERNAL int play_sound_channel (SoundID id, int loops, int channel)
 {
     assert((id >= 0) && (id < SND_TOTAL));
+    int returned_channel = 0;
     if (gAudio.initialized)
     {
-        if (Mix_PlayChannel(channel, gAudio.sound[id].data, loops) == -1)
+        returned_channel = Mix_PlayChannel(channel, gAudio.sound[id].data, loops);
+        if (returned_channel == -1)
         {
             LOGDEBUG("Failed to play sound! (%s)", Mix_GetError());
         }
     }
+    return returned_channel;
 }
 
 INTERNAL void play_music (MusicID id, int loops)
