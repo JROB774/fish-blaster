@@ -964,6 +964,28 @@ INTERNAL void render_entity (float dt)
     }
 }
 
+INTERNAL void clear_entity ()
+{
+    // Make sure to stop zapping sound on all channels it is being played on.
+    for (int i=0; i<ENTITY_MAX; ++i)
+    {
+        Entity* entity = gEntity+i;
+        if (entity->alive)
+        {
+            if (entity->type == ENT_JELLY)
+            {
+                if (entity->extra != -1)
+                {
+                    stop_channel(entity->extra);
+                    entity->extra = 0;
+                }
+            }
+        }
+    }
+
+    memset(gEntity, 0, sizeof(gEntity));
+}
+
 // Collision against the player is done with a point so that the player has more
 // freedom to move and is less likely to get hit. Collision with shots is handled
 // using a box so the player is more likely to hit fish and creates when shooting.

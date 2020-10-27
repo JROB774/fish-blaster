@@ -378,8 +378,8 @@ INTERNAL void start_game ()
 {
     gApp.state = APP_STATE_GAME;
 
-    memset(gEntity, 0, sizeof(gEntity));
-    memset(gEffect, 0, sizeof(gEffect));
+    clear_entity();
+    clear_effect();
 
     create_spawner();
     create_player();

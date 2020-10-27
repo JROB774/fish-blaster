@@ -44,5 +44,6 @@ INTERNAL void create_effect    (EffectID id, int x, int y, int w, int h, int min
 INTERNAL void update_effect    (float dt);
 INTERNAL void render_effect_lo (float dt); // Drawn before entities.
 INTERNAL void render_effect_hi (float dt); // Drawn after entities.
+INTERNAL void  clear_effect    ();
 
 #endif /* EFFECT_H */

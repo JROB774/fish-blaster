@@ -609,3 +609,8 @@ INTERNAL void render_effect_hi (float dt)
         }
     }
 }
+
+INTERNAL void clear_effect ()
+{
+    memset(gEffect, 0, sizeof(gEffect));
+}
