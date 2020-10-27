@@ -107,7 +107,7 @@ INTERNAL void init_audio ()
         load_sound(&gAudio.sound[SND_SSHOT_0 ], "assets/sshot0.wav" );
         load_sound(&gAudio.sound[SND_SSHOT_1 ], "assets/sshot1.wav" );
         load_sound(&gAudio.sound[SND_SSHOT_2 ], "assets/sshot2.wav" );
-        load_sound(&gAudio.sound[SND_ZAP     ], "assets/zap3.wav"   );
+        load_sound(&gAudio.sound[SND_ZAP     ], "assets/zap.wav"    );
         // Load all of the music.
         load_music(&gAudio.music[MUS_TRACK   ], "assets/track.ogg"  );
     }
