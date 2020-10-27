@@ -298,6 +298,7 @@ INTERNAL void create_jelly (Entity* entity)
 {
     entity->palette = PAL_JELLY;
     entity->frame = 0;
+    entity->extra = -1; // Used to store the channel the zap sound is played on.
     entity->t = JELLY_ANM_SPEED;
     entity->t2 = JELLY_FLASH_COOLDOWN;
     entity->x = random_int_range(JELLY_MIN_SPAWN_X,JELLY_MAX_SPAWN_X);
@@ -311,6 +312,11 @@ INTERNAL void update_jelly (Entity* entity, float dt)
     {
         entity->t2 = JELLY_FLASH_COOLDOWN;
         entity->frame = 0;
+        if (entity->extra != -1)
+        {
+            stop_channel(entity->extra);
+            entity->extra = -1;
+        }
     }
     // Move the jelly.
     if (entity->t2 > 0.0f) // Don't move the jelly if flashing.
@@ -320,6 +326,15 @@ INTERNAL void update_jelly (Entity* entity, float dt)
         {
             gSpawner.jelly_count--;
             entity->alive = false;
+        }
+    }
+    // If the jelly just started being electric play the sound.
+    if (entity->t2 <= 0.0f)
+    {
+        if (entity->extra == -1) // -1 is used to mean we haven't done this yet.
+        {
+            // Play the sound on continuous loop but store the channel so we can stop it later.
+            entity->extra = play_sound(SND_ZAP,-1);
         }
     }
 }

@@ -107,6 +107,7 @@ INTERNAL void init_audio ()
         load_sound(&gAudio.sound[SND_SSHOT_0 ], "assets/sshot0.wav" );
         load_sound(&gAudio.sound[SND_SSHOT_1 ], "assets/sshot1.wav" );
         load_sound(&gAudio.sound[SND_SSHOT_2 ], "assets/sshot2.wav" );
+        load_sound(&gAudio.sound[SND_ZAP     ], "assets/zap3.wav"   );
         // Load all of the music.
         load_music(&gAudio.music[MUS_TRACK   ], "assets/track.ogg"  );
     }
@@ -138,6 +139,7 @@ INTERNAL void quit_audio ()
         free_sound(&gAudio.sound[SND_SSHOT_0 ]);
         free_sound(&gAudio.sound[SND_SSHOT_1 ]);
         free_sound(&gAudio.sound[SND_SSHOT_2 ]);
+        free_sound(&gAudio.sound[SND_ZAP     ]);
         // Free all of the music.
         free_music(&gAudio.music[MUS_TRACK   ]);
 
@@ -176,6 +178,11 @@ INTERNAL void play_music (MusicID id, int loops)
             LOGDEBUG("Failed to play music! (%s)", Mix_GetError());
         }
     }
+}
+
+INTERNAL void stop_channel (int channel)
+{
+    Mix_HaltChannel(channel);
 }
 
 INTERNAL void set_sound_volume (float volume)

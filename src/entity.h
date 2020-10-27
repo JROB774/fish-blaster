@@ -25,6 +25,7 @@ typedef struct Entity__
     int palette;
     int frame;
     int dir;
+    int extra;
     float t;
     float t2;
     bool alive;
