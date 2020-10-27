@@ -1090,8 +1090,8 @@ INTERNAL void update_spawner (float dt)
         }
     }
 
-    // We only spawn fish on the main menu.
-    if (gApp.state == APP_STATE_MENU)
+    // We only spawn the other entity types during actual gameplay.
+    if (gApp.state != APP_STATE_GAME)
     {
         return;
     }
