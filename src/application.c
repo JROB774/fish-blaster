@@ -317,6 +317,8 @@ INTERNAL bool init_application ()
     init_player();
     load_scores();
 
+    create_spawner();
+
     play_music(MUS_TRACK[random_int_range(0,ARRAYSIZE(MUS_TRACK)-1)],-1);
 
     return true;
@@ -455,8 +457,17 @@ INTERNAL void flash_screen_white ()
 INTERNAL void start_menu ()
 {
     gApp.state = APP_STATE_MENU;
+
     gApp.menu_state = MENU_STATE_MAIN;
-    create_spawner();
+
+    gPlayer.cooldown_time = LOSE_COOLDOWN;
+    gPlayer.god_time = 0.0f;
+    gPlayer.current_item = ITEM_NONE;
+
+    if (!gApp.code_retro_enabled && !gApp.code_nopal_enabled)
+    {
+        set_palette_mode(PAL_MODE_DEFAULT);
+    }
 }
 INTERNAL void start_game ()
 {
