@@ -1,7 +1,8 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-typedef enum AppState__ { APP_STATE_MENU, APP_STATE_GAME, APP_STATE_LOSE, APP_STATE_TOTAL } AppState;
+typedef enum  AppState__ { APP_STATE_MENU, APP_STATE_GAME, APP_STATE_LOSE, APP_STATE_TOTAL }  AppState;
+typedef enum MenuState__ { MENU_STATE_MAIN, MENU_STATE_SCORES, MENU_STATE_TOTAL            } MenuState;
 
 #define CODE_LENGTH 5
 #define CODE_RETRO "retro"
@@ -15,6 +16,7 @@ typedef enum AppState__ { APP_STATE_MENU, APP_STATE_GAME, APP_STATE_LOSE, APP_ST
 GLOBAL struct
 {
     AppState state;
+    MenuState menu_state;
 
     int score;
     int frame;

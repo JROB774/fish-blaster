@@ -57,13 +57,13 @@ INTERNAL void render_hud (int y, bool extra)
 
 // APP_STATE_MENU
 
-INTERNAL bool do_menu_button (int* x, int* y, const char* text, float* target, float* current, float dt)
+INTERNAL bool do_menu_button (int* x, int* y, const char* text, float* target, float* current, bool center, float dt)
 {
     assert(x && y && target && current);
 
     int rw = get_text_w(text);
     int rh = TILE_H;
-    int rx = (SCREEN_W-rw)/2;
+    int rx = (center) ? ((SCREEN_W-rw)/2) : *x;
     int ry = *y;
 
     int mx = get_mouse_x();
@@ -110,6 +110,25 @@ INTERNAL bool do_menu_button (int* x, int* y, const char* text, float* target, f
 
     return pressed;
 }
+INTERNAL void do_menu_score_label (int* x, int* y, U32 score)
+{
+    assert(x && y);
+
+    const char* SCORE_TEXT = "%06d";
+
+    int rw = get_text_w(SCORE_TEXT,score);
+    int rh = TILE_H;
+    int rx = (SCREEN_W-rw)/2;
+    int ry = *y;
+
+    render_bitmap(rx-SPR_SCOREBGL.w,ry,PAL_BLACK,&SPR_SCOREBGL);
+    render_fill(rx,ry,rw,rh,get_palette_color(PAL_BLACK,0));
+    render_bitmap(rx+rw,ry,PAL_BLACK,&SPR_SCOREBGR);
+    render_text(rx,ry,PAL_TEXT_SHADE,SCORE_TEXT,score);
+
+    *x  = rx;
+    *y += rh+2;
+}
 
 INTERNAL void update_menu (float dt)
 {
@@ -122,17 +141,19 @@ INTERNAL void render_menu (float dt)
 {
     // @Incomplete: Remove static/persistent variables!!!
 
-    static float play_target = 0.0f;
-    static float options_target = 0.0f;
-    static float scores_target = 0.0f;
-    static float credits_target = 0.0f;
-    static float exit_target = 0.0f;
+    static float play_target     = 0.0f;
+    static float options_target  = 0.0f;
+    static float scores_target   = 0.0f;
+    static float credits_target  = 0.0f;
+    static float exit_target     = 0.0f;
+    static float back_target     = 0.0f;
 
-    static float play_current = 0.0f;
+    static float play_current    = 0.0f;
     static float options_current = 0.0f;
-    static float scores_current = 0.0f;
+    static float scores_current  = 0.0f;
     static float credits_current = 0.0f;
-    static float exit_current = 0.0f;
+    static float exit_current    = 0.0f;
+    static float back_current    = 0.0f;
 
     begin_camera();
     render_effect_lo(dt);
@@ -140,16 +161,39 @@ INTERNAL void render_menu (float dt)
     render_effect_hi(dt);
     end_camera();
 
-    render_bitmap(0,12,PAL_TEXT_SHADE,&SPR_TITLE);
+    int x = 0;
+    int y = 0;
 
-    int x =  0;
-    int y = 76;
+    switch (gApp.menu_state)
+    {
+        case (MENU_STATE_MAIN):
+        {
+            render_bitmap(0,12,PAL_TEXT_SHADE,&SPR_TITLE);
 
-    if (do_menu_button(&x,&y,"PLAY",    &/*gApp.*/play_target,   &/*gApp.*/play_current,    dt)) start_game();
-    if (do_menu_button(&x,&y,"OPTIONS", &/*gApp.*/options_target,&/*gApp.*/options_current, dt)) {}
-    if (do_menu_button(&x,&y,"SCORES",  &/*gApp.*/scores_target, &/*gApp.*/scores_current,  dt)) {}
-    if (do_menu_button(&x,&y,"CREDITS", &/*gApp.*/credits_target,&/*gApp.*/credits_current, dt)) {}
-    if (do_menu_button(&x,&y,"EXIT",    &/*gApp.*/exit_target,   &/*gApp.*/exit_current,    dt)) gWindow.running = false;
+            y = 76;
+
+            if (do_menu_button(&x,&y,"PLAY",    &/*gApp.*/play_target,   &/*gApp.*/play_current,    true, dt)) start_game();
+            if (do_menu_button(&x,&y,"OPTIONS", &/*gApp.*/options_target,&/*gApp.*/options_current, true, dt)) {}
+            if (do_menu_button(&x,&y,"SCORES",  &/*gApp.*/scores_target, &/*gApp.*/scores_current,  true, dt)) gApp.menu_state = MENU_STATE_SCORES, scores_current = 0.0f;
+            if (do_menu_button(&x,&y,"CREDITS", &/*gApp.*/credits_target,&/*gApp.*/credits_current, true, dt)) {}
+            if (do_menu_button(&x,&y,"EXIT",    &/*gApp.*/exit_target,   &/*gApp.*/exit_current,    true, dt)) gWindow.running = false;
+        } break;
+        case (MENU_STATE_SCORES):
+        {
+            y = 23;
+            for (int i=0; i<MAX_SCORES; ++i)
+            {
+                do_menu_score_label(&x,&y,gScores[i]);
+            }
+            x = TILE_W+4;
+            y = SCREEN_H-TILE_H-4;
+            if (do_menu_button(&x,&y,"BACK", &back_target,&back_current, false, dt))
+            {
+                gApp.menu_state = MENU_STATE_MAIN;
+                back_current = 0.0f;
+            }
+        } break;
+    }
 
     render_player(dt);
 }
@@ -237,7 +281,7 @@ INTERNAL bool init_application ()
     SDL_ShowCursor(SDL_DISABLE);
 
     seed_random();
-    start_menu();
+    start_menu ();
     init_player();
     load_scores();
 
@@ -379,6 +423,7 @@ INTERNAL void flash_screen_white ()
 INTERNAL void start_menu ()
 {
     gApp.state = APP_STATE_MENU;
+    gApp.menu_state = MENU_STATE_MAIN;
     create_spawner();
 }
 INTERNAL void start_game ()
