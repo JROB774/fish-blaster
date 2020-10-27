@@ -382,6 +382,12 @@ INTERNAL void kill_jelly (Entity* entity)
             gApp.score += JELLY_SCORE;
         }
     }
+    // If the zap sound is still playing then stop it.
+    if (entity->extra != -1)
+    {
+        stop_channel(entity->extra);
+        entity->extra = -1;
+    }
 }
 INTERNAL void collide_jelly_vs_player (Entity* entity, int px, int py)
 {
