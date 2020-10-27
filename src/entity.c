@@ -1,6 +1,6 @@
 // ENT_CRATE
 
-#define CRATE_SPAWN_COUNT 20
+#define CRATE_SPAWN_COUNT 18
 #define CRATE_WIDTH  16
 #define CRATE_HEIGHT 16
 #define CRATE_SPEED  30
@@ -207,6 +207,7 @@ INTERNAL void kill_fish (Entity* entity)
     create_effect(EFX_BLOOD, c.x,c.y,c.w,c.h, FISH_MIN_BLOOD,FISH_MAX_BLOOD);
     create_effect(EFX_GIB, c.x,c.y,c.w,c.h, FISH_MIN_GIB,FISH_MAX_GIB);
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
+    gSpawner.crate_spawn_counter++;
     entity->alive = false;
     if (gApp.state == APP_STATE_GAME)
     {
@@ -228,7 +229,6 @@ INTERNAL void collide_fish_vs_shot (Entity* entity, int sx, int sy, int sw, int 
     Rect c = get_fish_collider(entity);
     if (rect_vs_rect_collision(sx,sy,sw,sh, c.x,c.y,c.w,c.h))
     {
-        gSpawner.crate_spawn_counter++;
         kill_fish(entity);
     }
 }
@@ -367,6 +367,7 @@ INTERNAL void kill_jelly (Entity* entity)
     create_effect(EFX_BLOOD, c.x,c.y,c.w,c.h, JELLY_MIN_BLOOD,JELLY_MAX_BLOOD);
     create_effect(EFX_GIB, c.x,c.y,c.w,c.h, JELLY_MIN_GIB,JELLY_MAX_GIB);
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
+    gSpawner.crate_spawn_counter++;
     gSpawner.jelly_count--;
     entity->alive = false;
     if (gApp.state == APP_STATE_GAME)
@@ -407,7 +408,6 @@ INTERNAL void collide_jelly_vs_shot (Entity* entity, int sx, int sy, int sw, int
     Rect c = get_jelly_collider(entity);
     if (rect_vs_rect_collision(sx,sy,sw,sh, c.x,c.y,c.w,c.h))
     {
-        gSpawner.crate_spawn_counter++;
         kill_jelly(entity);
     }
 }
@@ -559,6 +559,7 @@ INTERNAL void kill_urchin (Entity* entity)
     create_effect(EFX_BLOOD, c.x,c.y,c.w,c.h, URCHIN_MIN_BLOOD,URCHIN_MAX_BLOOD);
     create_effect(EFX_GIB, c.x,c.y,c.w,c.h, URCHIN_MIN_GIB,URCHIN_MAX_GIB);
     play_sound(SND_SQUEAK[random_int_range(0,ARRAYSIZE(SND_SQUEAK)-1)],0);
+    gSpawner.crate_spawn_counter++;
     gSpawner.urchin_count--;
     entity->alive = false;
     if (gApp.state == APP_STATE_GAME)
@@ -1096,9 +1097,9 @@ INTERNAL void update_spawner (float dt)
     }
 
     // ENT_CRATE
-    while (gSpawner.crate_spawn_counter >= CRATE_SPAWN_COUNT)
+    if (gSpawner.crate_spawn_counter >= CRATE_SPAWN_COUNT)
     {
-        gSpawner.crate_spawn_counter -= CRATE_SPAWN_COUNT;
+        gSpawner.crate_spawn_counter = 0;
         EntityID min_choice = ENT_CRATE_LIFE;
         EntityID max_choice = ENT_CRATE_BOOM;
         if (gPlayer.life >= MAX_LIFE) min_choice++; // Don't spawn life crates if we're at max life!

@@ -22,13 +22,6 @@ INTERNAL void add_highscore (U32 score)
         gScores[MAX_SCORES-1] = score;
         qsort(gScores,ARRAYSIZE(gScores),sizeof(gScores[0]),score_compare);
     }
-
-    // @Temporary: Just to test the highscore system.
-    printf("SCORES:\n");
-    for (int i=0; i<MAX_SCORES; ++i)
-    {
-        printf("  %d\n",gScores[i]);
-    }
 }
 
 INTERNAL void load_scores ()
