@@ -49,3 +49,9 @@ INTERNAL void save_scores ()
         fclose(file);
     }
 }
+
+INTERNAL void reset_scores ()
+{
+    memset(gScores,0,sizeof(gScores));
+    save_scores();
+}

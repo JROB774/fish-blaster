@@ -74,6 +74,9 @@ typedef enum MenuButton__
     MENU_BUTTON_CURSOR,
     MENU_BUTTON_FULLSCREEN,
     MENU_BUTTON_RESET,
+    MENU_BUTTON_DELETE,
+    MENU_BUTTON_YES,
+    MENU_BUTTON_NO,
     MENU_BUTTON_TOTAL
 
 } MenuButton;
@@ -164,6 +167,23 @@ INTERNAL void do_menu_score_label (int* x, int* y, U32 score)
     *x  = rx;
     *y += rh+2;
 }
+INTERNAL void do_menu_label (int* x, int* y, bool center, const char* text)
+{
+    assert(x && y);
+
+    int rw = get_text_w(text);
+    int rh = TILE_H;
+    int rx = (center) ? ((SCREEN_W-rw)/2) : *x;
+    int ry = *y;
+
+    render_bitmap(rx-SPR_SCOREBGL.w,ry,PAL_BLACK,&SPR_SCOREBGL);
+    render_fill(rx,ry,rw,rh,get_palette_color(PAL_BLACK,0));
+    render_bitmap(rx+rw,ry,PAL_BLACK,&SPR_SCOREBGR);
+    render_text(rx,ry,PAL_TEXT_SHADE,text);
+
+    *x  = rx;
+    *y += rh+2;
+}
 
 INTERNAL void reset_menu_button_state ()
 {
@@ -179,6 +199,11 @@ INTERNAL void start_menu_main ()
 INTERNAL void start_menu_options ()
 {
     gApp.menu_state = MENU_STATE_OPTIONS;
+    reset_menu_button_state();
+}
+INTERNAL void start_menu_reset ()
+{
+    gApp.menu_state = MENU_STATE_RESET;
     reset_menu_button_state();
 }
 INTERNAL void start_menu_scores ()
@@ -199,8 +224,7 @@ INTERNAL void update_menu (float dt)
     {
         if (key_pressed(ESCAPE))
         {
-            start_menu_main();
-            return;
+            if (gApp.menu_state == MENU_STATE_RESET) start_menu_options(); else start_menu_main();
         }
     }
 
@@ -225,9 +249,7 @@ INTERNAL void render_menu (float dt)
         case (MENU_STATE_MAIN):
         {
             render_bitmap(0,12,PAL_TEXT_SHADE,&SPR_TITLE);
-
             y = 76;
-
             if (do_menu_button(&x,&y, MENU_BUTTON_PLAY,    true, dt, "PLAY"   )) start_game();
             if (do_menu_button(&x,&y, MENU_BUTTON_OPTIONS, true, dt, "OPTIONS")) start_menu_options();
             if (do_menu_button(&x,&y, MENU_BUTTON_SCORES,  true, dt, "SCORES" )) start_menu_scores();
@@ -237,16 +259,23 @@ INTERNAL void render_menu (float dt)
         case (MENU_STATE_OPTIONS):
         {
             y = 48;
-
             if (do_menu_button(&x,&y, MENU_BUTTON_FULLSCREEN, true, dt, "FULLSCREEN %s",   is_fullscreen() ? "ON" : "OFF"  )) set_fullscreen(!is_fullscreen());
             if (do_menu_button(&x,&y, MENU_BUTTON_CURSOR,     true, dt, "CURSOR TYPE %d",  gPlayer.current_cursor          )) set_player_cursor_type(++gPlayer.current_cursor);
             if (do_menu_button(&x,&y, MENU_BUTTON_SOUND,      true, dt, "SOUND VOLUME %d", CAST(int,get_sound_volume()*100))) set_sound_volume(get_sound_volume()+0.1f);
             if (do_menu_button(&x,&y, MENU_BUTTON_MUSIC,      true, dt, "MUSIC VOLUME %d", CAST(int,get_music_volume()*100))) set_music_volume(get_music_volume()+0.1f);
-            if (do_menu_button(&x,&y, MENU_BUTTON_RESET,      true, dt, "RESET"                                            )) reset_settings();
-
+            if (do_menu_button(&x,&y, MENU_BUTTON_RESET,      true, dt, "RESET OPTIONS"                                    )) reset_settings();
+            if (do_menu_button(&x,&y, MENU_BUTTON_DELETE,     true, dt, "DELETE SCORES"                                    )) start_menu_reset();
             x = TILE_W+4;
             y = SCREEN_H-TILE_H-4;
             if (do_menu_button(&x,&y,MENU_BUTTON_BACK, false, dt, "BACK")) start_menu_main();
+        } break;
+        case (MENU_STATE_RESET):
+        {
+            y = 63;
+            do_menu_label(&x,&y, true, "ARE YOU SURE?");
+            y += 8;
+            if (do_menu_button(&x,&y, MENU_BUTTON_YES, true, dt, "YES")) { reset_scores(); start_menu_options(); }
+            if (do_menu_button(&x,&y, MENU_BUTTON_NO,  true, dt, "NO" )) {                 start_menu_options(); }
         } break;
         case (MENU_STATE_SCORES):
         {

@@ -6,7 +6,8 @@ GLOBAL U32 gScores[MAX_SCORES];
 
 INTERNAL void add_highscore (U32 score);
 
-INTERNAL void load_scores ();
-INTERNAL void save_scores ();
+INTERNAL void  load_scores ();
+INTERNAL void  save_scores ();
+INTERNAL void reset_scores ();
 
 #endif /* SCORE_H */
