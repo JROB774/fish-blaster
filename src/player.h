@@ -19,6 +19,17 @@ typedef enum ItemID__
 
 } ItemID;
 
+typedef enum CursorID__
+{
+    CUR_0,
+    CUR_1,
+    CUR_2,
+    CUR_3,
+    CUR_4,
+    CUR_TOTAL
+
+} CursorID;
+
 GLOBAL struct
 {
     int cursor_x, cursor_prev_x;
@@ -26,6 +37,7 @@ GLOBAL struct
 
     int life;
 
+    CursorID current_cursor;
     ItemID current_item;
 
     float cooldown_time;
@@ -39,6 +51,8 @@ INTERNAL void create_player ();
 INTERNAL void update_player (float dt);
 INTERNAL void render_player (float dt);
 INTERNAL void    hit_player ();
+
+INTERNAL void set_player_cursor_type (CursorID cursor);
 
 INTERNAL bool is_player_in_screen_bounds ();
 

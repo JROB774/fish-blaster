@@ -68,10 +68,11 @@ INTERNAL void shoot ()
 
 INTERNAL void init_player ()
 {
-    gPlayer.cursor_x      = get_mouse_x();
-    gPlayer.cursor_y      = get_mouse_y();
-    gPlayer.cursor_prev_x = gPlayer.cursor_x;
-    gPlayer.cursor_prev_y = gPlayer.cursor_y;
+    gPlayer.cursor_x       = get_mouse_x();
+    gPlayer.cursor_y       = get_mouse_y();
+    gPlayer.cursor_prev_x  = gPlayer.cursor_x;
+    gPlayer.cursor_prev_y  = gPlayer.cursor_y;
+    gPlayer.current_cursor = gSettings.cursor_type;
 }
 
 INTERNAL void create_player ()
@@ -184,7 +185,7 @@ INTERNAL void render_player (float dt)
     {
         int x = gPlayer.cursor_x-(SPR_CURSOR_0.w/2);
         int y = gPlayer.cursor_y-(SPR_CURSOR_0.h/2);
-        render_bitmap(x,y,PAL_CURSOR,&SPR_CURSOR_0);
+        render_bitmap(x,y,PAL_CURSOR,ANM_CURSOR[gPlayer.current_cursor]);
     }
 }
 
@@ -203,6 +204,12 @@ INTERNAL void hit_player ()
             start_lose();
         }
     }
+}
+
+INTERNAL void set_player_cursor_type (CursorID cursor)
+{
+    assert(cursor >= 0 && cursor < CUR_TOTAL);
+    gPlayer.current_cursor = cursor;
 }
 
 INTERNAL bool is_player_in_screen_bounds ()

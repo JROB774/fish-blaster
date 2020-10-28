@@ -79,9 +79,8 @@ INTERNAL void init_audio ()
     {
         Mix_AllocateChannels(32);
 
-        // @Incomplete: Load these values from a settings file...
-        set_sound_volume(0.5f);
-        set_music_volume(0.5f);
+        set_sound_volume(CAST(float,gSettings.sound_volume)/CAST(float,MIX_MAX_VOLUME));
+        set_music_volume(CAST(float,gSettings.music_volume)/CAST(float,MIX_MAX_VOLUME));
 
         gAudio.initialized = true;
 

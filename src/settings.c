@@ -1,6 +1,6 @@
 #define SETTINGS_DEFAULT_SOUND_VOLUME  (MIX_MAX_VOLUME / 2)
 #define SETTINGS_DEFAULT_MUSIC_VOLUME  (MIX_MAX_VOLUME / 2)
-#define SETTINGS_DEFAULT_CURSOR_TYPE   0
+#define SETTINGS_DEFAULT_CURSOR_TYPE   CUR_0
 #define SETTINGS_DEFAULT_WINDOW_WIDTH  (SCREEN_W * 3)
 #define SETTINGS_DEFAULT_WINDOW_HEIGHT (SCREEN_H * 3)
 #define SETTINGS_DEFAULT_FULLSCREEN    false
@@ -31,7 +31,7 @@ INTERNAL void save_settings ()
 {
     gSettings.sound_volume  = CAST(U32,CAST(float,MIX_MAX_VOLUME)*get_sound_volume());
     gSettings.music_volume  = CAST(U32,CAST(float,MIX_MAX_VOLUME)*get_music_volume());
-    gSettings.cursor_type   = CAST(U32,0);
+    gSettings.cursor_type   = CAST(U32,gPlayer.current_cursor);
     gSettings.window_width  = CAST(U32,get_window_cached_w ());
     gSettings.window_height = CAST(U32,get_window_cached_h ());
     gSettings.fullscreen    = CAST(U32,is_fullscreen());
@@ -52,9 +52,7 @@ INTERNAL void reset_settings ()
 {
     set_sound_volume(SETTINGS_DEFAULT_SOUND_VOLUME/MIX_MAX_VOLUME);
     set_music_volume(SETTINGS_DEFAULT_SOUND_VOLUME/MIX_MAX_VOLUME);
-    // @Incomplete: Cursor type...
+    set_player_cursor_type(SETTINGS_DEFAULT_CURSOR_TYPE);
     set_window_size(SETTINGS_DEFAULT_WINDOW_WIDTH, SETTINGS_DEFAULT_WINDOW_HEIGHT);
     set_fullscreen(SETTINGS_DEFAULT_FULLSCREEN);
-
-    save_settings();
 }
