@@ -59,9 +59,27 @@ INTERNAL void render_hud (int y)
 
 // APP_STATE_MENU
 
-INTERNAL bool do_menu_button (int* x, int* y, const char* text, float* target, float* current, bool center, float dt)
+typedef enum MenuButton__
 {
-    assert(x && y && target && current);
+    MENU_BUTTON_PLAY,
+    MENU_BUTTON_OPTIONS,
+    MENU_BUTTON_SCORES,
+    MENU_BUTTON_CREDITS,
+    MENU_BUTTON_EXIT,
+    MENU_BUTTON_BACK,
+    MENU_BUTTON_RETRY,
+    MENU_BUTTON_MENU,
+    MENU_BUTTON_TOTAL
+
+} MenuButton;
+
+// Stores the state values needed for lerping button backgrounds.
+GLOBAL float gMenuButtonTarget[MENU_BUTTON_TOTAL];
+GLOBAL float gMenuButtonCurrent[MENU_BUTTON_TOTAL];
+
+INTERNAL bool do_menu_button (int* x, int* y, const char* text, MenuButton button, bool center, float dt)
+{
+    assert(x && y);
 
     int rw = get_text_w(text);
     int rh = TILE_H;
@@ -75,10 +93,10 @@ INTERNAL bool do_menu_button (int* x, int* y, const char* text, float* target, f
     bool pressed = false;
     if (point_vs_rect_collision(mx,my, rx,ry,rw,rh))
     {
-        if (*target == 0.0f)
+        if (gMenuButtonTarget[button] == 0.0f)
         {
             play_sound_channel(SND_SWISH,0,1);
-            *target = rw;
+            gMenuButtonTarget[button] = rw;
         }
 
         if (button_pressed(LMB))
@@ -88,16 +106,16 @@ INTERNAL bool do_menu_button (int* x, int* y, const char* text, float* target, f
     }
     else
     {
-        *target = 0.0f;
+        gMenuButtonTarget[button] = 0.0f;
     }
 
     // Animate the backing of the button.
-    *current = lerp(*current, *target, 20*dt);
-    if (*current > 1.0f)
+    gMenuButtonCurrent[button] = lerp(gMenuButtonCurrent[button], gMenuButtonTarget[button], 20*dt);
+    if (gMenuButtonCurrent[button] > 1.0f)
     {
-        int bx = rx+((rw-(round(*current)))/2);
+        int bx = rx+((rw-(round(gMenuButtonCurrent[button])))/2);
         int by = ry;
-        int bw = ceil(*current);
+        int bw = ceil(gMenuButtonCurrent[button]);
         int bh = rh;
 
         render_bitmap(bx-SPR_SCOREBGL.w,by,PAL_BLACK,&SPR_SCOREBGL);
@@ -132,8 +150,40 @@ INTERNAL void do_menu_score_label (int* x, int* y, U32 score)
     *y += rh+2;
 }
 
+INTERNAL void reset_menu_button_state ()
+{
+    memset(gMenuButtonTarget, 0, sizeof(gMenuButtonTarget));
+    memset(gMenuButtonCurrent, 0, sizeof(gMenuButtonCurrent));
+}
+
+INTERNAL void start_menu_options ()
+{
+    gApp.menu_state = MENU_STATE_OPTIONS;
+    reset_menu_button_state();
+}
+INTERNAL void start_menu_scores ()
+{
+    gApp.menu_state = MENU_STATE_SCORES;
+    reset_menu_button_state();
+}
+INTERNAL void start_menu_credits ()
+{
+    gApp.menu_state = MENU_STATE_CREDITS;
+    reset_menu_button_state();
+}
+
 INTERNAL void update_menu (float dt)
 {
+    // Go to the menu if the player wants.
+    if (gApp.menu_state != MENU_STATE_MAIN)
+    {
+        if (key_pressed(ESCAPE))
+        {
+            start_menu();
+            return;
+        }
+    }
+
     update_spawner(dt);
     update_player (dt);
     update_entity (dt);
@@ -141,22 +191,6 @@ INTERNAL void update_menu (float dt)
 }
 INTERNAL void render_menu (float dt)
 {
-    // @Incomplete: Remove static/persistent variables!!!
-
-    static float play_target     = 0.0f;
-    static float options_target  = 0.0f;
-    static float scores_target   = 0.0f;
-    static float credits_target  = 0.0f;
-    static float exit_target     = 0.0f;
-    static float back_target     = 0.0f;
-
-    static float play_current    = 0.0f;
-    static float options_current = 0.0f;
-    static float scores_current  = 0.0f;
-    static float credits_current = 0.0f;
-    static float exit_current    = 0.0f;
-    static float back_current    = 0.0f;
-
     begin_camera();
     render_effect_lo(dt);
     render_entity   (dt);
@@ -174,26 +208,33 @@ INTERNAL void render_menu (float dt)
 
             y = 76;
 
-            if (do_menu_button(&x,&y,"PLAY",    &/*gApp.*/play_target,   &/*gApp.*/play_current,    true, dt)) start_game();
-            if (do_menu_button(&x,&y,"OPTIONS", &/*gApp.*/options_target,&/*gApp.*/options_current, true, dt)) {}
-            if (do_menu_button(&x,&y,"SCORES",  &/*gApp.*/scores_target, &/*gApp.*/scores_current,  true, dt)) gApp.menu_state = MENU_STATE_SCORES, scores_current = 0.0f;
-            if (do_menu_button(&x,&y,"CREDITS", &/*gApp.*/credits_target,&/*gApp.*/credits_current, true, dt)) {}
-            if (do_menu_button(&x,&y,"EXIT",    &/*gApp.*/exit_target,   &/*gApp.*/exit_current,    true, dt)) gWindow.running = false;
+            if (do_menu_button(&x,&y,"PLAY",    MENU_BUTTON_PLAY,    true, dt)) start_game();
+            if (do_menu_button(&x,&y,"OPTIONS", MENU_BUTTON_OPTIONS, true, dt)) start_menu_options();
+            if (do_menu_button(&x,&y,"SCORES",  MENU_BUTTON_SCORES,  true, dt)) start_menu_scores();
+            if (do_menu_button(&x,&y,"CREDITS", MENU_BUTTON_CREDITS, true, dt)) start_menu_credits();
+            if (do_menu_button(&x,&y,"EXIT",    MENU_BUTTON_EXIT,    true, dt)) gWindow.running = false;
+        } break;
+        case (MENU_STATE_OPTIONS):
+        {
+            // @Incomplete: ...
+            x = TILE_W+4;
+            y = SCREEN_H-TILE_H-4;
+            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu();
         } break;
         case (MENU_STATE_SCORES):
         {
             y = 23;
-            for (int i=0; i<MAX_SCORES; ++i)
-            {
-                do_menu_score_label(&x,&y,gScores[i]);
-            }
+            for (int i=0; i<MAX_SCORES; ++i) do_menu_score_label(&x,&y,gScores[i]);
             x = TILE_W+4;
             y = SCREEN_H-TILE_H-4;
-            if (do_menu_button(&x,&y,"BACK", &back_target,&back_current, false, dt))
-            {
-                gApp.menu_state = MENU_STATE_MAIN;
-                back_current = 0.0f;
-            }
+            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu();
+        } break;
+        case (MENU_STATE_CREDITS):
+        {
+            // @Incomplete: ...
+            x = TILE_W+4;
+            y = SCREEN_H-TILE_H-4;
+            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu();
         } break;
     }
 
@@ -208,6 +249,12 @@ INTERNAL void update_game (float dt)
     if (key_pressed(RESTART))
     {
         start_game();
+        return;
+    }
+    // Go to the menu if the player wants.
+    if (key_pressed(ESCAPE))
+    {
+        start_menu();
         return;
     }
 
@@ -266,13 +313,6 @@ INTERNAL void update_lose (float dt)
 }
 INTERNAL void render_lose (float dt)
 {
-    // @Incomplete: Remove static/persistent variables!!!
-
-    static float retry_target  = 0.0f;
-    static float menu_target   = 0.0f;
-    static float retry_current = 0.0f;
-    static float menu_current  = 0.0f;
-
     begin_camera();
     render_effect_lo(dt);
     render_entity   (dt);
@@ -300,8 +340,8 @@ INTERNAL void render_lose (float dt)
 
     y += 32;
 
-    if (do_menu_button(&x,&y,"RETRY",&retry_target,&retry_current,true,dt)) start_game();
-    if (do_menu_button(&x,&y,"MENU", &menu_target, &menu_current, true,dt)) start_menu();
+    if (do_menu_button(&x,&y,"RETRY",MENU_BUTTON_RETRY,true,dt)) start_game();
+    if (do_menu_button(&x,&y,"MENU", MENU_BUTTON_MENU, true,dt)) start_menu();
 
     render_player(dt);
 }
@@ -414,18 +454,11 @@ INTERNAL void update_application (float dt)
 
     update_camera(dt);
 
-    // Go to the menu if the player wants.
-    if (key_pressed(ESCAPE))
-    {
-        start_menu();
-        return;
-    }
-
     switch (gApp.state)
     {
         case (APP_STATE_MENU): update_menu(dt); break;
         case (APP_STATE_GAME): update_game(dt); break;
-        case (APP_STATE_LOSE): update_game(dt); break;
+        case (APP_STATE_LOSE): update_lose(dt); break;
     }
 
     // Make sure the score cannot go over its maximum value.
@@ -463,11 +496,13 @@ INTERNAL void flash_screen_white ()
 
 INTERNAL void start_menu ()
 {
+    reset_menu_button_state();
+
     gApp.state = APP_STATE_MENU;
 
     gApp.menu_state = MENU_STATE_MAIN;
 
-    gPlayer.cooldown_time = LOSE_COOLDOWN;
+    gPlayer.cooldown_time = 0.0f;
     gPlayer.god_time = 0.0f;
     gPlayer.current_item = ITEM_NONE;
 
