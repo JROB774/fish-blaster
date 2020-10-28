@@ -5,7 +5,7 @@ typedef enum  AppState__ { APP_STATE_MENU, APP_STATE_GAME, APP_STATE_LOSE, APP_S
 typedef enum MenuState__ { MENU_STATE_MAIN, MENU_STATE_SCORES, MENU_STATE_TOTAL            } MenuState;
 
 #define CODE_LENGTH 5
-#define CODE_RETRO "retro"
+#define CODE_RETRO "gameb"
 #define CODE_BLOOD "blood"
 #define CODE_NOPAL "nopal"
 
