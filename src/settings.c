@@ -50,8 +50,8 @@ INTERNAL void save_settings ()
 
 INTERNAL void reset_settings ()
 {
-    set_sound_volume(SETTINGS_DEFAULT_SOUND_VOLUME/MIX_MAX_VOLUME);
-    set_music_volume(SETTINGS_DEFAULT_SOUND_VOLUME/MIX_MAX_VOLUME);
+    set_sound_volume(CAST(float,SETTINGS_DEFAULT_SOUND_VOLUME)/CAST(float,MIX_MAX_VOLUME));
+    set_music_volume(CAST(float,SETTINGS_DEFAULT_MUSIC_VOLUME)/CAST(float,MIX_MAX_VOLUME));
     set_player_cursor_type(SETTINGS_DEFAULT_CURSOR_TYPE);
     set_window_size(SETTINGS_DEFAULT_WINDOW_WIDTH, SETTINGS_DEFAULT_WINDOW_HEIGHT);
     set_fullscreen(SETTINGS_DEFAULT_FULLSCREEN);

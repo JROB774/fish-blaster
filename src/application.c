@@ -69,6 +69,11 @@ typedef enum MenuButton__
     MENU_BUTTON_BACK,
     MENU_BUTTON_RETRY,
     MENU_BUTTON_MENU,
+    MENU_BUTTON_SOUND,
+    MENU_BUTTON_MUSIC,
+    MENU_BUTTON_CURSOR,
+    MENU_BUTTON_FULLSCREEN,
+    MENU_BUTTON_RESET,
     MENU_BUTTON_TOTAL
 
 } MenuButton;
@@ -77,11 +82,21 @@ typedef enum MenuButton__
 GLOBAL float gMenuButtonTarget[MENU_BUTTON_TOTAL];
 GLOBAL float gMenuButtonCurrent[MENU_BUTTON_TOTAL];
 
-INTERNAL bool do_menu_button (int* x, int* y, const char* text, MenuButton button, bool center, float dt)
+#define MENU_BUTTON_BUFFER_SIZE 64
+
+INTERNAL bool do_menu_button (int* x, int* y, MenuButton button, bool center, float dt, const char* text, ...)
 {
     assert(x && y);
 
-    int rw = get_text_w(text);
+    char text_buffer[MENU_BUTTON_BUFFER_SIZE] = {0};
+
+    // Format the arguments into a formatted string in a buffer.
+    va_list args;
+    va_start(args, text);
+    vsnprintf(text_buffer, MENU_BUTTON_BUFFER_SIZE, text, args);
+    va_end(args);
+
+    int rw = get_text_w(text_buffer);
     int rh = TILE_H;
     int rx = (center) ? ((SCREEN_W-rw)/2) : *x;
     int ry = *y;
@@ -123,7 +138,7 @@ INTERNAL bool do_menu_button (int* x, int* y, const char* text, MenuButton butto
         render_bitmap(bx+bw,by,PAL_BLACK,&SPR_SCOREBGR);
     }
 
-    render_text(rx,ry,PAL_TEXT_SHADE,text);
+    render_text(rx,ry,PAL_TEXT_SHADE,text_buffer);
 
     *x  = rx;
     *y += rh+2;
@@ -213,18 +228,25 @@ INTERNAL void render_menu (float dt)
 
             y = 76;
 
-            if (do_menu_button(&x,&y,"PLAY",    MENU_BUTTON_PLAY,    true, dt)) start_game();
-            if (do_menu_button(&x,&y,"OPTIONS", MENU_BUTTON_OPTIONS, true, dt)) start_menu_options();
-            if (do_menu_button(&x,&y,"SCORES",  MENU_BUTTON_SCORES,  true, dt)) start_menu_scores();
-            if (do_menu_button(&x,&y,"CREDITS", MENU_BUTTON_CREDITS, true, dt)) start_menu_credits();
-            if (do_menu_button(&x,&y,"EXIT",    MENU_BUTTON_EXIT,    true, dt)) gWindow.running = false;
+            if (do_menu_button(&x,&y, MENU_BUTTON_PLAY,    true, dt, "PLAY"   )) start_game();
+            if (do_menu_button(&x,&y, MENU_BUTTON_OPTIONS, true, dt, "OPTIONS")) start_menu_options();
+            if (do_menu_button(&x,&y, MENU_BUTTON_SCORES,  true, dt, "SCORES" )) start_menu_scores();
+            if (do_menu_button(&x,&y, MENU_BUTTON_CREDITS, true, dt, "CREDITS")) start_menu_credits();
+            if (do_menu_button(&x,&y, MENU_BUTTON_EXIT,    true, dt, "EXIT"   )) gWindow.running = false;
         } break;
         case (MENU_STATE_OPTIONS):
         {
-            // @Incomplete: ...
+            y = 48;
+
+            if (do_menu_button(&x,&y, MENU_BUTTON_FULLSCREEN, true, dt, "FULLSCREEN %s",   is_fullscreen() ? "ON" : "OFF"  )) set_fullscreen(!is_fullscreen());
+            if (do_menu_button(&x,&y, MENU_BUTTON_CURSOR,     true, dt, "CURSOR TYPE %d",  gPlayer.current_cursor          )) set_player_cursor_type(++gPlayer.current_cursor);
+            if (do_menu_button(&x,&y, MENU_BUTTON_SOUND,      true, dt, "SOUND VOLUME %d", CAST(int,get_sound_volume()*100))) set_sound_volume(get_sound_volume()+0.1f);
+            if (do_menu_button(&x,&y, MENU_BUTTON_MUSIC,      true, dt, "MUSIC VOLUME %d", CAST(int,get_music_volume()*100))) set_music_volume(get_music_volume()+0.1f);
+            if (do_menu_button(&x,&y, MENU_BUTTON_RESET,      true, dt, "RESET"                                            )) reset_settings();
+
             x = TILE_W+4;
             y = SCREEN_H-TILE_H-4;
-            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu_main();
+            if (do_menu_button(&x,&y,MENU_BUTTON_BACK, false, dt, "BACK")) start_menu_main();
         } break;
         case (MENU_STATE_SCORES):
         {
@@ -232,14 +254,13 @@ INTERNAL void render_menu (float dt)
             for (int i=0; i<MAX_SCORES; ++i) do_menu_score_label(&x,&y,gScores[i]);
             x = TILE_W+4;
             y = SCREEN_H-TILE_H-4;
-            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu_main();
+            if (do_menu_button(&x,&y,MENU_BUTTON_BACK, false, dt, "BACK")) start_menu_main();
         } break;
         case (MENU_STATE_CREDITS):
         {
-            // @Incomplete: ...
             x = TILE_W+4;
             y = SCREEN_H-TILE_H-4;
-            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu_main();
+            if (do_menu_button(&x,&y,MENU_BUTTON_BACK, false, dt, "BACK")) start_menu_main();
         } break;
     }
 
@@ -345,8 +366,8 @@ INTERNAL void render_lose (float dt)
 
     y += 32;
 
-    if (do_menu_button(&x,&y,"RETRY",MENU_BUTTON_RETRY,true,dt)) start_game();
-    if (do_menu_button(&x,&y,"MENU", MENU_BUTTON_MENU, true,dt)) start_menu();
+    if (do_menu_button(&x,&y,MENU_BUTTON_RETRY,true,dt,"RETRY")) start_game();
+    if (do_menu_button(&x,&y,MENU_BUTTON_MENU, true,dt,"MENU" )) start_menu();
 
     render_player(dt);
 }
@@ -521,7 +542,6 @@ INTERNAL void start_game ()
     gApp.state = APP_STATE_GAME;
 
     clear_entity();
-    clear_effect();
 
     create_spawner();
     create_player();

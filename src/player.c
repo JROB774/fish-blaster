@@ -208,7 +208,7 @@ INTERNAL void hit_player ()
 
 INTERNAL void set_player_cursor_type (CursorID cursor)
 {
-    assert(cursor >= 0 && cursor < CUR_TOTAL);
+    if (cursor < 0 || cursor >= CUR_TOTAL) cursor = 0;
     gPlayer.current_cursor = cursor;
 }
 
