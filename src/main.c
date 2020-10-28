@@ -4,6 +4,8 @@ int main (int argc, char** argv)
 {
     init_frame_timer();
 
+    load_settings();
+
     if (init_window())
     {
         if (init_renderer())
@@ -52,6 +54,8 @@ int main (int argc, char** argv)
                     render_display();
                 }
                 quit_application();
+
+                save_settings();
             }
             quit_audio();
             quit_renderer();

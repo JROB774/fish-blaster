@@ -195,10 +195,18 @@ INTERNAL void set_sound_volume (float volume)
     int ivolume = CAST(int, CAST(float,MIX_MAX_VOLUME)*gAudio.sound_volume);
     Mix_Volume(-1, ivolume);
 }
-
 INTERNAL void set_music_volume (float volume)
 {
     gAudio.music_volume = CLAMP(volume, 0.0f, 1.0f);
     int ivolume = CAST(int, CAST(float,MIX_MAX_VOLUME)*gAudio.music_volume);
     Mix_VolumeMusic(ivolume);
+}
+
+INTERNAL float get_sound_volume ()
+{
+    return gAudio.sound_volume;
+}
+INTERNAL float get_music_volume ()
+{
+    return gAudio.music_volume;
 }

@@ -1,8 +1,5 @@
 INTERNAL bool init_window ()
 {
-    const int WIDTH  = SCREEN_W * SCREEN_S;
-    const int HEIGHT = SCREEN_H * SCREEN_S;
-
     gWindow.running = true;
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -11,17 +8,21 @@ INTERNAL bool init_window ()
         return false;
     }
 
+    gWindow.cached_width = gSettings.window_width;
+    gWindow.cached_height = gSettings.window_height;
+
     // We make the window hidden by default so that we can perform all of the game's
     // initialization before displaying the game window -- this looks a lot nicer.
     gWindow.window = SDL_CreateWindow("Fish Blaster", SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED, WIDTH,HEIGHT, SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE);
+        SDL_WINDOWPOS_CENTERED, gWindow.cached_width,gWindow.cached_height, SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE);
     if (!gWindow.window)
     {
         LOGERROR("Failed to create window! (%s)", SDL_GetError());
         return false;
     }
-
     SDL_SetWindowMinimumSize(gWindow.window, SCREEN_W,SCREEN_H);
+
+    set_fullscreen(gSettings.fullscreen);
 
     return true;
 }
@@ -56,16 +57,31 @@ INTERNAL bool is_fullscreen ()
     return gWindow.fullscreen;
 }
 
+INTERNAL void set_window_size (int width, int height)
+{
+    SDL_SetWindowSize(gWindow.window, width, height);
+}
+
 INTERNAL int get_window_w ()
 {
     int width;
     SDL_GetWindowSize(gWindow.window, &width, NULL);
     return width;
 }
-
 INTERNAL int get_window_h ()
 {
     int height;
     SDL_GetWindowSize(gWindow.window, NULL, &height);
     return height;
+}
+
+INTERNAL int get_window_cached_w ()
+{
+    if (gWindow.fullscreen) return gWindow.cached_width;
+    return get_window_w();
+}
+INTERNAL int get_window_cached_h ()
+{
+    if (gWindow.fullscreen) return gWindow.cached_height;
+    return get_window_h();
 }

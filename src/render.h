@@ -5,7 +5,6 @@
 // This can be scaled up based on the window size.
 #define SCREEN_W 160 // Width
 #define SCREEN_H 144 // Height
-#define SCREEN_S   3 // Scale
 
 #define TILE_W 8
 #define TILE_H 8
@@ -109,21 +108,22 @@ GLOBAL const Clip SPR_ICO_BOOM_1 = {  40,  24,   8,  8 };
 
 // ANIMATIONS
 
-GLOBAL const Clip* ANM_FISH_R  [] = { &SPR_FISH_R_0,     &SPR_FISH_R_1                                                                                       };
-GLOBAL const Clip* ANM_FISH_L  [] = { &SPR_FISH_L_0,     &SPR_FISH_L_1                                                                                       };
-GLOBAL const Clip* ANM_JELLY   [] = { &SPR_JELLY_0,      &SPR_JELLY_1                                                                                        };
-GLOBAL const Clip* ANM_URCHIN  [] = { &SPR_URCHIN_0,     &SPR_URCHIN_1                                                                                       };
-GLOBAL const Clip* ANM_BLOOD   [] = { &SPR_BLOOD_0,      &SPR_BLOOD_1,   &SPR_BLOOD_2,  &SPR_BLOOD_3, &SPR_BLOOD_4, &SPR_BLOOD_5, &SPR_BLOOD_6, &SPR_BLOOD_7 };
-GLOBAL const Clip* ANM_SHOT    [] = { &SPR_SHOT_0,       &SPR_SHOT_1,    &SPR_SHOT_2,   &SPR_SHOT_3                                                          };
-GLOBAL const Clip* ANM_BUBBLE  [] = { &SPR_BUBBLE_0,     &SPR_BUBBLE_1,  &SPR_BUBBLE_2, &SPR_BUBBLE_3                                                        };
-GLOBAL const Clip* ANM_BONE    [] = { &SPR_BONE_0,       &SPR_BONE_1,    &SPR_BONE_2,   &SPR_BONE_3                                                          };
-GLOBAL const Clip* ANM_CHIP    [] = { &SPR_CHIP_0,       &SPR_CHIP_1,    &SPR_CHIP_2,   &SPR_CHIP_3,  &SPR_CHIP_4,  &SPR_CHIP_5,  &SPR_CHIP_6,  &SPR_CHIP_7  };
-GLOBAL const Clip* ANM_ICO_LIFE[] = { &SPR_ICO_LIFE_0,   &SPR_ICO_LIFE_1                                                                                     };
-GLOBAL const Clip* ANM_ICO_TIME[] = { &SPR_ICO_TIME_0,   &SPR_ICO_TIME_1                                                                                     };
-GLOBAL const Clip* ANM_ICO_MULT[] = { &SPR_ICO_MULT_0,   &SPR_ICO_MULT_1                                                                                     };
-GLOBAL const Clip* ANM_ICO_RAPD[] = { &SPR_ICO_RAPD_0,   &SPR_ICO_RAPD_1                                                                                     };
-GLOBAL const Clip* ANM_ICO_SPRD[] = { &SPR_ICO_SPRD_0,   &SPR_ICO_SPRD_1                                                                                     };
-GLOBAL const Clip* ANM_ICO_BOOM[] = { &SPR_ICO_BOOM_0,   &SPR_ICO_BOOM_1                                                                                     };
+GLOBAL const Clip* ANM_CURSOR  [] = { &SPR_CURSOR_0,     &SPR_CURSOR_1,  &SPR_CURSOR_2, &SPR_CURSOR_3, &SPR_CURSOR_4                                          };
+GLOBAL const Clip* ANM_FISH_R  [] = { &SPR_FISH_R_0,     &SPR_FISH_R_1                                                                                        };
+GLOBAL const Clip* ANM_FISH_L  [] = { &SPR_FISH_L_0,     &SPR_FISH_L_1                                                                                        };
+GLOBAL const Clip* ANM_JELLY   [] = { &SPR_JELLY_0,      &SPR_JELLY_1                                                                                         };
+GLOBAL const Clip* ANM_URCHIN  [] = { &SPR_URCHIN_0,     &SPR_URCHIN_1                                                                                        };
+GLOBAL const Clip* ANM_BLOOD   [] = { &SPR_BLOOD_0,      &SPR_BLOOD_1,   &SPR_BLOOD_2,  &SPR_BLOOD_3,  &SPR_BLOOD_4, &SPR_BLOOD_5, &SPR_BLOOD_6, &SPR_BLOOD_7 };
+GLOBAL const Clip* ANM_SHOT    [] = { &SPR_SHOT_0,       &SPR_SHOT_1,    &SPR_SHOT_2,   &SPR_SHOT_3                                                           };
+GLOBAL const Clip* ANM_BUBBLE  [] = { &SPR_BUBBLE_0,     &SPR_BUBBLE_1,  &SPR_BUBBLE_2, &SPR_BUBBLE_3                                                         };
+GLOBAL const Clip* ANM_BONE    [] = { &SPR_BONE_0,       &SPR_BONE_1,    &SPR_BONE_2,   &SPR_BONE_3                                                           };
+GLOBAL const Clip* ANM_CHIP    [] = { &SPR_CHIP_0,       &SPR_CHIP_1,    &SPR_CHIP_2,   &SPR_CHIP_3,   &SPR_CHIP_4,  &SPR_CHIP_5,  &SPR_CHIP_6,  &SPR_CHIP_7  };
+GLOBAL const Clip* ANM_ICO_LIFE[] = { &SPR_ICO_LIFE_0,   &SPR_ICO_LIFE_1                                                                                      };
+GLOBAL const Clip* ANM_ICO_TIME[] = { &SPR_ICO_TIME_0,   &SPR_ICO_TIME_1                                                                                      };
+GLOBAL const Clip* ANM_ICO_MULT[] = { &SPR_ICO_MULT_0,   &SPR_ICO_MULT_1                                                                                      };
+GLOBAL const Clip* ANM_ICO_RAPD[] = { &SPR_ICO_RAPD_0,   &SPR_ICO_RAPD_1                                                                                      };
+GLOBAL const Clip* ANM_ICO_SPRD[] = { &SPR_ICO_SPRD_0,   &SPR_ICO_SPRD_1                                                                                      };
+GLOBAL const Clip* ANM_ICO_BOOM[] = { &SPR_ICO_BOOM_0,   &SPR_ICO_BOOM_1                                                                                      };
 
 // PALETTES
 
