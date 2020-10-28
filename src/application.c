@@ -156,6 +156,11 @@ INTERNAL void reset_menu_button_state ()
     memset(gMenuButtonCurrent, 0, sizeof(gMenuButtonCurrent));
 }
 
+INTERNAL void start_menu_main ()
+{
+    gApp.menu_state = MENU_STATE_MAIN;
+    reset_menu_button_state();
+}
 INTERNAL void start_menu_options ()
 {
     gApp.menu_state = MENU_STATE_OPTIONS;
@@ -179,7 +184,7 @@ INTERNAL void update_menu (float dt)
     {
         if (key_pressed(ESCAPE))
         {
-            start_menu();
+            start_menu_main();
             return;
         }
     }
@@ -219,7 +224,7 @@ INTERNAL void render_menu (float dt)
             // @Incomplete: ...
             x = TILE_W+4;
             y = SCREEN_H-TILE_H-4;
-            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu();
+            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu_main();
         } break;
         case (MENU_STATE_SCORES):
         {
@@ -227,14 +232,14 @@ INTERNAL void render_menu (float dt)
             for (int i=0; i<MAX_SCORES; ++i) do_menu_score_label(&x,&y,gScores[i]);
             x = TILE_W+4;
             y = SCREEN_H-TILE_H-4;
-            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu();
+            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu_main();
         } break;
         case (MENU_STATE_CREDITS):
         {
             // @Incomplete: ...
             x = TILE_W+4;
             y = SCREEN_H-TILE_H-4;
-            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu();
+            if (do_menu_button(&x,&y,"BACK", MENU_BUTTON_BACK, false, dt)) start_menu_main();
         } break;
     }
 
