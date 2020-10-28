@@ -19,7 +19,7 @@ INTERNAL float get_mouse_y ();
 
 // KEYBOARD
 
-typedef enum KeyboardCode__ { ESCAPE = SDLK_ESCAPE, RESTART = SDLK_SPACE, KEYBOARD_CODE_TOTAL } KeyboardCode;
+typedef enum KeyboardCode__ { ESCAPE = SDLK_ESCAPE, RESTART = SDLK_r, KEYBOARD_CODE_TOTAL } KeyboardCode;
 
 INTERNAL bool key_pressed  (KeyboardCode code);
 INTERNAL bool key_released (KeyboardCode code);

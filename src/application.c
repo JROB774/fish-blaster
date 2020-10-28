@@ -204,13 +204,7 @@ INTERNAL void render_menu (float dt)
 
 INTERNAL void update_game (float dt)
 {
-    // Go to the menu if the player wants.
-    if (key_pressed(ESCAPE))
-    {
-        start_menu();
-        return;
-    }
-    // Restart the game if the player wants.
+    // // Restart the game if the player wants.
     if (key_pressed(RESTART))
     {
         start_game();
@@ -252,6 +246,12 @@ INTERNAL void render_game (float dt)
 
 INTERNAL void update_lose (float dt)
 {
+    // // Restart the game if the player wants.
+    if (key_pressed(RESTART))
+    {
+        start_game();
+        return;
+    }
     // Go to the menu if the player wants.
     if (key_pressed(ESCAPE))
     {
@@ -413,6 +413,13 @@ INTERNAL void update_application (float dt)
     gApp.frame++;
 
     update_camera(dt);
+
+    // Go to the menu if the player wants.
+    if (key_pressed(ESCAPE))
+    {
+        start_menu();
+        return;
+    }
 
     switch (gApp.state)
     {
