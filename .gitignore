@@ -1,4 +1,4 @@
-bin/*.exe
+bin/win32/*.exe
 
 *.sublime-workspace
 
