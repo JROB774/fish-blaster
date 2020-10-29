@@ -251,7 +251,7 @@ INTERNAL void render_menu (float dt)
         {
             y = 12;
             render_bitmap(0,y,PAL_TEXT_SHADE,&SPR_TITLE);
-            y = 68;
+            y = 70;
             if (do_menu_button(&x,&y, MENU_BUTTON_PLAY,    true, dt, "PLAY"   )) start_game();
             if (do_menu_button(&x,&y, MENU_BUTTON_OPTIONS, true, dt, "OPTIONS")) start_menu_options();
             if (do_menu_button(&x,&y, MENU_BUTTON_SCORES,  true, dt, "SCORES" )) start_menu_scores();
@@ -293,6 +293,13 @@ INTERNAL void render_menu (float dt)
         } break;
         case (MENU_STATE_CREDITS):
         {
+            y = 48;
+            do_menu_label(&x,&y, true, "GAME BY");
+            do_menu_label(&x,&y, true, "JOSHUA ROBERTSON");
+            y += 10;
+            do_menu_label(&x,&y, true, "MUSIC BY");
+            do_menu_label(&x,&y, true, "AZUREFLUX");
+
             x = TILE_W+4;
             y = SCREEN_H-TILE_H-4;
             if (do_menu_button(&x,&y,MENU_BUTTON_BACK, false, dt, "BACK")) start_menu_main();
