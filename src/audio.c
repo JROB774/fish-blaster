@@ -85,32 +85,32 @@ INTERNAL void init_audio ()
         gAudio.initialized = true;
 
         // Load all of the sounds.
-        load_sound(&gAudio.sound[SND_NSHOT_0 ], "assets/nshot0.wav" );
-        load_sound(&gAudio.sound[SND_NSHOT_1 ], "assets/nshot1.wav" );
-        load_sound(&gAudio.sound[SND_NSHOT_2 ], "assets/nshot2.wav" );
-        load_sound(&gAudio.sound[SND_SQUEAK_0], "assets/squeak0.wav");
-        load_sound(&gAudio.sound[SND_SQUEAK_1], "assets/squeak1.wav");
-        load_sound(&gAudio.sound[SND_SQUEAK_2], "assets/squeak2.wav");
-        load_sound(&gAudio.sound[SND_TING_0  ], "assets/ting0.wav"  );
-        load_sound(&gAudio.sound[SND_TING_1  ], "assets/ting1.wav"  );
-        load_sound(&gAudio.sound[SND_TING_2  ], "assets/ting2.wav"  );
-        load_sound(&gAudio.sound[SND_CODE    ], "assets/code.wav"   );
-        load_sound(&gAudio.sound[SND_SMACK   ], "assets/smack.wav"  );
-        load_sound(&gAudio.sound[SND_BREAK   ], "assets/break.wav"  );
-        load_sound(&gAudio.sound[SND_ITEM    ], "assets/item.wav"   );
-        load_sound(&gAudio.sound[SND_BOOM    ], "assets/boom.wav"   );
-        load_sound(&gAudio.sound[SND_SWISH   ], "assets/swish.wav"  );
-        load_sound(&gAudio.sound[SND_RSHOT_0 ], "assets/rshot0.wav" );
-        load_sound(&gAudio.sound[SND_RSHOT_1 ], "assets/rshot1.wav" );
-        load_sound(&gAudio.sound[SND_RSHOT_2 ], "assets/rshot2.wav" );
-        load_sound(&gAudio.sound[SND_SSHOT_0 ], "assets/sshot0.wav" );
-        load_sound(&gAudio.sound[SND_SSHOT_1 ], "assets/sshot1.wav" );
-        load_sound(&gAudio.sound[SND_SSHOT_2 ], "assets/sshot2.wav" );
-        load_sound(&gAudio.sound[SND_ZAP     ], "assets/zap.wav"    );
+        load_sound(&gAudio.sound[SND_NSHOT_0 ], ASSET_NSHOT0 );
+        load_sound(&gAudio.sound[SND_NSHOT_1 ], ASSET_NSHOT1 );
+        load_sound(&gAudio.sound[SND_NSHOT_2 ], ASSET_NSHOT2 );
+        load_sound(&gAudio.sound[SND_SQUEAK_0], ASSET_SQUEAK0);
+        load_sound(&gAudio.sound[SND_SQUEAK_1], ASSET_SQUEAK1);
+        load_sound(&gAudio.sound[SND_SQUEAK_2], ASSET_SQUEAK2);
+        load_sound(&gAudio.sound[SND_TING_0  ], ASSET_TING0  );
+        load_sound(&gAudio.sound[SND_TING_1  ], ASSET_TING1  );
+        load_sound(&gAudio.sound[SND_TING_2  ], ASSET_TING2  );
+        load_sound(&gAudio.sound[SND_CODE    ], ASSET_CODE   );
+        load_sound(&gAudio.sound[SND_SMACK   ], ASSET_SMACK  );
+        load_sound(&gAudio.sound[SND_BREAK   ], ASSET_BREAK  );
+        load_sound(&gAudio.sound[SND_ITEM    ], ASSET_ITEM   );
+        load_sound(&gAudio.sound[SND_BOOM    ], ASSET_BOOM   );
+        load_sound(&gAudio.sound[SND_SWISH   ], ASSET_SWISH  );
+        load_sound(&gAudio.sound[SND_RSHOT_0 ], ASSET_RSHOT0 );
+        load_sound(&gAudio.sound[SND_RSHOT_1 ], ASSET_RSHOT1 );
+        load_sound(&gAudio.sound[SND_RSHOT_2 ], ASSET_RSHOT2 );
+        load_sound(&gAudio.sound[SND_SSHOT_0 ], ASSET_SSHOT0 );
+        load_sound(&gAudio.sound[SND_SSHOT_1 ], ASSET_SSHOT1 );
+        load_sound(&gAudio.sound[SND_SSHOT_2 ], ASSET_SSHOT2 );
+        load_sound(&gAudio.sound[SND_ZAP     ], ASSET_ZAP    );
         // Load all of the music.
-        load_music(&gAudio.music[MUS_TRACK_0 ], "assets/track0.ogg" );
-        load_music(&gAudio.music[MUS_TRACK_1 ], "assets/track1.ogg" );
-        load_music(&gAudio.music[MUS_TRACK_2 ], "assets/track2.ogg" );
+        load_music(&gAudio.music[MUS_TRACK_0 ], ASSET_TRACK0 );
+        load_music(&gAudio.music[MUS_TRACK_1 ], ASSET_TRACK1 );
+        load_music(&gAudio.music[MUS_TRACK_2 ], ASSET_TRACK2 );
     }
 }
 

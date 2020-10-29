@@ -166,7 +166,7 @@ INTERNAL bool init_renderer ()
     // This section of code loads the bitmap containing all the game's graphics.
     //
 
-    U8* bitmap_data = read_bitmap_file("assets/imgbit.bmp");
+    U8* bitmap_data = read_bitmap_file(ASSET_IMGBIT);
     if (!bitmap_data)
     {
         LOGERROR("Failed to load the renderer graphics!");
@@ -246,7 +246,7 @@ INTERNAL bool init_renderer ()
     // This section of code loads the bitmap containing all the game's palettes.
     //
 
-    U8* palette_data = read_bitmap_file("assets/imgpal.bmp");
+    U8* palette_data = read_bitmap_file(ASSET_IMGPAL);
     if (!palette_data)
     {
         LOGERROR("Failed to load the renderer palettess!");

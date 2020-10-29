@@ -1,5 +1,5 @@
 @echo off
 
-pushd bin
+pushd bin\win32
 fish.exe
 popd

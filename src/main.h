@@ -20,6 +20,7 @@
 #include <SDL2/SDL_mixer.h>
 
 // Headers
+#include "assets.h"
 #include "utility.h"
 #include "logger.h"
 #include "ftimer.h"
