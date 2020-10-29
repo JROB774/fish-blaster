@@ -127,32 +127,33 @@ GLOBAL const Clip* ANM_ICO_BOOM[] = { &SPR_ICO_BOOM_0,   &SPR_ICO_BOOM_1        
 
 // PALETTES
 
-#define PAL_BACKGROUND   0
-#define PAL_WHITE        1
-#define PAL_BLACK        2
-#define PAL_TEXT_SHADE   3
-#define PAL_CURSOR       3
-#define PAL_NOHEART      5
-#define PAL_HEART        6
-#define PAL_CRATE       10
-#define PAL_FISH_0       6
-#define PAL_FISH_1       7
-#define PAL_FISH_2       8
-#define PAL_JELLY        8
-#define PAL_JELLYFLASH0 12
-#define PAL_JELLYFLASH1 13
-#define PAL_URCHIN       7
-#define PAL_BLOOD_0      4
-#define PAL_BLOOD_1      5
-#define PAL_SHOT         3
-#define PAL_BUBBLE       8
-#define PAL_BONE         9
-#define PAL_CHIP        10
-#define PAL_ICO_LIFE     6
-#define PAL_ICO_TIME     8
-#define PAL_ICO_MULT    11
-#define PAL_ICO_RAPD     7
-#define PAL_ICO_SPRD     7
-#define PAL_ICO_BOOM    12
+#define PAL_BACKGROUND    0
+#define PAL_WHITE         1
+#define PAL_BLACK         2
+#define PAL_TEXT_SHADE    3
+#define PAL_TEXT_VERSION 15
+#define PAL_CURSOR        3
+#define PAL_NOHEART       5
+#define PAL_HEART         6
+#define PAL_CRATE        10
+#define PAL_FISH_0        6
+#define PAL_FISH_1        7
+#define PAL_FISH_2        8
+#define PAL_JELLY         8
+#define PAL_JELLYFLASH0  12
+#define PAL_JELLYFLASH1  13
+#define PAL_URCHIN        7
+#define PAL_BLOOD_0       4
+#define PAL_BLOOD_1       5
+#define PAL_SHOT          3
+#define PAL_BUBBLE        8
+#define PAL_BONE          9
+#define PAL_CHIP         10
+#define PAL_ICO_LIFE      6
+#define PAL_ICO_TIME      8
+#define PAL_ICO_MULT     11
+#define PAL_ICO_RAPD      7
+#define PAL_ICO_SPRD      7
+#define PAL_ICO_BOOM     12
 
 #endif /* RENDER_H */

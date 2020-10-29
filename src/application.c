@@ -249,13 +249,17 @@ INTERNAL void render_menu (float dt)
     {
         case (MENU_STATE_MAIN):
         {
-            render_bitmap(0,12,PAL_TEXT_SHADE,&SPR_TITLE);
-            y = 76;
+            y = 12;
+            render_bitmap(0,y,PAL_TEXT_SHADE,&SPR_TITLE);
+            y = 68;
             if (do_menu_button(&x,&y, MENU_BUTTON_PLAY,    true, dt, "PLAY"   )) start_game();
             if (do_menu_button(&x,&y, MENU_BUTTON_OPTIONS, true, dt, "OPTIONS")) start_menu_options();
             if (do_menu_button(&x,&y, MENU_BUTTON_SCORES,  true, dt, "SCORES" )) start_menu_scores();
             if (do_menu_button(&x,&y, MENU_BUTTON_CREDITS, true, dt, "CREDITS")) start_menu_credits();
             if (do_menu_button(&x,&y, MENU_BUTTON_EXIT,    true, dt, "EXIT"   )) gWindow.running = false;
+            y = SCREEN_H-12;
+            x = 6;
+            render_text(x,y,PAL_TEXT_VERSION,"v%d.%d.%d",APP_VERSION_MAJOR,APP_VERSION_MINOR,APP_VERSION_PATCH);
         } break;
         case (MENU_STATE_OPTIONS):
         {
