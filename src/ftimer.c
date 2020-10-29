@@ -9,10 +9,16 @@ INTERNAL void init_frame_timer ()
     gFrameTimer.last_counter          = SDL_GetPerformanceCounter();
     gFrameTimer.end_counter           = 0;
     gFrameTimer.current_fps           = 0.0f;
+    #if defined(PLATFORM_WIN32)
     gFrameTimer.fixed_time_step       = 1.0f / FRAMERATE;
     gFrameTimer.delta_time            = gFrameTimer.fixed_time_step;
+    #elif defined(PLATFORM_WEB)
+    gFrameTimer.fixed_time_step       = 0.0f;
+    gFrameTimer.delta_time            = 0.0f;
+    #endif
 }
 
+#if defined(PLATFORM_WIN32)
 INTERNAL void cap_framerate ()
 {
     gFrameTimer.end_counter = SDL_GetPerformanceCounter();
@@ -32,3 +38,18 @@ INTERNAL void cap_framerate ()
     gFrameTimer.current_fps = CAST(float, gFrameTimer.performance_frequency) / CAST(float, elapsed_counter);
     gFrameTimer.last_counter = SDL_GetPerformanceCounter();
 }
+#endif
+
+#if defined(PLATFORM_WEB)
+INTERNAL void cap_framerate ()
+{
+    gFrameTimer.end_counter = SDL_GetPerformanceCounter();
+    U64 elapsed_counter = gFrameTimer.end_counter - gFrameTimer.last_counter;
+    gFrameTimer.last_counter = SDL_GetPerformanceCounter();
+
+    gFrameTimer.current_fps = CAST(float,gFrameTimer.performance_frequency) / CAST(float,elapsed_counter);
+
+    gFrameTimer.delta_time = counter_to_seconds(elapsed_counter);
+    gFrameTimer.fixed_time_step = counter_to_seconds(elapsed_counter);
+}
+#endif

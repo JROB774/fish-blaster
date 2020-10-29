@@ -66,10 +66,14 @@ INTERNAL void free_music (Music* music)
 
 INTERNAL void init_audio ()
 {
+    // Doesn't seem like it's necessary in web builds as the OGG files play anyway even
+    // though this function fails when ran on the web? So I guess we'll just disable it.
+    #if defined(PLATFORM_WIN32)
     if (!(Mix_Init(MIX_INIT_OGG) & MIX_INIT_OGG))
     {
         LOGWARNING("Failed to initialize mixer OGG functionality! (%s)", Mix_GetError());
     }
+    #endif
 
     if (Mix_OpenAudio(AUDIO_FREQUENCY, AUDIO_SAMPLE_FORMAT, AUDIO_CHANNELS, AUDIO_SAMPLE_SIZE) != 0)
     {
