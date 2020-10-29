@@ -1,5 +1,10 @@
 bin/win32/*.exe
 
+bin/web/*.html
+bin/web/*.js
+bin/web/*.wasm
+bin/web/*.data
+
 *.sublime-workspace
 
 *.log
