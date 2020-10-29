@@ -38,6 +38,8 @@ INTERNAL void rotate_vec2 (float* x, float* y, float rad);
 
 INTERNAL float lerp (float a, float b, float t);
 
+INTERNAL float round_to_multiple (float num, float multiple);
+
 INTERNAL void  seed_random        ();
 INTERNAL int   random_int         ();
 INTERNAL int   random_int_range   (int   min, int   max);

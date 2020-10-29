@@ -263,12 +263,18 @@ INTERNAL void render_menu (float dt)
         } break;
         case (MENU_STATE_OPTIONS):
         {
+            int sound_volume = CAST(int, round_to_multiple(get_sound_volume()*100,10));
+            int music_volume = CAST(int, round_to_multiple(get_music_volume()*100,10));
+            float next_sound_volume = get_sound_volume();
+            float next_music_volume = get_music_volume();
+            if (next_sound_volume >= 1.0f) next_sound_volume = 0.0f; else next_sound_volume+=0.1f;
+            if (next_music_volume >= 1.0f) next_music_volume = 0.0f; else next_music_volume+=0.1f;
             y = 38;
             if (do_menu_button(&x,&y, MENU_BUTTON_FULLSCREEN, true, dt, "FULLSCREEN %s",   is_fullscreen() ? "ON" : "OFF"  )) set_fullscreen(!is_fullscreen());
             if (do_menu_button(&x,&y, MENU_BUTTON_CURSOR,     true, dt, "CURSOR TYPE %d",  gPlayer.current_cursor          )) set_player_cursor_type(++gPlayer.current_cursor);
             if (do_menu_button(&x,&y, MENU_BUTTON_TRACK,      true, dt, "MUSIC TRACK %d",  gApp.current_track              )) set_music_track(++gApp.current_track);
-            if (do_menu_button(&x,&y, MENU_BUTTON_SOUND,      true, dt, "SOUND VOLUME %d", CAST(int,get_sound_volume()*100))) set_sound_volume(get_sound_volume()+0.1f);
-            if (do_menu_button(&x,&y, MENU_BUTTON_MUSIC,      true, dt, "MUSIC VOLUME %d", CAST(int,get_music_volume()*100))) set_music_volume(get_music_volume()+0.1f);
+            if (do_menu_button(&x,&y, MENU_BUTTON_SOUND,      true, dt, "SOUND VOLUME %d", sound_volume                    )) set_sound_volume(next_sound_volume);
+            if (do_menu_button(&x,&y, MENU_BUTTON_MUSIC,      true, dt, "MUSIC VOLUME %d", music_volume                    )) set_music_volume(next_music_volume);
             if (do_menu_button(&x,&y, MENU_BUTTON_RESET,      true, dt, "RESET OPTIONS"                                    )) reset_settings();
             if (do_menu_button(&x,&y, MENU_BUTTON_DELETE,     true, dt, "DELETE SCORES"                                    )) start_menu_reset();
             x = TILE_W+4;

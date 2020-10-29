@@ -14,6 +14,17 @@ INTERNAL float lerp (float a, float b, float t)
     return a + t * (b - a);
 }
 
+INTERNAL float round_to_multiple (float num, float multiple)
+{
+    if (multiple == 0) return num;
+
+    float rem = fmod(abs(num), multiple);
+    if (rem == 0) return num;
+
+    if (num < 0) return -(abs(num) - rem);
+    else return num + multiple - rem;
+}
+
 INTERNAL void seed_random ()
 {
     srand(CAST(unsigned int, time(NULL)));
