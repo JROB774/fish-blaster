@@ -72,6 +72,7 @@ typedef enum MenuButton__
     MENU_BUTTON_SOUND,
     MENU_BUTTON_MUSIC,
     MENU_BUTTON_CURSOR,
+    MENU_BUTTON_TRACK,
     MENU_BUTTON_FULLSCREEN,
     MENU_BUTTON_RESET,
     MENU_BUTTON_DELETE,
@@ -258,9 +259,10 @@ INTERNAL void render_menu (float dt)
         } break;
         case (MENU_STATE_OPTIONS):
         {
-            y = 48;
+            y = 38;
             if (do_menu_button(&x,&y, MENU_BUTTON_FULLSCREEN, true, dt, "FULLSCREEN %s",   is_fullscreen() ? "ON" : "OFF"  )) set_fullscreen(!is_fullscreen());
             if (do_menu_button(&x,&y, MENU_BUTTON_CURSOR,     true, dt, "CURSOR TYPE %d",  gPlayer.current_cursor          )) set_player_cursor_type(++gPlayer.current_cursor);
+            if (do_menu_button(&x,&y, MENU_BUTTON_TRACK,      true, dt, "MUSIC TRACK %d",  gApp.current_track              )) set_music_track(++gApp.current_track);
             if (do_menu_button(&x,&y, MENU_BUTTON_SOUND,      true, dt, "SOUND VOLUME %d", CAST(int,get_sound_volume()*100))) set_sound_volume(get_sound_volume()+0.1f);
             if (do_menu_button(&x,&y, MENU_BUTTON_MUSIC,      true, dt, "MUSIC VOLUME %d", CAST(int,get_music_volume()*100))) set_music_volume(get_music_volume()+0.1f);
             if (do_menu_button(&x,&y, MENU_BUTTON_RESET,      true, dt, "RESET OPTIONS"                                    )) reset_settings();
@@ -414,7 +416,7 @@ INTERNAL bool init_application ()
 
     create_spawner();
 
-    play_music(MUS_TRACK[random_int_range(0,ARRAYSIZE(MUS_TRACK)-1)],-1);
+    set_music_track(gSettings.music_track);
 
     return true;
 }
@@ -591,4 +593,13 @@ INTERNAL void start_lose ()
     {
         set_palette_mode(PAL_MODE_DEFAULT);
     }
+}
+
+// MUSIC TRACK
+
+INTERNAL void set_music_track (MusicID track)
+{
+    if (track < MUS_TRACK_0 || track >= MUS_TOTAL) track = MUS_TRACK_0;
+    gApp.current_track = track;
+    play_music(gApp.current_track,-1);
 }

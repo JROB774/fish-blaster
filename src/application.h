@@ -21,6 +21,8 @@ GLOBAL struct
     int score;
     int frame;
 
+    MusicID current_track;
+
     char code[CODE_LENGTH];
     int code_length;
 
@@ -45,5 +47,8 @@ INTERNAL void flash_screen_white ();
 INTERNAL void start_menu ();
 INTERNAL void start_game ();
 INTERNAL void start_lose ();
+
+// Sets and plays the desired music track.
+INTERNAL void set_music_track (MusicID track);
 
 #endif /* APPLICATION_H */
