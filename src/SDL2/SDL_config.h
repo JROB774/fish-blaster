@@ -65,9 +65,17 @@ typedef signed long long int64_t;
 typedef unsigned long long uint64_t;
 #ifndef _SIZE_T_DEFINED_
 #define _SIZE_T_DEFINED_
+#ifdef BUILD_64BIT
 typedef uint64_t size_t;
+#else
+typedef uint32_t size_t;
 #endif
+#endif
+#ifdef BUILD_64BIT
 typedef uint64_t uintptr_t;
+#else
+typedef uint32_t uintptr_t;
+#endif
 #endif /* __GNUC__ || _MSC_VER */
 #endif /* !_STDINT_H_ && !HAVE_STDINT_H */
 
