@@ -14,11 +14,7 @@ void main_loop ()
             {
                 switch (event.key.keysym.sym)
                 {
-                    case (SDLK_RETURN): if (!(SDL_GetModState()&KMOD_ALT)) break;
-                    // FALL-THROUGH!
                     case (SDLK_f):
-                    // FALL-THROUGH!
-                    case (SDLK_F11):
                     {
                         set_fullscreen(!is_fullscreen());
                     } break;
