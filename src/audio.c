@@ -2,10 +2,11 @@
 
 // The stuff in this section is all used internally by the audio/sound system!
 
-#define AUDIO_FREQUENCY     MIX_DEFAULT_FREQUENCY
-#define AUDIO_SAMPLE_FORMAT MIX_DEFAULT_FORMAT
-#define AUDIO_CHANNELS      2 // Stereo Sound
-#define AUDIO_SAMPLE_SIZE   2048
+#define AUDIO_FREQUENCY      MIX_DEFAULT_FREQUENCY
+#define AUDIO_SAMPLE_FORMAT  MIX_DEFAULT_FORMAT
+#define AUDIO_CHANNELS       2 // Stereo Sound
+#define AUDIO_SAMPLE_SIZE    2048
+#define AUDIO_SOUND_CHANNELS 64
 
 typedef struct Sound__ { Mix_Chunk* data; } Sound;
 typedef struct Music__ { Mix_Music* data; } Music;
@@ -81,7 +82,7 @@ INTERNAL void init_audio ()
     }
     else
     {
-        Mix_AllocateChannels(32);
+        Mix_AllocateChannels(AUDIO_SOUND_CHANNELS);
 
         set_sound_volume(CAST(float,gSettings.sound_volume)/CAST(float,MIX_MAX_VOLUME));
         set_music_volume(CAST(float,gSettings.music_volume)/CAST(float,MIX_MAX_VOLUME));
