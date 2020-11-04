@@ -1,9 +1,16 @@
 @echo off
 
-set DebugFlags=-D BUILD_DEBUG -g
+:: can be either "x86" or "x64"
+set Architecture=x64
+:: can be either "debug" or "release"
+set BuildMode=release
 
-:: Build both the 32-bit and 64-bit versions of the application.
-if not exist bin\win32\x64 mkdir bin\win32\x64
-tcc -I src -L lib\win32 -lSDL2 -lSDL2_mixer -D BUILD_64BIT -bench %DebugFlags% -o bin\win32\x64\FISH.exe src\main_win32.c res\icon64.res
-if not exist bin\win32\x86 mkdir bin\win32\x86
-i386-win32-tcc -I src -L lib\win32 -lSDL2 -lSDL2_mixer -D BUILD_32BIT -bench %DebugFlags% -o bin\win32\x86\FISH.exe src\main_win32.c res\icon32.res
+set ExtraFlags=
+
+if %Architecture% == x86 set ExtraFlags=%ExtraFlags% -m32 -D BUILD_32BIT
+if %Architecture% == x64 set ExtraFlags=%ExtraFlags% -m64 -D BUILD_64BIT
+
+if %BuildMode% == debug set ExtraFlags=%ExtraFlags% -D BUILD_DEBUG -g
+
+if not exist bin\win32\%Architecture% mkdir bin\win32\%Architecture%
+tcc -I src -L lib\win32 -lSDL2 -lSDL2_mixer -bench %ExtraFlags% -o bin\win32\%Architecture%\FISH.exe src\main_win32.c res\icon%Architecture%.res
