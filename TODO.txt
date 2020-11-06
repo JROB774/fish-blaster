@@ -1,4 +1,0 @@
-v1.0.1 (AFTER GAME JAM VOTING):
-- The slowdown palette doesn't get reset when pressing "R" for quick restart!
-- Upload build with doubled number of sound channels.
-- Remove the windows console from the release builds.
