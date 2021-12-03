@@ -1,4 +1,4 @@
-# Revival Jam (Fish Blaster)
+# Fish Blater (Revival Jam)
 
 This project was made for 2020's **[Revival Jam](https://itch.io/jam/revival-jam)**.
 It is a simple 2D arcade blaster about getting the highest score possible A download
