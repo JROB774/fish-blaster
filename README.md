@@ -1,14 +1,5 @@
 # Revival Jam (Fish Blaster)
 
-### ***THIS PROJECT HAS NOW BEEN ARCHIVED!***
-
-*The project has been archived to preserve its state at the end of 2020's
-**[Revival Jam](https://itch.io/jam/revival-jam)** contest.*
-
-***Below is the original README for this repository.***
-
----
-
 This project was made for 2020's **[Revival Jam](https://itch.io/jam/revival-jam)**.
 It is a simple 2D arcade blaster about getting the highest score possible A download
 for the game can be found over on **[itch.io](https://jrob774.itch.io/fish-blaster)**,
