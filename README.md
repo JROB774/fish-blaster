@@ -15,10 +15,11 @@ developed using **[emscripten](https://github.com/emscripten-core/emscripten)**.
 
 ### Windows
 
-Run the `buildwin32.bat` file to build the application. The script is setup to
-require *TCC* in order to build, however setting up the project to build with
-another C/C++ compiler would be relatively simple. All external dependencies
-are provided with the repo.
+Run the `buildwin32.bat` file to build the application as a 32-bit executable and
+`buildwin64.bat` to build as a 64-bit executable. The script is setup to require *TCC*
+in order to build (which has been packaged in this repository), however setting up the
+project to build with another C/C++ compiler would be relatively simple. All external
+dependencies are provided with the repo.
 
 ### Web
 
