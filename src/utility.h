@@ -10,6 +10,12 @@
 
 #define ABS(a) (((a)<0)?-(a):(a))
 
+#ifdef __EMSCRIPTEN__
+#define FABSF(a) fabsf(a)
+#else
+#define FABSF(a) abs(a)
+#endif
+
 #define SWAP(x,y,t) do { t tmp__ = x; x = y; y = tmp__; } while (0)
 
 #define MIN(a,b) (((a)<(b))?(a):(b))

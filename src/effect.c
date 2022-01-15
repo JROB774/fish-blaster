@@ -439,6 +439,8 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
                 case (EFX_ICO_RAPD ):
                 case (EFX_ICO_SPRD ):
                 case (EFX_ICO_BOOM ): fw =  8, fh = 8; break;
+                default:
+                    break;
             }
 
             effect->x  = random_int_range(x,x+w) - (fw/2);
@@ -467,6 +469,8 @@ INTERNAL void create_effect (EffectID id, int x, int y, int w, int h, int min_co
                 case (EFX_ICO_RAPD ): create_ico_rapd (effect); break;
                 case (EFX_ICO_SPRD ): create_ico_sprd (effect); break;
                 case (EFX_ICO_BOOM ): create_ico_boom (effect); break;
+                default:
+                    break;
             }
 
             count--;
@@ -505,6 +509,8 @@ INTERNAL void update_effect (float dt)
                 case (EFX_ICO_RAPD ):
                 case (EFX_ICO_SPRD ):
                 case (EFX_ICO_BOOM ): update_ico       (effect, dt); break;
+                default:
+                    break;
             }
         }
     }
@@ -555,6 +561,8 @@ INTERNAL void render_effect_lo (float dt)
                     case (EFX_CHIP_1   ): clip = ANM_CHIP  [effect->frame]; break;
                     case (EFX_BUBBLE   ): clip = ANM_BUBBLE[effect->frame]; break;
                     case (EFX_SHOT     ): clip = ANM_SHOT  [effect->frame]; break;
+                    default:
+                        break;
                 }
 
                 if (!effect->invis)
@@ -599,6 +607,8 @@ INTERNAL void render_effect_hi (float dt)
                     case (EFX_ICO_RAPD ): clip = &SPR_ICO_RAPD_0; break;
                     case (EFX_ICO_SPRD ): clip = &SPR_ICO_SPRD_0; break;
                     case (EFX_ICO_BOOM ): clip = &SPR_ICO_BOOM_0; break;
+                    default:
+                        break;
                 }
 
                 if (!effect->invis)

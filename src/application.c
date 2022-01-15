@@ -52,6 +52,8 @@ INTERNAL void render_hud (int y)
                 case (ITEM_MULT): render_bitmap(SCREEN_W-32,y,PAL_ICO_MULT, &SPR_ICO_MULT_0); break;
                 case (ITEM_RAPD): render_bitmap(SCREEN_W-33,y,PAL_ICO_RAPD, &SPR_ICO_RAPD_0); break; // Kind of hacky but we draw this 1px left so it doesn't hug/touch the number to the right!
                 case (ITEM_SPRD): render_bitmap(SCREEN_W-32,y,PAL_ICO_SPRD, &SPR_ICO_SPRD_0); break;
+                default:
+                    break;
             }
         }
     }
@@ -316,6 +318,10 @@ INTERNAL void render_menu (float dt)
             y = SCREEN_H-TILE_H-4;
             if (do_menu_button(&x,&y,MENU_BUTTON_BACK, false, dt, "BACK")) start_menu_main();
         } break;
+        default:
+        {
+            // Nothing...
+        } break;
     }
 
     render_player(dt);
@@ -539,6 +545,8 @@ INTERNAL void update_application (float dt)
         case (APP_STATE_MENU): update_menu(dt); break;
         case (APP_STATE_GAME): update_game(dt); break;
         case (APP_STATE_LOSE): update_lose(dt); break;
+        default:
+            break;
     }
 
     // Make sure the score cannot go over its maximum value.
@@ -556,6 +564,8 @@ INTERNAL void render_application (float dt)
         case (APP_STATE_MENU): render_menu(dt); break;
         case (APP_STATE_GAME): render_game(dt); break;
         case (APP_STATE_LOSE): render_lose(dt); break;
+        default:
+            break;
     }
 
     if (gApp.flash_white)

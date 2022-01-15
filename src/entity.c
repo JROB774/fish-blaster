@@ -52,6 +52,8 @@ INTERNAL void render_crate (Entity* entity, float dt)
             case (ENT_CRATE_RAPD): render_bitmap(entity->x+4,entity->y+4,PAL_ICO_RAPD,ANM_ICO_RAPD[0]); break;
             case (ENT_CRATE_SPRD): render_bitmap(entity->x+4,entity->y+4,PAL_ICO_SPRD,ANM_ICO_SPRD[0]); break;
             case (ENT_CRATE_BOOM): render_bitmap(entity->x+4,entity->y+4,PAL_ICO_BOOM,ANM_ICO_BOOM[0]); break;
+            default:
+                break;
         }
     }
 }
@@ -108,6 +110,10 @@ INTERNAL void collide_crate_vs_shot (Entity* entity, int sx, int sy, int sw, int
                 boom->x = entity->x+(CRATE_WIDTH/2);
                 boom->y = entity->y+(CRATE_HEIGHT/2);
                 effect_id = EFX_ICO_BOOM;
+            } break;
+            default:
+            {
+                // Nothing...
             } break;
         }
 
@@ -648,6 +654,8 @@ INTERNAL void update_boom (Entity* entity, float dt)
                     case (ENT_SQUID     ): c = get_squid_collider (other); break;
                     case (ENT_JELLY     ): c = get_jelly_collider (other); break;
                     case (ENT_URCHIN    ): c = get_urchin_collider(other); break;
+                    default:
+                        break;
                 }
 
                 if (circle_vs_rect_collision(entity->x,entity->y,entity->t, c.x,c.y,c.w,c.h))
@@ -664,6 +672,8 @@ INTERNAL void update_boom (Entity* entity, float dt)
                         case (ENT_SQUID     ): kill_squid (other); break;
                         case (ENT_JELLY     ): kill_jelly (other); break;
                         case (ENT_URCHIN    ): kill_urchin(other); break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -889,6 +899,8 @@ INTERNAL Entity* create_entity (EntityID id)
                 case (ENT_JELLY     ): create_jelly (entity); break;
                 case (ENT_URCHIN    ): create_urchin(entity); break;
                 case (ENT_BOOM      ): create_boom  (entity); break;
+                default:
+                    break;
             }
 
             return entity;
@@ -918,6 +930,8 @@ INTERNAL void update_entity (float dt)
                 case (ENT_JELLY     ): update_jelly (entity, dt); break;
                 case (ENT_URCHIN    ): update_urchin(entity, dt); break;
                 case (ENT_BOOM      ): update_boom  (entity, dt); break;
+                default:
+                    break;
             }
         }
     }
@@ -960,6 +974,8 @@ INTERNAL void render_entity (float dt)
                 case (ENT_JELLY     ): render_jelly (entity, dt); break;
                 case (ENT_URCHIN    ): render_urchin(entity, dt); break;
                 case (ENT_BOOM      ): render_boom  (entity, dt); break;
+                default:
+                    break;
             }
         }
     }
@@ -1006,6 +1022,8 @@ INTERNAL void collide_entity_vs_player (int px, int py)
             {
                 case (ENT_JELLY ): collide_jelly_vs_player (entity, px,py); break;
                 case (ENT_URCHIN): collide_urchin_vs_player(entity, px,py); break;
+                default:
+                    break;
             }
         }
     }
@@ -1030,6 +1048,8 @@ INTERNAL void collide_entity_vs_shot (int sx, int sy, int sw, int sh)
                 case (ENT_SQUID     ): collide_squid_vs_shot (entity, sx,sy,sw,sh); break;
                 case (ENT_JELLY     ): collide_jelly_vs_shot (entity, sx,sy,sw,sh); break;
                 case (ENT_URCHIN    ): collide_urchin_vs_shot(entity, sx,sy,sw,sh); break;
+                default:
+                    break;
             }
         }
     }

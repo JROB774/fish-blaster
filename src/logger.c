@@ -24,10 +24,10 @@ INTERNAL void log_message (const char* file, int line, LogLevel level, const cha
     snprintf(line_buffer, LOG_BUFFER_SIZE, "[%s] Error in %s at line %d: %s\n",
         time_buffer, file, line, msg_buffer);
 
-    if (gLogFile) fprintf(gLogFile, line_buffer);
+    if (gLogFile) fprintf(gLogFile, "%s", line_buffer);
 
     #if defined(BUILD_DEBUG)
-    fprintf(stderr, line_buffer);
+    fprintf(stderr, "%s", line_buffer);
     #endif
 
     // Warning and above level messages also get displayed to the user in a dialog box.

@@ -18,10 +18,10 @@ INTERNAL float round_to_multiple (float num, float multiple)
 {
     if (multiple == 0) return num;
 
-    float rem = fmod(abs(num), multiple);
+    float rem = fmod(FABSF(num), multiple);
     if (rem == 0) return num;
 
-    if (num < 0) return -(abs(num) - rem);
+    if (num < 0) return -(FABSF(num) - rem);
     else return num + multiple - rem;
 }
 
@@ -45,5 +45,5 @@ INTERNAL float random_float ()
 }
 INTERNAL float random_float_range (float min, float max)
 {
-    return (min + CAST(float,rand()) / CAST(float,RAND_MAX/(max-min)));
+    return (min + CAST(float,rand()) / CAST(float,RAND_MAX)/(max-min));
 }
