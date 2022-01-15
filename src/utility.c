@@ -45,5 +45,5 @@ INTERNAL float random_float ()
 }
 INTERNAL float random_float_range (float min, float max)
 {
-    return (min + CAST(float,rand()) / CAST(float,RAND_MAX)/(max-min));
+    return (min + CAST(float,rand()) / CAST(float,RAND_MAX/(max-min)));
 }
