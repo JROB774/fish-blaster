@@ -13,4 +13,4 @@ if %Architecture% == x64 set ExtraFlags=%ExtraFlags% -m64 -D BUILD_64BIT
 if %BuildMode% == debug set ExtraFlags=%ExtraFlags% -D BUILD_DEBUG -g
 
 if not exist bin\win32\%Architecture% mkdir bin\win32\%Architecture%
-tcc -I src -L lib\win32 -lSDL2 -lSDL2_mixer -bench %ExtraFlags% -o bin\win32\%Architecture%\FISH.exe src\main_win32.c res\icon%Architecture%.res
+tcc\tcc -I src -L lib\win32 -lSDL2 -lSDL2_mixer -bench %ExtraFlags% -o bin\win32\%Architecture%\FISH.exe src\main_win32.c res\icon%Architecture%.res
